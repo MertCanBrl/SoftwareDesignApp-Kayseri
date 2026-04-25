@@ -1,0 +1,386 @@
+[
+  {
+    "durakId": "1006001",
+    "durakAd": "Organize Sanayi",
+    "latitude": 38.7390374,
+    "longitude": 35.3866703
+  },
+  {
+    "durakId": "1006003",
+    "durakAd": "46161",
+    "latitude": 38.7781052,
+    "longitude": 35.4178979
+  },
+  {
+    "durakId": "1006008",
+    "durakAd": "Sakarya",
+    "latitude": 38.7289693,
+    "longitude": 35.444286
+  },
+  {
+    "durakId": "1006022",
+    "durakAd": "Fuzuli",
+    "latitude": 38.7271523,
+    "longitude": 35.5068034
+  },
+  {
+    "durakId": "1006025",
+    "durakAd": "Erciyesevler",
+    "latitude": 38.7295734,
+    "longitude": 35.5152762
+  },
+  {
+    "durakId": "1006053",
+    "durakAd": "Bahçelievler",
+    "latitude": 38.7787834,
+    "longitude": 35.5824495
+  },
+  {
+    "durakId": "1006067",
+    "durakAd": "YILDIRIM BEYAZIT",
+    "latitude": 38.7218696,
+    "longitude": 35.5279751
+  },
+  {
+    "durakId": "1006074",
+    "durakAd": "TURGUT ÖZAL",
+    "latitude": 38.7018887,
+    "longitude": 35.5666427
+  },
+  {
+    "durakId": "1006002",
+    "durakAd": "Tınaztepe",
+    "latitude": 38.7324791,
+    "longitude": 35.3852811
+  },
+  {
+    "durakId": "1006004",
+    "durakAd": "Belsin Kürsü",
+    "latitude": 38.7443518,
+    "longitude": 35.3923761
+  },
+  {
+    "durakId": "1006005",
+    "durakAd": "Selimiye",
+    "latitude": 38.7466365,
+    "longitude": 35.3978741
+  },
+  {
+    "durakId": "1006006",
+    "durakAd": "Anafartalar",
+    "latitude": 38.7415174,
+    "longitude": 35.395664
+  },
+  {
+    "durakId": "1006007",
+    "durakAd": "Keykubat",
+    "latitude": 38.7549055,
+    "longitude": 35.395735
+  },
+  {
+    "durakId": "1006009",
+    "durakAd": "Stadyum",
+    "latitude": 38.7335069,
+    "longitude": 35.4242425
+  },
+  {
+    "durakId": "1006010",
+    "durakAd": "Köprülü kavşak",
+    "latitude": 38.7333787,
+    "longitude": 35.4308344
+  },
+  {
+    "durakId": "1006011",
+    "durakAd": "Yazı Bağları",
+    "latitude": 38.3547973,
+    "longitude": 35.4599881
+  },
+  {
+    "durakId": "1006012",
+    "durakAd": "Esentepe",
+    "latitude": 38.7289693,
+    "longitude": 35.444286
+  },
+  {
+    "durakId": "1006013",
+    "durakAd": "Yeni Sanayi Dsi",
+    "latitude": 38.7296854,
+    "longitude": 35.4456912
+  },
+  {
+    "durakId": "1006015",
+    "durakAd": "Karayolları",
+    "latitude": 38.7258923,
+    "longitude": 35.459532
+  },
+  {
+    "durakId": "1006016",
+    "durakAd": "Aydınlıkevler",
+    "latitude": 38.7226298,
+    "longitude": 35.465789
+  },
+  {
+    "durakId": "1006017",
+    "durakAd": "Eski Sanayi",
+    "latitude": 38.7248313,
+    "longitude": 35.4734376
+  },
+  {
+    "durakId": "1006018",
+    "durakAd": "Düvenönü",
+    "latitude": 38.7208345,
+    "longitude": 35.4814079
+  },
+  {
+    "durakId": "1006019",
+    "durakAd": "Cumhuriyet Meydanı",
+    "latitude": 38.7224206,
+    "longitude": 35.4872721
+  },
+  {
+    "durakId": "1006020",
+    "durakAd": "Hunat Hatun",
+    "latitude": 38.7216361,
+    "longitude": 35.4920406
+  },
+  {
+    "durakId": "1006021",
+    "durakAd": "Büyükşehir Belediyesi",
+    "latitude": 38.7247303,
+    "longitude": 35.4982045
+  },
+  {
+    "durakId": "1006023",
+    "durakAd": "Alparslan",
+    "latitude": 39.01928,
+    "longitude": 35.50845
+  },
+  {
+    "durakId": "1006024",
+    "durakAd": "Tuna",
+    "latitude": 38.7307023,
+    "longitude": 35.5192365
+  },
+  {
+    "durakId": "1006026",
+    "durakAd": "Çifte Kümbet",
+    "latitude": 38.7338967,
+    "longitude": 35.5304445
+  },
+  {
+    "durakId": "1006027",
+    "durakAd": "Yıldızevler",
+    "latitude": 38.74426,
+    "longitude": 35.5383682
+  },
+  {
+    "durakId": "1006028",
+    "durakAd": "Doğu Terminali",
+    "latitude": 38.7433029,
+    "longitude": 35.5426757
+  },
+  {
+    "durakId": "1006029",
+    "durakAd": "Mimarsinan Kavşağı",
+    "latitude": 38.7487621,
+    "longitude": 35.548897
+  },
+  {
+    "durakId": "1006030",
+    "durakAd": "Gökkent",
+    "latitude": 38.7477023,
+    "longitude": 35.5638689
+  },
+  {
+    "durakId": "1006031",
+    "durakAd": "Kumarlı",
+    "latitude": 38.7585007,
+    "longitude": 35.5600955
+  },
+  {
+    "durakId": "1006032",
+    "durakAd": "Harikalar Diyarı",
+    "latitude": 38.7667923,
+    "longitude": 35.5649858
+  },
+  {
+    "durakId": "1006033",
+    "durakAd": "Cirgalan",
+    "latitude": 38.7892987,
+    "longitude": 35.5634308
+  },
+  {
+    "durakId": "1006034",
+    "durakAd": "Ahi Evran",
+    "latitude": 38.765503,
+    "longitude": 35.5703616
+  },
+  {
+    "durakId": "1006035",
+    "durakAd": "Gesi Kavşağı",
+    "latitude": 38.7769748,
+    "longitude": 35.5749621
+  },
+  {
+    "durakId": "1006036",
+    "durakAd": "Beyazşehir 1",
+    "latitude": 38.7840772,
+    "longitude": 35.5862828
+  },
+  {
+    "durakId": "1006037",
+    "durakAd": "Toki Kavşağı",
+    "latitude": 38.7798058,
+    "longitude": 35.5893592
+  },
+  {
+    "durakId": "1006038",
+    "durakAd": "Beyazşehir 2",
+    "latitude": 38.7840772,
+    "longitude": 35.5862828
+  },
+  {
+    "durakId": "1006044",
+    "durakAd": "Sema Yazar",
+    "latitude": 38.731332,
+    "longitude": 35.5221952
+  },
+  {
+    "durakId": "1006045",
+    "durakAd": "Şehit Mustafa Şimşek",
+    "latitude": 38.7271327,
+    "longitude": 35.5259292
+  },
+  {
+    "durakId": "1006046",
+    "durakAd": "Şehit Furkan Doğan",
+    "latitude": 38.7207985,
+    "longitude": 35.528266
+  },
+  {
+    "durakId": "1006048",
+    "durakAd": "Erciyes Üniversitesi",
+    "latitude": 38.7073914,
+    "longitude": 35.5337566
+  },
+  {
+    "durakId": "1006050",
+    "durakAd": "Lojmanlar",
+    "latitude": 38.7001668,
+    "longitude": 35.5271425
+  },
+  {
+    "durakId": "1006051",
+    "durakAd": "Kızılay Kan Merkezi",
+    "latitude": 38.6973287,
+    "longitude": 35.5340713
+  },
+  {
+    "durakId": "1006052",
+    "durakAd": "Yurtlar Bölgesi",
+    "latitude": 38.6958248,
+    "longitude": 35.5392781
+  },
+  {
+    "durakId": "1006054",
+    "durakAd": "Talas Belediyesi",
+    "latitude": 38.6926966,
+    "longitude": 35.5500413
+  },
+  {
+    "durakId": "1006055",
+    "durakAd": "Talas Cemil Baba",
+    "latitude": 38.6884892,
+    "longitude": 35.5545846
+  },
+  {
+    "durakId": "1006057",
+    "durakAd": "OTOGAR",
+    "latitude": 38.7485165,
+    "longitude": 35.404252
+  },
+  {
+    "durakId": "1006058",
+    "durakAd": "FEN LISESI",
+    "latitude": 38.7548694,
+    "longitude": 35.4084993
+  },
+  {
+    "durakId": "1006059",
+    "durakAd": "HURDACILAR",
+    "latitude": 38.7599798,
+    "longitude": 35.4120794
+  },
+  {
+    "durakId": "1006060",
+    "durakAd": "PSIKIYATRI HASTANESI",
+    "latitude": 38.7667557,
+    "longitude": 35.407463
+  },
+  {
+    "durakId": "1006061",
+    "durakAd": "SEHIR HASTANESI",
+    "latitude": 38.7685915,
+    "longitude": 35.4090403
+  },
+  {
+    "durakId": "1006062",
+    "durakAd": "HASTANE KONUTLARI",
+    "latitude": 38.7743597,
+    "longitude": 35.4123668
+  },
+  {
+    "durakId": "1006063",
+    "durakAd": "NUH NACI YAZGAN",
+    "latitude": 38.7792401,
+    "longitude": 35.4133033
+  },
+  {
+    "durakId": "1006064",
+    "durakAd": "MOBILYA KENT 1",
+    "latitude": 38.7769115,
+    "longitude": 35.4230963
+  },
+  {
+    "durakId": "1006065",
+    "durakAd": "MOBILYA KENT 2",
+    "latitude": 38.7769115,
+    "longitude": 35.4230963
+  },
+  {
+    "durakId": "1006066",
+    "durakAd": "KUMSMALL AVM",
+    "latitude": 38.7777316,
+    "longitude": 35.4324529
+  },
+  {
+    "durakId": "1006068",
+    "durakAd": "KEÇITEPESI",
+    "latitude": 38.7171616,
+    "longitude": 35.5362171
+  },
+  {
+    "durakId": "1006070",
+    "durakAd": "GERMIRALTI",
+    "latitude": 38.7186125,
+    "longitude": 35.5551628
+  },
+  {
+    "durakId": "1006072",
+    "durakAd": "HALEF HOCA",
+    "latitude": 38.709581,
+    "longitude": 35.556749
+  },
+  {
+    "durakId": "1006073",
+    "durakAd": "ANAYURT PAZAR YERI",
+    "latitude": 38.7085784,
+    "longitude": 35.5620895
+  },
+  {
+    "durakId": "1006075",
+    "durakAd": "IZZET BAYRAKTAR CAMII",
+    "latitude": 38.7024924,
+    "longitude": 35.5663543
+  }
+]

@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "Kayseri Raylı Yoğunluk",
+    "slug": "kayseri-rail-density",
+    "scheme": "kayseri-rail-density",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0B1B3A"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kayseri.raildensity"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0B1B3A"
+      },
+      "package": "com.kayseri.raildensity",
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": ["expo-router"]
+  }
+}
