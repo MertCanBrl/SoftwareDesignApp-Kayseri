@@ -7,10 +7,12 @@ import { DateTimeSelector } from '../components/DateTimeSelector';
 import { theme } from '../constants/theme';
 import { useSelection } from '../context/SelectionContext';
 import { formatDisplayDate } from '../utils/date';
+import { getPredictionConfidence } from '../utils/predictionConfidence';
 import { getDailySummary } from '../utils/statistics';
 
 export function StatisticsScreen() {
-  const { passengerRows, sortedDates, tarih, setTarih, saat, setSaat } = useSelection();
+  const { passengerRows, sortedDates, tarih, setTarih, saat, setSaat, dateDataKind, markPredictionOnlyDates } =
+    useSelection();
 
   const summary = useMemo(() => getDailySummary(passengerRows, tarih), [passengerRows, tarih]);
 
@@ -19,7 +21,16 @@ export function StatisticsScreen() {
       <StatusBar style="light" />
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={styles.title}>İstatistikler</Text>
-        <Text style={styles.lead}>Seçilen gün: {formatDisplayDate(tarih)}</Text>
+        <Text style={styles.lead}>
+          Seçilen gün: {formatDisplayDate(tarih)}
+          {dateDataKind === 'prediction' ? (
+            <>
+              {' '}
+              · Bu veriler ML tahminidir
+              {` · Güven: ${getPredictionConfidence(tarih)}`}
+            </>
+          ) : null}
+        </Text>
 
         <DateTimeSelector
           sortedDates={sortedDates}
@@ -27,6 +38,7 @@ export function StatisticsScreen() {
           saat={saat}
           onChangeDate={setTarih}
           onChangeHour={setSaat}
+          predictionOnlyDates={markPredictionOnlyDates}
         />
 
         <View style={styles.grid}>
