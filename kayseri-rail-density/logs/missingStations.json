@@ -1,57 +1,42 @@
 [
   {
-    "durakId": "1006014",
-    "durakAd": "Anatamir",
-    "reason": "no_results"
-  },
-  {
     "durakId": "1006039",
-    "durakAd": "İldem1",
+    "name": "İldem1",
     "reason": "no_results"
   },
   {
     "durakId": "1006040",
-    "durakAd": "İldem2",
+    "name": "İldem2",
     "reason": "no_results"
   },
   {
     "durakId": "1006041",
-    "durakAd": "İldem3",
+    "name": "İldem3",
     "reason": "no_results"
   },
   {
     "durakId": "1006042",
-    "durakAd": "İldem4",
+    "name": "İldem4",
     "reason": "no_results"
   },
   {
     "durakId": "1006043",
-    "durakAd": "İldem5",
-    "reason": "no_results"
-  },
-  {
-    "durakId": "1006047",
-    "durakAd": "Tekno Park",
+    "name": "İldem5",
     "reason": "no_results"
   },
   {
     "durakId": "1006049",
-    "durakAd": "Erciyes Üniversitesi Hastaneleri",
-    "reason": "no_results"
-  },
-  {
-    "durakId": "1006056",
-    "durakAd": "ANAFARTALAR2",
+    "name": "Erciyes Üniversitesi Hastaneleri",
     "reason": "no_results"
   },
   {
     "durakId": "1006069",
-    "durakAd": "DEDEMAN IMAM HATIP LISESI",
+    "name": "Dedeman İmam Hatip Lisesi",
     "reason": "no_results"
   },
   {
     "durakId": "1006071",
-    "durakAd": "KAYSERI ÜNIVERSITESI SEHIT ISMET ERASLAN",
+    "name": "Kayseri Üniversitesi Şehit İsmet Eraslan",
     "reason": "no_results"
   }
 ]

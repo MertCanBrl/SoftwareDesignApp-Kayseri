@@ -1,386 +1,517 @@
 [
   {
     "durakId": "1006001",
-    "durakAd": "Organize Sanayi",
-    "latitude": 38.7390374,
-    "longitude": 35.3866703
-  },
-  {
-    "durakId": "1006003",
-    "durakAd": "46161",
-    "latitude": 38.7781052,
-    "longitude": 35.4178979
-  },
-  {
-    "durakId": "1006008",
-    "durakAd": "Sakarya",
-    "latitude": 38.7289693,
-    "longitude": 35.444286
-  },
-  {
-    "durakId": "1006022",
-    "durakAd": "Fuzuli",
-    "latitude": 38.7271523,
-    "longitude": 35.5068034
-  },
-  {
-    "durakId": "1006025",
-    "durakAd": "Erciyesevler",
-    "latitude": 38.7295734,
-    "longitude": 35.5152762
-  },
-  {
-    "durakId": "1006053",
-    "durakAd": "Bahçelievler",
-    "latitude": 38.7787834,
-    "longitude": 35.5824495
-  },
-  {
-    "durakId": "1006067",
-    "durakAd": "YILDIRIM BEYAZIT",
-    "latitude": 38.7218696,
-    "longitude": 35.5279751
-  },
-  {
-    "durakId": "1006074",
-    "durakAd": "TURGUT ÖZAL",
-    "latitude": 38.7018887,
-    "longitude": 35.5666427
+    "name": "Organize Sanayi",
+    "lat": 38.738443900976726, 
+    "lng": 35.368401441140485
   },
   {
     "durakId": "1006002",
-    "durakAd": "Tınaztepe",
-    "latitude": 38.7324791,
-    "longitude": 35.3852811
+    "name": "Tınaz Tepe",
+    "lat": 38.73775282055456,
+    "lng": 35.38006155463323
+  },
+  {
+    "durakId": "1006003",
+    "name": "Ondokuz Mayıs", 
+    "lat": 38.73939131039236,
+    "lng": 35.38788265463333
   },
   {
     "durakId": "1006004",
-    "durakAd": "Belsin Kürsü",
-    "latitude": 38.7443518,
-    "longitude": 35.3923761
+    "name": "Belsin Kürsü",
+    "lat": 38.744409801830926, 
+    "lng": 35.39276598161908
   },
   {
     "durakId": "1006005",
-    "durakAd": "Selimiye",
-    "latitude": 38.7466365,
-    "longitude": 35.3978741
+    "name": "Selimiye",
+    "lat": 38.742595861813314,
+    "lng": 35.399700708604485
   },
   {
     "durakId": "1006006",
-    "durakAd": "Anafartalar",
-    "latitude": 38.7415174,
-    "longitude": 35.395664
+    "name": "Anafartalar",
+    "lat": 38.74100992296636, 
+    "lng": 35.403592188207355
+    
   },
   {
     "durakId": "1006007",
-    "durakAd": "Keykubat",
-    "latitude": 38.7549055,
-    "longitude": 35.395735
+    "name": "Keykubat",
+    "lat": 38.739498182680684, 
+    "lng": 35.4107947969618
+   
+  },
+  {
+    "durakId": "1006008",
+    "name": "Sakarya",
+    "lat": 38.73668384456293, 
+    "lng": 35.41741863337288  
+  
   },
   {
     "durakId": "1006009",
-    "durakAd": "Stadyum",
-    "latitude": 38.7335069,
-    "longitude": 35.4242425
+    "name": "Stadyum",
+    "lat": 38.733694677231675, 
+    "lng": 35.42398445833341
+ 
   },
   {
     "durakId": "1006010",
-    "durakAd": "Köprülü kavşak",
-    "latitude": 38.7333787,
-    "longitude": 35.4308344
+    "name": "Köprülü Kavşak",
+    "lat": 38.73337155619678, 
+    "lng": 35.43036870239931
+
   },
   {
     "durakId": "1006011",
-    "durakAd": "Yazı Bağları",
-    "latitude": 38.3547973,
-    "longitude": 35.4599881
+    "name": "Yazı Bağları",
+    "lat": 38.73195457564401, 
+    "lng": 35.43595782633895
+   
   },
   {
     "durakId": "1006012",
-    "durakAd": "Esentepe",
-    "latitude": 38.7289693,
-    "longitude": 35.444286
+    "name": "Esentepe",
+    "lat": 38.72968267924763, 
+    "lng": 35.441268480650685
   },
   {
     "durakId": "1006013",
-    "durakAd": "Yeni Sanayi Dsi",
-    "latitude": 38.7296854,
-    "longitude": 35.4456912
+    "name": "DSI-Yeni Sanayi",
+    "lat": 38.729422481739704, 
+    "lng": 35.44555452371097
+  },
+  {
+    "durakId": "1006014",
+    "name": "Osman Kavuncu",
+    "lat": 38.727358877650396, 
+    "lng": 35.45281253503032
+  
   },
   {
     "durakId": "1006015",
-    "durakAd": "Karayolları",
-    "latitude": 38.7258923,
-    "longitude": 35.459532
+    "name": "Karayolları",
+    "lat": 38.72601769193029, 
+    "lng": 35.45915186391776
+  
   },
   {
     "durakId": "1006016",
-    "durakAd": "Aydınlıkevler",
-    "latitude": 38.7226298,
-    "longitude": 35.465789
+    "name": "Aydınlıkevler",
+    "lat": 38.724536006433354, 
+    "lng": 35.46582189010217
+
   },
   {
     "durakId": "1006017",
-    "durakAd": "Eski Sanayi",
-    "latitude": 38.7248313,
-    "longitude": 35.4734376
+    "name": "Eski Sanayi",
+    "lat": 38.723730535635404, 
+    "lng": 35.47028303132892
+ 
   },
   {
     "durakId": "1006018",
-    "durakAd": "Düvenönü",
-    "latitude": 38.7208345,
-    "longitude": 35.4814079
+    "name": "Düvenönü",
+    "lat": 38.72075919824841, 
+    "lng": 35.48119623843487
   },
   {
     "durakId": "1006019",
-    "durakAd": "Cumhuriyet Meydanı",
-    "latitude": 38.7224206,
-    "longitude": 35.4872721
+    "name": "Cumhuriyet Meydanı",
+    "lat": 38.72199249768648, 
+    "lng": 35.48694374532952
+ 
   },
   {
     "durakId": "1006020",
-    "durakAd": "Hunat Hatun",
-    "latitude": 38.7216361,
-    "longitude": 35.4920406
+    "name": "Hunat",
+    "lat": 38.723113002576255, 
+    "lng": 35.49274555397826
+
   },
   {
     "durakId": "1006021",
-    "durakAd": "Büyükşehir Belediyesi",
-    "latitude": 38.7247303,
-    "longitude": 35.4982045
+    "name": "Büyükşehir Belediyesi",
+    "lat": 38.724589243549154, 
+    "lng": 35.497998041637246
+
+  },
+  {
+    "durakId": "1006022",
+    "name": "Fuzuli",
+    "lat": 38.72694582818994, 
+    "lng": 35.50648916747132
+ 
   },
   {
     "durakId": "1006023",
-    "durakAd": "Alparslan",
-    "latitude": 39.01928,
-    "longitude": 35.50845
+    "name": "Alpaslan",
+    "lat": 38.72864584334773, 
+    "lng": 35.51210939877338
+
   },
   {
     "durakId": "1006024",
-    "durakAd": "Tuna",
-    "latitude": 38.7307023,
-    "longitude": 35.5192365
+    "name": "Tuna",
+    "lat": 38.73053420023061, 
+    "lng": 35.5189537845029
+
+  },
+  {
+    "durakId": "1006025",
+    "name": "Erciyes Evler",
+    "lat": 38.73229830406542, 
+    "lng": 35.52494358992349
   },
   {
     "durakId": "1006026",
-    "durakAd": "Çifte Kümbet",
-    "latitude": 38.7338967,
-    "longitude": 35.5304445
+    "name": "Çifte Kümbet",
+    "lat": 38.73383588732723, 
+    "lng": 35.53022434505618
+
   },
   {
     "durakId": "1006027",
-    "durakAd": "Yıldızevler",
-    "latitude": 38.74426,
-    "longitude": 35.5383682
+    "name": "Yıldız Evler",
+    "lat": 38.737919391108996, 
+    "lng": 35.53676406627594
+
   },
   {
     "durakId": "1006028",
-    "durakAd": "Doğu Terminali",
-    "latitude": 38.7433029,
-    "longitude": 35.5426757
+    "name": "Doğu Terminali",
+    "lat": 38.74305951095808, 
+    "lng": 35.542527226226234
+ 
   },
   {
     "durakId": "1006029",
-    "durakAd": "Mimarsinan Kavşağı",
-    "latitude": 38.7487621,
-    "longitude": 35.548897
+    "name": "Mimarsinan Kavşağı",
+    "lat": 38.74865189229056, 
+    "lng": 35.54863866163961
+
   },
   {
     "durakId": "1006030",
-    "durakAd": "Gökkent",
-    "latitude": 38.7477023,
-    "longitude": 35.5638689
+    "name": "Gökkent",
+    "lat": 38.75358833116556, 
+    "lng": 35.5541882979244
+
   },
   {
     "durakId": "1006031",
-    "durakAd": "Kumarlı",
-    "latitude": 38.7585007,
-    "longitude": 35.5600955
+    "name": "Kumarlı",
+    "lat": 38.75835280667259, 
+    "lng": 35.559933885590596
+  
   },
   {
     "durakId": "1006032",
-    "durakAd": "Harikalar Diyarı",
-    "latitude": 38.7667923,
-    "longitude": 35.5649858
+    "name": "Harikalar Diyarı",
+    "lat": 38.76636091455411, 
+    "lng": 35.56495930860543
+
   },
   {
     "durakId": "1006033",
-    "durakAd": "Cirgalan",
-    "latitude": 38.7892987,
-    "longitude": 35.5634308
+    "name": "Cırgalan",
+    "lat": 38.769432563896956, 
+    "lng": 35.56713089340087
+
   },
   {
     "durakId": "1006034",
-    "durakAd": "Ahi Evran",
-    "latitude": 38.765503,
-    "longitude": 35.5703616
+    "name": "Ahi Evran",
+    "lat": 38.77310923940247, 
+    "lng": 35.57138364530721
+
   },
   {
     "durakId": "1006035",
-    "durakAd": "Gesi Kavşağı",
-    "latitude": 38.7769748,
-    "longitude": 35.5749621
+    "name": "Gesi Kavşağı",
+    "lat": 38.77697173915214, 
+    "lng": 35.574650386582725
+ 
   },
   {
     "durakId": "1006036",
-    "durakAd": "Beyazşehir 1",
-    "latitude": 38.7840772,
-    "longitude": 35.5862828
+    "name": "Beyazşehir",
+    "lat": 38.77818882248507, 
+    "lng": 35.580488937983034
+
   },
   {
     "durakId": "1006037",
-    "durakAd": "Toki Kavşağı",
-    "latitude": 38.7798058,
-    "longitude": 35.5893592
+    "name": "Toki Kavşağı",
+    "lat": 38.779791450713596, 
+    "lng": 35.58915823347053
+
   },
   {
     "durakId": "1006038",
-    "durakAd": "Beyazşehir 2",
-    "latitude": 38.7840772,
-    "longitude": 35.5862828
+    "name": "Millet",
+    "lat": 38.78026692677764, 
+    "lng": 35.59689707128125
+
+  },
+  {
+    "durakId": "1006039",
+    "name": "İldem1",
+    "lat": 38.7820178368167, 
+    "lng": 35.600959869977835
+
+  },
+  {
+    "durakId": "1006040",
+    "name": "İldem2",
+    "lat": 38.78417279930944, 
+    "lng": 35.60544204419139
+   
+  },
+  {
+    "durakId": "1006041",
+    "name": "İldem3",
+    "lat": 38.78509659125766, 
+    "lng": 35.6116379347586
+
+  },
+  {
+    "durakId": "1006042",
+    "name": "İldem4",
+    "lat": 38.78606834565055, 
+    "lng": 35.618225392463465
+
+  },
+  {
+    "durakId": "1006043",
+    "name": "İldem5",
+    "lat": 38.78692976511871, 
+    "lng": 35.625062677920184
+
   },
   {
     "durakId": "1006044",
-    "durakAd": "Sema Yazar",
-    "latitude": 38.731332,
-    "longitude": 35.5221952
+    "name": "Sema Yazar",
+    "lat": 38.731283570921825, 
+    "lng": 35.52420180380805
+
   },
   {
     "durakId": "1006045",
-    "durakAd": "Şehit Mustafa Şimşek",
-    "latitude": 38.7271327,
-    "longitude": 35.5259292
+    "name": "Şehit Mustafa Şimşek",
+    "lat": 38.72731681606797, 
+    "lng": 35.525875316846246
+ 
   },
   {
     "durakId": "1006046",
-    "durakAd": "Şehit Furkan Doğan",
-    "latitude": 38.7207985,
-    "longitude": 35.528266
+    "name": "Şehit Furkan Doğan",
+    "lat": 38.720252940252124, 
+    "lng": 35.528553144709186
+
+  },
+  {
+    "durakId": "1006047",
+    "name": "Teknopark",
+    "lat": 38.714638565789585, 
+    "lng": 35.53098019574438
+ 
   },
   {
     "durakId": "1006048",
-    "durakAd": "Erciyes Üniversitesi",
-    "latitude": 38.7073914,
-    "longitude": 35.5337566
+    "name": "Erciyes Üniversitesi",
+    "lat": 38.70820893506788, 
+    "lng": 35.53085563128676
+
+  },
+  {
+    "durakId": "1006049",
+    "name": "Erciyes Üniversitesi Hastaneleri",
+    "lat": 38.7040540217276, 
+    "lng": 35.529002213123064
+  
   },
   {
     "durakId": "1006050",
-    "durakAd": "Lojmanlar",
-    "latitude": 38.7001668,
-    "longitude": 35.5271425
+    "name": "Lojmanlar",
+    "lat": 38.7004053923701, 
+    "lng": 35.52732561415347
+ 
   },
   {
     "durakId": "1006051",
-    "durakAd": "Kızılay Kan Merkezi",
-    "latitude": 38.6973287,
-    "longitude": 35.5340713
+    "name": "Kızılay Kan Merkezi",
+    "lat": 38.697374046572364, 
+    "lng": 35.533771260723725
+
   },
   {
     "durakId": "1006052",
-    "durakAd": "Yurtlar Bölgesi",
-    "latitude": 38.6958248,
-    "longitude": 35.5392781
+    "name": "Yurtlar Bölgesi",
+    "lat": 38.6958330098803, 
+    "lng": 35.53912967726257
+
+  },
+  {
+    "durakId": "1006053",
+    "name": "Bahçelievler",
+    "lat": 38.69416612545715, 
+    "lng": 35.544910122339694
+
   },
   {
     "durakId": "1006054",
-    "durakAd": "Talas Belediyesi",
-    "latitude": 38.6926966,
-    "longitude": 35.5500413
+    "name": "Talas Belediyesi",
+    "lat": 38.692788507773436,
+    "lng": 35.54977295874889
   },
   {
     "durakId": "1006055",
-    "durakAd": "Talas Cemil Baba",
-    "latitude": 38.6884892,
-    "longitude": 35.5545846
+    "name": "Talas Cemil Baba",
+    "lat": 38.68877551155991, 
+    "lng": 35.55426113493382
+  
+  },
+  {
+    "durakId": "1006056",
+    "name": "Anafartalar 2",
+    "lat": 38.74285021282453, 
+    "lng": 35.40119992024714
+ 
   },
   {
     "durakId": "1006057",
-    "durakAd": "OTOGAR",
-    "latitude": 38.7485165,
-    "longitude": 35.404252
+    "name": "Otogar",
+    "lat": 38.74799464929743, 
+    "lng": 35.40404753123821
+ 
   },
   {
     "durakId": "1006058",
-    "durakAd": "FEN LISESI",
-    "latitude": 38.7548694,
-    "longitude": 35.4084993
+    "name": "Fen Lisesi",
+    "lat": 38.75451955365644, 
+    "lng": 35.40825422024754
+  
   },
   {
     "durakId": "1006059",
-    "durakAd": "HURDACILAR",
-    "latitude": 38.7599798,
-    "longitude": 35.4120794
+    "name": "Hurdacılar",
+    "lat": 38.759656887063315, 
+    "lng": 35.411867043589424
+ 
   },
   {
     "durakId": "1006060",
-    "durakAd": "PSIKIYATRI HASTANESI",
-    "latitude": 38.7667557,
-    "longitude": 35.407463
+    "name": "Psikiyatri Hastanesi",
+    "lat": 38.76447952808106, 
+    "lng": 35.41275329021625
+ 
   },
   {
     "durakId": "1006061",
-    "durakAd": "SEHIR HASTANESI",
-    "latitude": 38.7685915,
-    "longitude": 35.4090403
+    "name": "Şehir Hastanesi",
+    "lat": 38.76927271467779, 
+    "lng": 35.41253601556634
+
   },
   {
     "durakId": "1006062",
-    "durakAd": "HASTANE KONUTLARI",
-    "latitude": 38.7743597,
-    "longitude": 35.4123668
+    "name": "Hastane Konutları",
+    "lat": 38.774065551042646, 
+    "lng": 35.412375317521665
+ 
   },
   {
     "durakId": "1006063",
-    "durakAd": "NUH NACI YAZGAN",
-    "latitude": 38.7792401,
-    "longitude": 35.4133033
+    "name": "Nuh Naci Yazgan",
+    "lat": 38.77917018576733, 
+    "lng": 35.41264046679277
+  
   },
   {
     "durakId": "1006064",
-    "durakAd": "MOBILYA KENT 1",
-    "latitude": 38.7769115,
-    "longitude": 35.4230963
+    "name": "Mobilya Kent 1",
+    "lat": 38.77725035167146, 
+    "lng": 35.41902423559148
+   
   },
   {
     "durakId": "1006065",
-    "durakAd": "MOBILYA KENT 2",
-    "latitude": 38.7769115,
-    "longitude": 35.4230963
+    "name": "Mobilya Kent 2",
+    "lat": 38.7732939938251, 
+    "lng": 35.42548231911974
+
   },
   {
     "durakId": "1006066",
-    "durakAd": "KUMSMALL AVM",
-    "latitude": 38.7777316,
-    "longitude": 35.4324529
+    "name": "Kumsmall AVM",
+    "lat": 38.77754674648681, 
+    "lng": 35.431983950003655
+
+  },
+  {
+    "durakId": "1006067",
+    "name": "Yıldırım Beyazıt",
+    "lat": 38.72187044818397, 
+    "lng": 35.52956396649608
+ 
   },
   {
     "durakId": "1006068",
-    "durakAd": "KEÇITEPESI",
-    "latitude": 38.7171616,
-    "longitude": 35.5362171
+    "name": "Keçitepesi",
+    "lat": 38.720949075670966, 
+    "lng": 35.53886000867825
+   
+  },
+  {
+    "durakId": "1006069",
+    "name": "Dedeman İmam Hatip Lisesi",
+    "lat": 38.720030874099024, 
+    "lng": 35.54785029576535
+   
   },
   {
     "durakId": "1006070",
-    "durakAd": "GERMIRALTI",
-    "latitude": 38.7186125,
-    "longitude": 35.5551628
+    "name": "Germiraltı",
+    "lat": 38.718301682831715, 
+    "lng": 35.55528696752736
+   
+  },
+  {
+    "durakId": "1006071",
+    "name": "Kayseri Üniversitesi Şehit İsmet Eraslan",
+    "lat": 38.71320729263741, 
+    "lng": 35.55634133818632
+
   },
   {
     "durakId": "1006072",
-    "durakAd": "HALEF HOCA",
-    "latitude": 38.709581,
-    "longitude": 35.556749
+    "name": "Halef Hoca",
+    "lat": 38.7089149522629, 
+    "lng": 35.556971109995146
+ 
   },
   {
     "durakId": "1006073",
-    "durakAd": "ANAYURT PAZAR YERI",
-    "latitude": 38.7085784,
-    "longitude": 35.5620895
+    "name": "Anayurt Pazar Yeri",
+    "lat": 38.7084994804018, 
+    "lng": 35.56236213673171
+
+  },
+  {
+    "durakId": "1006074",
+    "name": "Turgut Özal",
+    "lat": 38.705766564878964, 
+    "lng": 35.5654217441994
+
   },
   {
     "durakId": "1006075",
-    "durakAd": "IZZET BAYRAKTAR CAMII",
-    "latitude": 38.7024924,
-    "longitude": 35.5663543
+    "name": "İzzet Bayraktar Camii",
+    "lat": 38.70219538335591, 
+    "lng": 35.56652977606702
+
   }
 ]

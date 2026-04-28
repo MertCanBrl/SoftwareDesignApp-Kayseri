@@ -39,3 +39,17 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Local ML
+ml/model.joblib
+
+# Large data files
+assets/data/passengerData.json
+assets/data/passenger-by-date/
+assets/data/predictions-by-date/
+assets/data/hourlyStationSummary.json
+assets/data/predictionDates.json
+assets/data/passengerDates.json
+
+# Logs
+logs/

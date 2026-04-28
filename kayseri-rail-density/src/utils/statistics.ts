@@ -1,16 +1,30 @@
-import type { HourlyPoint, PassengerRow } from '../types';
+import { getCanonicalDurakAd } from '../constants/durakCanonicalMap';
+import type { DisplayPassengerRow, HourlyPoint } from '../types';
+
+/** Context’ten gelen satırlar (dataType + isteğe bağlı tahmin güveni) */
+type CountRow = DisplayPassengerRow;
 
 export function getPassengerCountByStationDateHour(
-  rows: PassengerRow[],
+  rows: CountRow[],
   durakId: string,
   tarih: string,
   saat: number
 ): number | null {
-  const hit = rows.find((r) => r.durakId === durakId && r.tarih === tarih && r.saat === saat);
+  const hit = getPassengerRowByStationDateHour(rows, durakId, tarih, saat);
   return hit ? hit.yolcuSayisi : null;
 }
 
-export function getDailyStationData(rows: PassengerRow[], durakId: string, tarih: string): HourlyPoint[] {
+export function getPassengerRowByStationDateHour(
+  rows: CountRow[],
+  durakId: string,
+  tarih: string,
+  saat: number
+): CountRow | null {
+  const hit = rows.find((r) => r.durakId === durakId && r.tarih === tarih && r.saat === saat);
+  return hit ?? null;
+}
+
+export function getDailyStationData(rows: CountRow[], durakId: string, tarih: string): HourlyPoint[] {
   const list = rows
     .filter((r) => r.durakId === durakId && r.tarih === tarih)
     .map((r) => ({ saat: r.saat, yolcuSayisi: r.yolcuSayisi }))
@@ -31,19 +45,22 @@ export function getBusiestHour(points: HourlyPoint[]): number | null {
   return best;
 }
 
-export function stationDailyTotals(rows: PassengerRow[], tarih: string): Map<string, { durakAd: string; total: number }> {
+export function stationDailyTotals(rows: CountRow[], tarih: string): Map<string, { durakAd: string; total: number }> {
   const m = new Map<string, { durakAd: string; total: number }>();
   for (const r of rows) {
     if (r.tarih !== tarih) continue;
+    const ad = getCanonicalDurakAd(r.durakId, r.durakAd);
     const cur = m.get(r.durakId);
-    if (cur) cur.total += r.yolcuSayisi;
-    else m.set(r.durakId, { durakAd: r.durakAd, total: r.yolcuSayisi });
+    if (cur) {
+      cur.total += r.yolcuSayisi;
+      cur.durakAd = ad;
+    } else m.set(r.durakId, { durakAd: ad, total: r.yolcuSayisi });
   }
   return m;
 }
 
 export function getTopStations(
-  rows: PassengerRow[],
+  rows: CountRow[],
   tarih: string,
   limit: number
 ): { durakId: string; durakAd: string; total: number }[] {
@@ -63,7 +80,7 @@ export type DailySummary = {
   top5: { durakId: string; durakAd: string; total: number }[];
 };
 
-export function getDailySummary(rows: PassengerRow[], tarih: string): DailySummary {
+export function getDailySummary(rows: CountRow[], tarih: string): DailySummary {
   const dayRows = rows.filter((r) => r.tarih === tarih);
   const totalPassengers = dayRows.reduce((s, r) => s + r.yolcuSayisi, 0);
   const byStation = stationDailyTotals(rows, tarih);

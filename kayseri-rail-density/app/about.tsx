@@ -18,10 +18,10 @@ export default function AboutRoute() {
         </Text>
         <Text style={styles.h2}>Yöntem</Text>
         <Text style={styles.p}>
-          Seçilen tarih ve saat için tüm durakların yolcu sayıları birlikte ele alınır; yoğunluk
-          seviyeleri bu dilime özgü dağılım üzerinden dinamik olarak (yüzdelik dilimler) hesaplanır.
-          Böylece sabit eşik değerleri yerine, seçilen zamana göre göreli bir yoğunluk ölçeği elde
-          edilir.
+          Haritadaki yoğunluk renkleri ve etiketler, her durak için seçilen saatteki yolcu sayısına
+          göre hesaplanır. Eşikler sabittir: tramvay kapasitesi 350 kişi kabul edilerek (ör. 0–20
+          yolcu seyrek, 351+ kapasite aşımı) mutlak yolcu aralıklarına göre sınıflandırma yapılır; seçilen
+          saatteki en yüksek yolcu sayısına göre normalize edilmez.
         </Text>
         <Text style={styles.h2}>Konum verisi</Text>
         <Text style={styles.p}>

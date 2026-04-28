@@ -1,14 +1,12 @@
 /**
- * Reads assets/data/passengerData.json, geocodes unique station names via OSM Nominatim,
- * writes assets/data/stations.json and logs/missingStations.json for failures.
- *
- * Nominatim usage policy: max 1 req/s, identify with User-Agent.
+ * DURAK_ID + kanonik isimlere göre (passenger ismi değil) Nominatim ile koordinat üretir.
+ * assets/data/stations.json: { durakId, name, lat, lng } — mevcut lat/lng doluysa atlanır.
  */
 const fs = require('fs');
 const path = require('path');
 
 const PROJECT_ROOT = path.join(__dirname, '..');
-const PASSENGER_FILE = path.join(PROJECT_ROOT, 'assets', 'data', 'passengerData.json');
+const CANONICAL_TS = path.join(PROJECT_ROOT, 'src', 'constants', 'durakCanonicalMap.ts');
 const STATIONS_OUT = path.join(PROJECT_ROOT, 'assets', 'data', 'stations.json');
 const LOGS_DIR = path.join(PROJECT_ROOT, 'logs');
 const MISSING_OUT = path.join(LOGS_DIR, 'missingStations.json');
@@ -20,21 +18,27 @@ function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-function loadPassengerRows() {
-  const raw = fs.readFileSync(PASSENGER_FILE, 'utf8');
-  return JSON.parse(raw);
+function loadCanonicalMap() {
+  const src = fs.readFileSync(CANONICAL_TS, 'utf8');
+  const map = {};
+  for (const m of src.matchAll(/(\d+):\s*'((?:\\'|[^'])*)'/g)) {
+    map[m[1]] = m[2].replace(/\\'/g, "'");
+  }
+  const keys = Object.keys(map).sort((a, b) => Number(a) - Number(b));
+  if (keys.length < 1) {
+    throw new Error(`No entries parsed from ${CANONICAL_TS}`);
+  }
+  return { map, keys };
 }
 
-function uniqueStationsByName(rows) {
-  const byName = new Map();
-  for (const r of rows) {
-    const name = (r.durakAd || '').trim();
-    if (!name) continue;
-    if (!byName.has(name)) {
-      byName.set(name, { durakId: String(r.durakId), durakAd: name });
-    }
+function loadStationsById() {
+  if (!fs.existsSync(STATIONS_OUT)) return new Map();
+  try {
+    const list = JSON.parse(fs.readFileSync(STATIONS_OUT, 'utf8'));
+    return new Map(list.map((s) => [String(s.durakId), s]));
+  } catch {
+    return new Map();
   }
-  return [...byName.values()];
 }
 
 async function nominatimRequest(params) {
@@ -52,15 +56,14 @@ async function nominatimRequest(params) {
   return res.json();
 }
 
-/** Kayseri merkez civarı — sonuçları şehre yakınsın diye viewbox ile öncelikle */
 const VIEWBOX = '35.38,38.66,35.58,38.82';
 
-async function nominatimSearch(durakAd) {
+async function nominatimSearch(canonicalName) {
   const attempts = [
-    { q: `${durakAd} Kayseri tramvay`, viewbox: VIEWBOX, bounded: '1' },
-    { q: `${durakAd} tramvay durağı Kayseri`, viewbox: VIEWBOX, bounded: '1' },
-    { q: `${durakAd}, Kayseri, Türkiye` },
-    { q: `${durakAd}, Kayseri, Turkey` },
+    { q: `${canonicalName} Kayseri tramvay`, viewbox: VIEWBOX, bounded: '1' },
+    { q: `${canonicalName} tramvay durağı Kayseri`, viewbox: VIEWBOX, bounded: '1' },
+    { q: `${canonicalName}, Kayseri, Türkiye` },
+    { q: `${canonicalName}, Kayseri, Turkey` },
   ];
 
   for (let i = 0; i < attempts.length; i += 1) {
@@ -78,59 +81,50 @@ async function nominatimSearch(durakAd) {
   return null;
 }
 
-function loadExistingStations() {
-  if (!fs.existsSync(STATIONS_OUT)) return new Map();
-  try {
-    const list = JSON.parse(fs.readFileSync(STATIONS_OUT, 'utf8'));
-    const m = new Map();
-    for (const s of list) {
-      m.set(String(s.durakId), s);
-    }
-    return m;
-  } catch {
-    return new Map();
-  }
+function hasCoords(rec) {
+  if (!rec) return false;
+  const la = rec.lat != null ? rec.lat : rec.latitude;
+  const ln = rec.lng != null ? rec.lng : rec.longitude;
+  return la != null && ln != null && !Number.isNaN(+la) && !Number.isNaN(+ln);
 }
 
 async function main() {
-  if (!fs.existsSync(PASSENGER_FILE)) {
-    console.error('Missing', PASSENGER_FILE, '— run npm run convert-excel first.');
-    process.exit(1);
-  }
-
-  const rows = loadPassengerRows();
-  const stations = uniqueStationsByName(rows);
-  const existingById = loadExistingStations();
-  const found = [...existingById.values()];
+  const { map, keys } = loadCanonicalMap();
+  const existingById = loadStationsById();
   const missing = [];
+  const total = keys.length;
 
-  for (let i = 0; i < stations.length; i += 1) {
-    const s = stations[i];
-    if (existingById.has(String(s.durakId))) {
-      console.log(`[${i + 1}/${stations.length}] ${s.durakAd} ... cached`);
+  for (let i = 0; i < keys.length; i += 1) {
+    const durakId = keys[i];
+    const name = map[durakId];
+    const prev = existingById.get(durakId);
+    if (hasCoords(prev)) {
+      const lat = prev.lat != null ? prev.lat : prev.latitude;
+      const lng = prev.lng != null ? prev.lng : prev.longitude;
+      const rec = { durakId, name, lat, lng };
+      existingById.set(durakId, rec);
+      console.log(`[${i + 1}/${total}] id=${durakId} ${name} ... cached`);
       continue;
     }
-    process.stdout.write(`[${i + 1}/${stations.length}] ${s.durakAd} ... `);
+    process.stdout.write(`[${i + 1}/${total}] id=${durakId} ${name} ... `);
     try {
-      const coords = await nominatimSearch(s.durakAd);
+      const coords = await nominatimSearch(name);
       if (coords) {
-        const rec = {
-          durakId: s.durakId,
-          durakAd: s.durakAd,
-          latitude: coords.latitude,
-          longitude: coords.longitude,
-        };
-        found.push(rec);
-        existingById.set(String(s.durakId), rec);
+        const rec = { durakId, name, lat: coords.latitude, lng: coords.longitude };
+        existingById.set(durakId, rec);
         console.log('ok');
       } else {
-        missing.push({ durakId: s.durakId, durakAd: s.durakAd, reason: 'no_results' });
-        console.log('not found');
+        const rec = { durakId, name, lat: null, lng: null };
+        existingById.set(durakId, rec);
+        missing.push({ durakId, name, reason: 'no_results' });
+        console.log('not found (lat/lng null)');
       }
     } catch (e) {
+      const rec = { durakId, name, lat: null, lng: null };
+      existingById.set(durakId, rec);
       missing.push({
-        durakId: s.durakId,
-        durakAd: s.durakAd,
+        durakId,
+        name,
         reason: String(e && e.message ? e.message : e),
       });
       console.log('error', e.message || e);
@@ -138,13 +132,15 @@ async function main() {
     await sleep(DELAY_MS);
   }
 
+  const ordered = keys.map((id) => existingById.get(id)).filter(Boolean);
+
   fs.mkdirSync(path.dirname(STATIONS_OUT), { recursive: true });
-  fs.writeFileSync(STATIONS_OUT, JSON.stringify(found, null, 2), 'utf8');
+  fs.writeFileSync(STATIONS_OUT, JSON.stringify(ordered, null, 2), 'utf8');
   fs.mkdirSync(LOGS_DIR, { recursive: true });
   fs.writeFileSync(MISSING_OUT, JSON.stringify(missing, null, 2), 'utf8');
 
-  console.log(`\nSaved ${found.length} stations to ${STATIONS_OUT}`);
-  console.log(`Missing: ${missing.length} (see ${MISSING_OUT})`);
+  console.log(`\nSaved ${ordered.length} stations to ${STATIONS_OUT}`);
+  console.log(`Missing / failed geocode: ${missing.length} (see ${MISSING_OUT})`);
 }
 
 main().catch((e) => {

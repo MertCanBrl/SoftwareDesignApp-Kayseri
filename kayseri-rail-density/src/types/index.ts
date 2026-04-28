@@ -6,6 +6,25 @@ export type PassengerRow = {
   yolcuSayisi: number;
 };
 
+/** Map + ekranlar: gerçek veya ML tahmin satırı (tarih, sayım ve tür) */
+export type DisplayPassengerRow = {
+  tarih: string;
+  durakId: string;
+  durakAd: string;
+  saat: number;
+  yolcuSayisi: number;
+  dataType: 'actual' | 'prediction';
+};
+
+/** ml/train_model.py çıktısı (gün JSON dosyaları) */
+export type PredictionFileRow = {
+  durakId: string;
+  durakAd: string;
+  date: string;
+  hour: number;
+  predictedPassengerCount: number;
+};
+
 export type StationRecord = {
   durakId: string;
   durakAd: string;
@@ -13,14 +32,6 @@ export type StationRecord = {
   longitude: number;
   /** OSM bulunamadıysa yaklaşık konum */
   approximate?: boolean;
-};
-
-export type DensityLevel = 'low' | 'medium' | 'high' | 'very_high';
-
-export type QuartileThresholds = {
-  q1: number;
-  q2: number;
-  q3: number;
 };
 
 export type HourlyPoint = { saat: number; yolcuSayisi: number };
