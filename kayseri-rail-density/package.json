@@ -10,7 +10,16 @@
     "convert-excel": "tsx scripts/convertExcelToJson.ts",
     "split-passenger": "NODE_OPTIONS=--max-old-space-size=8192 tsx scripts/splitPassengerDataFromJson.ts",
     "train-ml": "python3 ml/train_model.py",
-    "fetch-stations": "node scripts/fetchStationCoordinates.js"
+    "train-ml-advanced": "python3 ml/train_model.py",
+    "fetch-stations": "node scripts/fetchStationCoordinates.js",
+    "demo-transit-network": "tsx src/transitNetwork/demoTransitNetwork.ts",
+    "demo-direction-split": "tsx src/directionSplit/demoDirectionSplit.ts",
+    "demo-segment-occupancy": "tsx src/segmentOccupancy/demoSegmentOccupancy.ts",
+    "demo-municipality-analysis": "tsx src/municipality/demoMunicipalityAnalysis.ts",
+    "demo-context-enrichment": "tsx src/contextEnrichment/demoContextEnrichment.ts",
+    "demo-agent-pipeline": "tsx src/agents/demoAgentPipeline.ts",
+    "tsc": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -21,13 +30,15 @@
     "expo-router": "~6.0.23",
     "expo-status-bar": "~3.0.9",
     "react": "19.1.0",
+    "react-dom": "19.1.0",
     "react-native": "0.81.5",
     "react-native-calendars": "^1.1314.0",
     "react-native-chart-kit": "^6.12.0",
     "react-native-maps": "1.20.1",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
-    "react-native-svg": "15.12.1"
+    "react-native-svg": "15.12.1",
+    "react-native-web": "^0.21.0"
   },
   "devDependencies": {
     "@types/react": "~19.1.0",

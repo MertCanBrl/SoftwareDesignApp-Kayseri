@@ -1,0 +1,53 @@
+{
+  "best_model": "GradientBoosting",
+  "total_rows": 508715,
+  "split_mode": "time_based",
+  "train_rows": 407917,
+  "test_rows": 100798,
+  "train_date_min": "2025-01-01",
+  "train_date_max": "2025-10-19",
+  "test_date_min": "2025-10-20",
+  "test_date_max": "2025-12-31",
+  "unique_train_dates": 292,
+  "unique_test_dates": 73,
+  "overlap_date_count": 0,
+  "no_date_leakage": true,
+  "feature_count": 34,
+  "legacy_feature_count": 10,
+  "debug_sample_size": null,
+  "x_train_shape": [
+    407917,
+    34
+  ],
+  "x_test_shape": [
+    100798,
+    34
+  ],
+  "evaluation_split": {
+    "split_mode": "time_based",
+    "train_fraction": 0.8,
+    "test_fraction": 0.2,
+    "train_rows": 407917,
+    "test_rows": 100798,
+    "unique_train_dates": 292,
+    "unique_test_dates": 73,
+    "overlap_date_count": 0,
+    "train_date_min": "2025-01-01",
+    "train_date_max": "2025-10-19",
+    "test_date_min": "2025-10-20",
+    "test_date_max": "2025-12-31",
+    "description": "Model karşılaştırma ve seçim metrikleri, kronolojik benzersiz-tarih hold-out test seti (son %20 takvim günü) üzerinde hesaplanır. Train ve test tarihleri ayrıktır.",
+    "method": "chronological_unique_date_split"
+  },
+  "metrics": {
+    "mae": 39.32391610592138,
+    "rmse": 78.92272853248835,
+    "mape": 115.10303121973584,
+    "r2": 0.8022740925553
+  },
+  "metrics_evaluated_on": "time_based_test_set",
+  "baseline_reference": {
+    "mae": 13.3844,
+    "r2": 0.969
+  }
+}

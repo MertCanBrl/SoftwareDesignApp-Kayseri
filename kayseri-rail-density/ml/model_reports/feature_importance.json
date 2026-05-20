@@ -1,0 +1,138 @@
+[
+  {
+    "feature": "lag_7_day_same_hour",
+    "importance": 0.5223702150561443
+  },
+  {
+    "feature": "rolling_mean_7",
+    "importance": 0.29889877921645197
+  },
+  {
+    "feature": "station_hour_avg",
+    "importance": 0.07360377244719163
+  },
+  {
+    "feature": "lag_1_day_same_hour",
+    "importance": 0.056724021883584254
+  },
+  {
+    "feature": "rolling_mean_30",
+    "importance": 0.011774086089746333
+  },
+  {
+    "feature": "is_official_holiday",
+    "importance": 0.0086711036239986
+  },
+  {
+    "feature": "day_of_week",
+    "importance": 0.00850990307639284
+  },
+  {
+    "feature": "is_weekend",
+    "importance": 0.0038736051771745966
+  },
+  {
+    "feature": "day_of_week_hour_avg",
+    "importance": 0.0036177840347366612
+  },
+  {
+    "feature": "is_religious_holiday",
+    "importance": 0.0027005767799255734
+  },
+  {
+    "feature": "station_avg",
+    "importance": 0.0025121678146159156
+  },
+  {
+    "feature": "day",
+    "importance": 0.0013668945420559123
+  },
+  {
+    "feature": "saat",
+    "importance": 0.0011118105014963685
+  },
+  {
+    "feature": "month",
+    "importance": 0.0006828284052410019
+  },
+  {
+    "feature": "is_university_break",
+    "importance": 0.0006167680448547483
+  },
+  {
+    "feature": "is_holiday_eve",
+    "importance": 0.0005125728613426294
+  },
+  {
+    "feature": "durak_id_num",
+    "importance": 0.0004974935781635149
+  },
+  {
+    "feature": "temperature",
+    "importance": 0.00028919935452160166
+  },
+  {
+    "feature": "station_type_encoded",
+    "importance": 0.0002857413549231963
+  },
+  {
+    "feature": "is_school_term",
+    "importance": 0.0002753519829514944
+  },
+  {
+    "feature": "season",
+    "importance": 0.0002610764465288576
+  },
+  {
+    "feature": "hour_avg",
+    "importance": 0.000259046630306322
+  },
+  {
+    "feature": "is_university_term",
+    "importance": 0.00021089421425158665
+  },
+  {
+    "feature": "is_morning_peak",
+    "importance": 0.0001416046714908842
+  },
+  {
+    "feature": "is_midterm_break",
+    "importance": 0.00011284148512636426
+  },
+  {
+    "feature": "is_peak_hour",
+    "importance": 4.009319377246217e-05
+  },
+  {
+    "feature": "is_evening_peak",
+    "importance": 2.2720034676641498e-05
+  },
+  {
+    "feature": "weather_impact_score",
+    "importance": 1.8874521927450937e-05
+  },
+  {
+    "feature": "is_transfer_station",
+    "importance": 1.585509924762253e-05
+  },
+  {
+    "feature": "rain",
+    "importance": 7.209882270065878e-06
+  },
+  {
+    "feature": "event_type_encoded",
+    "importance": 7.022598552084721e-06
+  },
+  {
+    "feature": "event_impact_score",
+    "importance": 6.77392583942716e-06
+  },
+  {
+    "feature": "has_event",
+    "importance": 8.468386727618512e-07
+  },
+  {
+    "feature": "snow",
+    "importance": 4.6463182442280475e-07
+  }
+]

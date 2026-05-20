@@ -1,0 +1,89 @@
+{
+  "evaluation_split": {
+    "split_mode": "time_based",
+    "train_fraction": 0.8,
+    "test_fraction": 0.2,
+    "train_rows": 407917,
+    "test_rows": 100798,
+    "unique_train_dates": 292,
+    "unique_test_dates": 73,
+    "overlap_date_count": 0,
+    "train_date_min": "2025-01-01",
+    "train_date_max": "2025-10-19",
+    "test_date_min": "2025-10-20",
+    "test_date_max": "2025-12-31",
+    "description": "Model karşılaştırma ve seçim metrikleri, kronolojik benzersiz-tarih hold-out test seti (son %20 takvim günü) üzerinde hesaplanır. Train ve test tarihleri ayrıktır.",
+    "method": "chronological_unique_date_split"
+  },
+  "note": "Evaluation split: time_based — model geçmiş tarihlerle eğitilip sonraki tarihlerde test edilmiştir.",
+  "models": [
+    {
+      "model": "RandomForest",
+      "split_mode": "time_based",
+      "evaluated_on": "time_based_test_set",
+      "test_rows": 100798,
+      "test_date_min": "2025-10-20",
+      "test_date_max": "2025-12-31",
+      "mae": 47.5661849203627,
+      "rmse": 103.25712306147692,
+      "mape": 159.8491170667253,
+      "r2": 0.661546167755671,
+      "feature_importance_top5": [
+        {
+          "feature": "lag_7_day_same_hour",
+          "importance": 0.18739738911008122
+        },
+        {
+          "feature": "rolling_mean_7",
+          "importance": 0.1741565527964973
+        },
+        {
+          "feature": "rolling_mean_30",
+          "importance": 0.17237080327618326
+        },
+        {
+          "feature": "lag_1_day_same_hour",
+          "importance": 0.16103323350852342
+        },
+        {
+          "feature": "station_hour_avg",
+          "importance": 0.12099094441337058
+        }
+      ]
+    },
+    {
+      "model": "GradientBoosting",
+      "split_mode": "time_based",
+      "evaluated_on": "time_based_test_set",
+      "test_rows": 100798,
+      "test_date_min": "2025-10-20",
+      "test_date_max": "2025-12-31",
+      "mae": 39.32391610592138,
+      "rmse": 78.92272853248835,
+      "mape": 115.10303121973584,
+      "r2": 0.8022740925553,
+      "feature_importance_top5": [
+        {
+          "feature": "lag_7_day_same_hour",
+          "importance": 0.5223702150561443
+        },
+        {
+          "feature": "rolling_mean_7",
+          "importance": 0.29889877921645197
+        },
+        {
+          "feature": "station_hour_avg",
+          "importance": 0.07360377244719163
+        },
+        {
+          "feature": "lag_1_day_same_hour",
+          "importance": 0.056724021883584254
+        },
+        {
+          "feature": "rolling_mean_30",
+          "importance": 0.011774086089746333
+        }
+      ]
+    }
+  ]
+}
