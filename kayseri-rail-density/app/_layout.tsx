@@ -18,6 +18,10 @@ export default function RootLayout() {
         <Stack.Screen name="map" options={{ title: 'Harita', headerShown: false }} />
         <Stack.Screen name="statistics" options={{ title: 'İstatistikler' }} />
         <Stack.Screen name="about" options={{ title: 'Proje Hakkında' }} />
+        <Stack.Screen
+          name="municipality-dashboard"
+          options={{ title: 'Belediye Karar Destek Paneli' }}
+        />
         <Stack.Screen name="station/[durakId]" options={{ title: 'Durak Detayı', headerShown: false }} />
       </Stack>
     </SelectionProvider>
