@@ -1,96 +1,92 @@
-import type { EventContext } from './contextTypes';
+import type { EventContext, EventType } from './contextTypes';
 import { eventActiveAtHour } from './contextEnrichmentUtils';
 
-/** Mock şehir etkinlikleri — ileride harici etkinlik API’sine bağlanabilir. */
-const MOCK_EVENTS: readonly EventContext[] = [
-  {
-    eventId: 'evt-match-kadirhas-2025-03-15',
-    eventType: 'MATCH',
-    eventName: 'Kayseri Spor — Süper Lig ev sahibi maçı',
-    date: '2025-03-15',
-    startHour: 18,
-    endHour: 22,
-    locationName: 'Kadir Has Stadyumu',
-    affectedStationGroupIds: ['1006008', '1006009', '1006010', '1006019'],
-    impactLevel: 'HIGH',
-    expectedDirectionBias: 'Stadyum ve Cumhuriyet Meydanı çevresine akşam yönü baskın',
-    notes: 'Maç öncesi/sonrası Stadyum ve merkez duraklarda yoğunluk beklenir.',
+import events2025Raw from '../../assets/data/events/events-2025.json';
+import events2026Raw from '../../assets/data/events/events-2026.json';
+
+type RawEvent = {
+  id: string;
+  eventType: string;
+  date: string;
+  startHour: number;
+  endHour: number;
+  impactLevel: string;
+  affectedStationIds: string[];
+  description: string;
+};
+
+type EventsJsonFile = {
+  year: number;
+  description: string;
+  events: RawEvent[];
+};
+
+// Dış veri kaynaklarında kullanılabilecek tür takma adları
+const EVENT_TYPE_ALIAS: Readonly<Record<string, EventType>> = {
+  SPORT_EVENT: 'MATCH',
+  CITY_EVENT: 'OTHER',
+  UNIVERSITY_EXAM: 'EXAM',
+  NATIONAL_EXAM: 'EXAM',
+  PUBLIC_EVENT: 'MEETING',
+};
+
+const VALID_EVENT_TYPES = new Set<string>([
+  'MATCH', 'CONCERT', 'FESTIVAL', 'MEETING', 'EXAM', 'GRADUATION', 'FAIR', 'ROAD_CLOSURE', 'OTHER',
+]);
+
+function resolveEventType(raw: string): EventType {
+  if (raw in EVENT_TYPE_ALIAS) return EVENT_TYPE_ALIAS[raw] as EventType;
+  if (VALID_EVENT_TYPES.has(raw)) return raw as EventType;
+  return 'OTHER';
+}
+
+function mapRawEvent(raw: RawEvent): EventContext {
+  return {
+    eventId: raw.id,
+    eventType: resolveEventType(raw.eventType),
+    eventName: raw.description,
+    date: raw.date,
+    startHour: raw.startHour,
+    endHour: raw.endHour,
+    locationName: '',
+    affectedStationGroupIds: raw.affectedStationIds,
+    impactLevel: raw.impactLevel as EventContext['impactLevel'],
+    expectedDirectionBias: null,
+    notes: raw.description,
     source: 'MANUAL',
-  },
-  {
-    eventId: 'evt-meeting-cumhuriyet-2025-04-12',
-    eventType: 'MEETING',
-    eventName: 'Cumhuriyet Meydanı toplu etkinlik',
-    date: '2025-04-12',
-    startHour: 14,
-    endHour: 18,
-    locationName: 'Cumhuriyet Meydanı',
-    affectedStationGroupIds: ['1006019', '1006020', '1006021'],
-    impactLevel: 'MEDIUM',
-    expectedDirectionBias: 'Merkez duraklara öğleden sonra giriş artışı',
-    notes: 'Miting/etkinlik nedeniyle merkez tramvay talebi artabilir.',
-    source: 'MANUAL',
-  },
-  {
-    eventId: 'evt-exam-erciyes-2025-06-10',
-    eventType: 'EXAM',
-    eventName: 'Erciyes Üniversitesi final sınavları',
-    date: '2025-06-10',
-    startHour: 8,
-    endHour: 17,
-    locationName: 'Erciyes Üniversitesi Kampüsü',
-    affectedStationGroupIds: ['1006048', '1006049', '1006052', '1006047'],
-    impactLevel: 'MEDIUM',
-    expectedDirectionBias: 'Sabah kampüse, öğleden sonra şehir merkezine',
-    notes: 'Sınav günü üniversite hattında sabah pik talebi artabilir.',
-    source: 'MANUAL',
-  },
-  {
-    eventId: 'evt-graduation-erciyes-2025-06-20',
-    eventType: 'GRADUATION',
-    eventName: 'Erciyes Üniversitesi mezuniyet töreni',
-    date: '2025-06-20',
-    startHour: 10,
-    endHour: 16,
-    locationName: 'Erciyes Üniversitesi Kampüsü',
-    affectedStationGroupIds: ['1006048', '1006049', '1006052'],
-    impactLevel: 'HIGH',
-    expectedDirectionBias: 'Kampüs çevresine sabah-öğle giriş, akşam çıkış',
-    notes: 'Mezuniyet günü aile ziyaretçileri nedeniyle talep artışı.',
-    source: 'MANUAL',
-  },
-  {
-    eventId: 'evt-fair-ildem-2025-05-03',
-    eventType: 'FAIR',
-    eventName: 'İldem bölgesi fuar etkinliği',
-    date: '2025-05-03',
-    startHour: 11,
-    endHour: 20,
-    locationName: 'İldem',
-    affectedStationGroupIds: ['1006039', '1006040', '1006041'],
-    impactLevel: 'LOW',
-    expectedDirectionBias: 'İldem hattına gün içi dağılmış talep',
-    notes: 'Bölgesel fuar — hat üzerinde orta düzey artış.',
-    source: 'MANUAL',
-  },
-];
+  };
+}
+
+const EVENT_FILES: Readonly<Record<number, EventsJsonFile>> = {
+  2025: events2025Raw as EventsJsonFile,
+  2026: events2026Raw as EventsJsonFile,
+};
+
+function getEventsForYear(year: number): EventContext[] {
+  const file = EVENT_FILES[year];
+  if (!file) return [];
+  return file.events.map(mapRawEvent);
+}
 
 export function getEventsForDate(date: string): EventContext[] {
-  return MOCK_EVENTS.filter((e) => e.date === date).map(cloneEvent);
+  const year = parseInt(date.slice(0, 4), 10);
+  return getEventsForYear(year).filter((e) => e.date === date).map(cloneEvent);
 }
 
 export function getEventsAffectingStation(
   stationGroupId: string,
   date: string
 ): EventContext[] {
-  return MOCK_EVENTS.filter(
-    (e) => e.date === date && e.affectedStationGroupIds.includes(stationGroupId)
-  ).map(cloneEvent);
+  const year = parseInt(date.slice(0, 4), 10);
+  return getEventsForYear(year)
+    .filter((e) => e.date === date && e.affectedStationGroupIds.includes(stationGroupId))
+    .map(cloneEvent);
 }
 
 /** Saat aralığına göre aktif etkinlikler (city context için). */
 export function getActiveEventsForDateHour(date: string, hour: number): EventContext[] {
-  return MOCK_EVENTS.filter((e) => eventActiveAtHour(e, date, hour)).map(cloneEvent);
+  const year = parseInt(date.slice(0, 4), 10);
+  return getEventsForYear(year).filter((e) => eventActiveAtHour(e, date, hour)).map(cloneEvent);
 }
 
 function cloneEvent(event: EventContext): EventContext {

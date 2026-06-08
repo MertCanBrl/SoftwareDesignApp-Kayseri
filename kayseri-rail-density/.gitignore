@@ -52,4 +52,5 @@ assets/data/predictionDates.json
 assets/data/passengerDates.json
 
 # Logs
-logs/
+logs/__pycache__/
+*.pyc

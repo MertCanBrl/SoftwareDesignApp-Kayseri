@@ -51,6 +51,12 @@ ADVANCED_FEATURE_NAMES: list[str] = [
     "is_university_term",
     "is_university_break",
     "is_university_exam_week",
+    "is_university_registration",
+    "is_university_midterm",
+    "is_university_finals",
+    "is_university_makeup",
+    "university_activity_score",
+    "university_load_score",
     # İstasyon
     "is_transfer_station",
     "station_type_encoded",
@@ -66,6 +72,10 @@ ADVANCED_FEATURE_NAMES: list[str] = [
     "is_exam_week",
     "event_type_encoded",
     "event_impact_score",
+    "is_event_window",
+    "event_window_score",
+    "station_event_proximity_score",
+    "weighted_event_score",
     # Hava — gerçek Open-Meteo CSV + forecast
     "temperature",
     "precipitation",
@@ -100,12 +110,20 @@ DATE_RANGES: dict[str, list[tuple[str, str]]] = {
         ("2025-02-03", "2025-06-20"),
         ("2025-09-15", "2026-01-23"),
         ("2026-02-02", "2026-06-19"),
+        # 2026-27 — NNY (Nuh Naci Yazgan Üniversitesi, doğrulanmış tarihler)
+        ("2026-09-14", "2027-01-15"),   # NNY 2026-27 güz (yarıyıl + sınavlar)
+        ("2027-02-15", "2027-06-25"),   # NNY 2026-27 bahar (yarıyıl + sınavlar)
+        # TODO: Erciyes ve Kayseri Üniversitesi 2026-27 tarihleri netleşince ekle
     ],
     "university_break": [
         ("2025-01-25", "2025-02-02"),
         ("2025-06-21", "2025-09-14"),
         ("2026-01-24", "2026-02-01"),
         ("2026-06-20", "2026-09-13"),
+        # 2026-27 — NNY dönemler arası (tatil + bütünleme + boş süre dahil)
+        ("2027-01-16", "2027-02-14"),   # NNY 2026-27 kış dönemler arası
+        ("2027-06-26", "2027-09-13"),   # NNY 2026-27 yaz tatili (tahmini bitiş)
+        # TODO: Erciyes ve Kayseri Üniversitesi 2026-27 tatil tarihleri netleşince ekle
     ],
     # Final ve midterm sınav haftaları (universitede yoğunluk artar)
     "university_exam_week": [
@@ -116,7 +134,59 @@ DATE_RANGES: dict[str, list[tuple[str, str]]] = {
         ("2026-01-05", "2026-01-16"),   # 2025-26 güz finali
         ("2026-04-06", "2026-04-17"),   # 2025-26 bahar midtermi
         ("2026-06-01", "2026-06-19"),   # 2025-26 bahar finali
+        # 2026-27 — NNY (güz + bahar final ve bütünleme, doğrulanmış)
+        ("2026-12-28", "2027-01-15"),   # NNY 2026-27 güz finali
+        ("2027-01-25", "2027-02-05"),   # NNY 2026-27 güz bütünleme
+        ("2027-06-07", "2027-06-25"),   # NNY 2026-27 bahar finali
+        ("2027-06-28", "2027-07-09"),   # NNY 2026-27 bahar bütünleme
+        # TODO: Kayseri Üniversitesi ve Erciyes 2026-27 sınav haftaları netleşince ekle
     ],
+    # Kayıt haftaları — ERÜ + KÜ 2025-26, NNY 2026-27 (doğrulanmış JSON)
+    "university_registration": [
+        ("2025-09-08", "2025-09-16"),   # ERÜ + KÜ 2025-26 güz kayıt
+        ("2026-02-09", "2026-02-17"),   # ERÜ + KÜ 2025-26 bahar kayıt
+        ("2026-09-07", "2026-09-15"),   # NNY 2026-27 güz kayıt
+        ("2027-02-08", "2027-02-16"),   # NNY 2026-27 bahar kayıt
+    ],
+    # Ara sınavlar — yalnızca ERÜ 2025-26 (doğrulanmış JSON; KÜ ve NNY 2025-26 mevcut değil)
+    "university_midterm": [
+        ("2025-11-08", "2025-11-16"),   # ERÜ 2025-26 güz ara sınavı
+        ("2026-04-11", "2026-04-19"),   # ERÜ 2025-26 bahar ara sınavı
+    ],
+    # Final sınavları — ERÜ + KÜ 2025-26, NNY 2026-27 (doğrulanmış JSON)
+    "university_finals": [
+        ("2025-12-29", "2026-01-11"),   # KÜ 2025-26 güz yarıyıl sonu
+        ("2026-01-05", "2026-02-01"),   # ERÜ 2025-26 güz dönem sonu + bütünleme
+        ("2026-06-08", "2026-06-21"),   # KÜ 2025-26 bahar yarıyıl sonu
+        ("2026-06-15", "2026-07-12"),   # ERÜ 2025-26 bahar dönem sonu + bütünleme
+        ("2026-12-28", "2027-01-15"),   # NNY 2026-27 güz yarıyıl sonu
+        ("2027-06-07", "2027-06-25"),   # NNY 2026-27 bahar yarıyıl sonu
+    ],
+    # Bütünleme sınavları — KÜ 2025-26, NNY 2026-27 (doğrulanmış JSON)
+    "university_makeup": [
+        ("2026-01-19", "2026-01-25"),   # KÜ 2025-26 güz bütünleme
+        ("2026-06-29", "2026-07-05"),   # KÜ 2025-26 bahar bütünleme
+        ("2027-01-25", "2027-02-05"),   # NNY 2026-27 güz bütünleme
+        ("2027-06-28", "2027-07-09"),   # NNY 2026-27 bahar bütünleme
+    ],
+}
+
+# Üniversite aktivite skoru — ML signal için ağırlıklar
+UNIVERSITY_ACTIVITY_SCORE: dict[str, float] = {
+    "BREAK":        0.3,
+    "TERM":         1.0,
+    "REGISTRATION": 1.1,
+    "MIDTERM":      1.2,
+    "MAKEUP":       1.3,
+    "FINALS":       1.4,
+}
+
+UNIVERSITY_LOAD_WEIGHTS: dict[str, float] = {
+    "TERM":         1.0,
+    "REGISTRATION": 1.5,
+    "MIDTERM":      2.0,
+    "FINALS":       2.5,
+    "MAKEUP":       2.2,
 }
 
 STATION_TYPE_MAP: dict[str, int] = {
@@ -135,6 +205,7 @@ STATION_TYPE_MAP: dict[str, int] = {
 STATION_TYPE_OVERRIDES: dict[str, str] = {
     "1006048": "UNIVERSITY",
     "1006071": "UNIVERSITY",
+    "1006063": "UNIVERSITY",  # Nuh Naci Yazgan Üniversitesi
     "1006049": "HOSPITAL",
     "1006061": "HOSPITAL",
     "1006060": "HOSPITAL",
@@ -170,6 +241,21 @@ IMPACT_SCORE: dict[str, float] = {
     "HIGH": 0.75,
     "CRITICAL": 1.0,
 }
+
+EVENT_TYPE_WEIGHTS: dict[str, float] = {
+    "NONE":         0.0,
+    "MATCH":        3.0,
+    "CONCERT":      2.5,
+    "GRADUATION":   2.0,
+    "EXAM":         1.5,
+    "FAIR":         1.5,
+    "MEETING":      1.0,
+    "ROAD_CLOSURE": 1.0,
+    "OTHER":        1.0,
+}
+
+EVENT_WINDOW_PRE_HOURS: int = 3
+EVENT_WINDOW_POST_HOURS: int = 2
 
 
 # ── HolidayLoader ─────────────────────────────────────────────────────────────
@@ -270,6 +356,7 @@ class EventLoader:
         year = int(date_str[:4])
         events = cls._load_year(year)
 
+        # Mevcut feature'lar (backward-compatible)
         has_event = 0
         is_event_day = 0
         is_match_day = 0
@@ -277,28 +364,54 @@ class EventLoader:
         best_score = 0.0
         best_type = 0
 
+        # Yeni feature'lar
+        is_event_window = 0
+        event_window_score = 0.0
+        station_event_proximity_score = 0.0
+        weighted_event_score = 0.0
+
         for ev in events:
             if ev.get("date") != date_str:
                 continue
+
             affected = ev.get("affectedStationIds", [])
-            if durak_id not in affected:
-                continue
-            if hour < ev.get("startHour", 0) or hour > ev.get("endHour", 23):
-                continue
-
-            is_event_day = 1
+            start_h = ev.get("startHour", 0)
+            end_h = ev.get("endHour", 23)
             ev_type = ev.get("eventType", "OTHER")
-            score = IMPACT_SCORE.get(ev.get("impactLevel", "NONE"), 0.0)
+            impact_score = IMPACT_SCORE.get(ev.get("impactLevel", "NONE"), 0.0)
+            proximity = _station_proximity_score(durak_id, affected)
 
-            if ev_type == "MATCH":
-                is_match_day = 1
-            if ev_type in ("EXAM", "GRADUATION"):
-                is_exam_week = 1
+            # ── Mevcut feature'lar (orijinal mantık korunuyor) ────────────────
+            if durak_id in affected and start_h <= hour <= end_h:
+                is_event_day = 1
+                if ev_type == "MATCH":
+                    is_match_day = 1
+                if ev_type in ("EXAM", "GRADUATION"):
+                    is_exam_week = 1
+                if impact_score >= best_score:
+                    best_score = impact_score
+                    best_type = EVENT_TYPE_MAP.get(ev_type, 0)
+                    has_event = 1
 
-            if score >= best_score:
-                best_score = score
-                best_type = EVENT_TYPE_MAP.get(ev_type, 0)
-                has_event = 1
+            # ── Yeni feature'lar ──────────────────────────────────────────────
+            # Uzatılmış etki penceresi: maç başlangıcından PRE saat önce,
+            # maç bitişinden POST saat sonrasına kadar
+            window_start = max(0, start_h - EVENT_WINDOW_PRE_HOURS)
+            window_end = min(23, end_h + EVENT_WINDOW_POST_HOURS)
+            in_window = window_start <= hour <= window_end
+
+            if proximity > 0 and in_window:
+                is_event_window = 1
+                if impact_score > event_window_score:
+                    event_window_score = impact_score
+                type_weight = EVENT_TYPE_WEIGHTS.get(ev_type, 1.0)
+                ws = proximity * type_weight * impact_score
+                if ws > weighted_event_score:
+                    weighted_event_score = ws
+
+            # Günlük mekânsal yakınlık (saatten bağımsız — hat üzerindeki konum)
+            if proximity > station_event_proximity_score:
+                station_event_proximity_score = proximity
 
         return {
             "has_event": has_event,
@@ -307,6 +420,10 @@ class EventLoader:
             "is_exam_week": is_exam_week,
             "event_type_encoded": best_type,
             "event_impact_score": best_score,
+            "is_event_window": is_event_window,
+            "event_window_score": event_window_score,
+            "station_event_proximity_score": station_event_proximity_score,
+            "weighted_event_score": weighted_event_score,
         }
 
 
@@ -430,6 +547,57 @@ class WeatherLoader:
 
 def _in_ranges(ymd: str, ranges: list[tuple[str, str]]) -> bool:
     return any(start <= ymd <= end for start, end in ranges)
+
+
+def _university_activity_score(ymd: str) -> float:
+    score = 0.0
+    if _in_ranges(ymd, DATE_RANGES["university_break"]):
+        score = max(score, UNIVERSITY_ACTIVITY_SCORE["BREAK"])
+    if _in_ranges(ymd, DATE_RANGES["university_term"]):
+        score = max(score, UNIVERSITY_ACTIVITY_SCORE["TERM"])
+    if _in_ranges(ymd, DATE_RANGES["university_registration"]):
+        score = max(score, UNIVERSITY_ACTIVITY_SCORE["REGISTRATION"])
+    if _in_ranges(ymd, DATE_RANGES["university_midterm"]):
+        score = max(score, UNIVERSITY_ACTIVITY_SCORE["MIDTERM"])
+    if _in_ranges(ymd, DATE_RANGES["university_finals"]):
+        score = max(score, UNIVERSITY_ACTIVITY_SCORE["FINALS"])
+    if _in_ranges(ymd, DATE_RANGES["university_makeup"]):
+        score = max(score, UNIVERSITY_ACTIVITY_SCORE["MAKEUP"])
+    return score
+
+
+def _station_proximity_score(durak_id: str, affected_ids: list) -> float:
+    """Durak ile etkilenen istasyonlar arasındaki hat yakınlığı (0.0–1.0)."""
+    if durak_id in affected_ids:
+        return 1.0
+    best = 0.0
+    try:
+        did = int(durak_id)
+        for aff in affected_ids:
+            dist = abs(did - int(aff))
+            if dist == 1:
+                best = max(best, 0.5)
+            elif dist == 2:
+                best = max(best, 0.25)
+    except (ValueError, TypeError):
+        pass
+    return best
+
+
+def _university_load_score(ymd: str) -> float:
+    """Üniversite akademik yük skoru — UNIVERSITY_LOAD_WEIGHTS ile ağırlıklı."""
+    score = 0.0
+    if _in_ranges(ymd, DATE_RANGES["university_term"]):
+        score = max(score, UNIVERSITY_LOAD_WEIGHTS["TERM"])
+    if _in_ranges(ymd, DATE_RANGES["university_registration"]):
+        score = max(score, UNIVERSITY_LOAD_WEIGHTS["REGISTRATION"])
+    if _in_ranges(ymd, DATE_RANGES["university_midterm"]):
+        score = max(score, UNIVERSITY_LOAD_WEIGHTS["MIDTERM"])
+    if _in_ranges(ymd, DATE_RANGES["university_finals"]):
+        score = max(score, UNIVERSITY_LOAD_WEIGHTS["FINALS"])
+    if _in_ranges(ymd, DATE_RANGES["university_makeup"]):
+        score = max(score, UNIVERSITY_LOAD_WEIGHTS["MAKEUP"])
+    return score
 
 
 def season_from_month(month: int) -> int:
@@ -610,6 +778,24 @@ def build_advanced_features(
     adv["is_university_exam_week"] = [
         int(_in_ranges(y, DATE_RANGES["university_exam_week"])) for y in ymd_list
     ]
+    adv["is_university_registration"] = [
+        int(_in_ranges(y, DATE_RANGES["university_registration"])) for y in ymd_list
+    ]
+    adv["is_university_midterm"] = [
+        int(_in_ranges(y, DATE_RANGES["university_midterm"])) for y in ymd_list
+    ]
+    adv["is_university_finals"] = [
+        int(_in_ranges(y, DATE_RANGES["university_finals"])) for y in ymd_list
+    ]
+    adv["is_university_makeup"] = [
+        int(_in_ranges(y, DATE_RANGES["university_makeup"])) for y in ymd_list
+    ]
+    adv["university_activity_score"] = [
+        _university_activity_score(y) for y in ymd_list
+    ]
+    adv["university_load_score"] = [
+        _university_load_score(y) for y in ymd_list
+    ]
 
     # ── İstasyon özellikleri ──────────────────────────────────────────────────
     durak_ids = base["durakId"].astype(str).to_numpy()
@@ -641,6 +827,10 @@ def build_advanced_features(
     is_exam = np.zeros(n, dtype=np.int32)
     ev_type_arr = np.zeros(n, dtype=np.int32)
     ev_score = np.zeros(n, dtype=np.float32)
+    is_ev_window = np.zeros(n, dtype=np.int32)
+    ev_window_score = np.zeros(n, dtype=np.float32)
+    station_ev_prox = np.zeros(n, dtype=np.float32)
+    weighted_ev = np.zeros(n, dtype=np.float32)
 
     temp = np.zeros(n, dtype=np.float32)
     precip = np.zeros(n, dtype=np.float32)
@@ -668,6 +858,10 @@ def build_advanced_features(
         is_exam[i] = max(ev["is_exam_week"], exam_from_cal)
         ev_type_arr[i] = ev["event_type_encoded"]
         ev_score[i] = ev["event_impact_score"]
+        is_ev_window[i] = ev["is_event_window"]
+        ev_window_score[i] = ev["event_window_score"]
+        station_ev_prox[i] = ev["station_event_proximity_score"]
+        weighted_ev[i] = ev["weighted_event_score"]
 
         # Hava (WeatherLoader — CSV + forecast + mevsimsel)
         wkey = (ymd, h)
@@ -689,6 +883,10 @@ def build_advanced_features(
     adv["is_exam_week"] = is_exam
     adv["event_type_encoded"] = ev_type_arr
     adv["event_impact_score"] = ev_score
+    adv["is_event_window"] = is_ev_window
+    adv["event_window_score"] = ev_window_score
+    adv["station_event_proximity_score"] = station_ev_prox
+    adv["weighted_event_score"] = weighted_ev
     adv["temperature"] = temp
     adv["precipitation"] = precip
     adv["rain"] = rain

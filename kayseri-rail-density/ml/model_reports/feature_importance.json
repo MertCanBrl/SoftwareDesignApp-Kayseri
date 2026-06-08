@@ -1,163 +1,207 @@
 [
   {
-    "feature": "lag_1_day_same_hour",
-    "importance": 1192.0
-  },
-  {
     "feature": "lag_7_day_same_hour",
-    "importance": 1190.0
-  },
-  {
-    "feature": "day",
-    "importance": 815.0
-  },
-  {
-    "feature": "station_hour_avg",
-    "importance": 814.0
-  },
-  {
-    "feature": "temperature",
-    "importance": 801.0
-  },
-  {
-    "feature": "day_of_week",
-    "importance": 713.0
+    "importance": 0.5076654406876409
   },
   {
     "feature": "rolling_mean_7",
-    "importance": 633.0
+    "importance": 0.3096967491041305
   },
   {
-    "feature": "windDirection",
-    "importance": 621.0
+    "feature": "station_hour_avg",
+    "importance": 0.07767021281973896
   },
   {
-    "feature": "day_of_week_hour_avg",
-    "importance": 585.0
-  },
-  {
-    "feature": "station_avg",
-    "importance": 504.0
-  },
-  {
-    "feature": "windSpeed",
-    "importance": 482.0
-  },
-  {
-    "feature": "rolling_mean_30",
-    "importance": 471.0
-  },
-  {
-    "feature": "saat",
-    "importance": 453.0
-  },
-  {
-    "feature": "windGusts",
-    "importance": 425.0
-  },
-  {
-    "feature": "month",
-    "importance": 418.0
-  },
-  {
-    "feature": "durak_id_num",
-    "importance": 416.0
+    "feature": "lag_1_day_same_hour",
+    "importance": 0.056939807041106745
   },
   {
     "feature": "is_holiday",
-    "importance": 307.0
+    "importance": 0.009186948645770916
   },
   {
-    "feature": "hour_avg",
-    "importance": 187.0
+    "feature": "rolling_mean_30",
+    "importance": 0.008993147504430272
   },
   {
-    "feature": "precipitation",
-    "importance": 184.0
+    "feature": "day_of_week",
+    "importance": 0.008839642823103941
   },
   {
-    "feature": "is_school_term",
-    "importance": 154.0
-  },
-  {
-    "feature": "is_university_exam_week",
-    "importance": 148.0
-  },
-  {
-    "feature": "station_type_encoded",
-    "importance": 127.0
-  },
-  {
-    "feature": "snowfall",
-    "importance": 110.0
-  },
-  {
-    "feature": "is_religious_holiday",
-    "importance": 106.0
-  },
-  {
-    "feature": "holiday_impact_score",
-    "importance": 81.0
-  },
-  {
-    "feature": "rain",
-    "importance": 75.0
-  },
-  {
-    "feature": "is_university_term",
-    "importance": 59.0
+    "feature": "day_of_week_hour_avg",
+    "importance": 0.003731344841965446
   },
   {
     "feature": "is_weekend",
-    "importance": 51.0
+    "importance": 0.0032654565791017075
   },
   {
-    "feature": "is_transfer_station",
-    "importance": 41.0
+    "feature": "station_avg",
+    "importance": 0.0027677138119571185
   },
   {
-    "feature": "is_national_holiday",
-    "importance": 37.0
+    "feature": "holiday_impact_score",
+    "importance": 0.0010594840461545661
   },
   {
-    "feature": "is_peak_hour",
-    "importance": 36.0
+    "feature": "temperature",
+    "importance": 0.0010264599521121376
   },
   {
-    "feature": "is_evening_peak",
-    "importance": 27.0
+    "feature": "saat",
+    "importance": 0.0009748278903505957
   },
   {
-    "feature": "season",
-    "importance": 26.0
+    "feature": "windDirection",
+    "importance": 0.0008857902428076575
   },
   {
-    "feature": "is_holiday_eve",
-    "importance": 26.0
+    "feature": "is_religious_holiday",
+    "importance": 0.0008585267807441122
   },
   {
-    "feature": "is_morning_peak",
-    "importance": 23.0
+    "feature": "day",
+    "importance": 0.0008527618072812425
+  },
+  {
+    "feature": "is_school_term",
+    "importance": 0.0006493011888501954
+  },
+  {
+    "feature": "snowfall",
+    "importance": 0.0006411099707044104
+  },
+  {
+    "feature": "windGusts",
+    "importance": 0.0005391803263565642
+  },
+  {
+    "feature": "precipitation",
+    "importance": 0.0004936003466739141
   },
   {
     "feature": "is_exam_week",
-    "importance": 23.0
+    "importance": 0.00045790248791911743
   },
   {
-    "feature": "is_midterm_break",
-    "importance": 16.0
+    "feature": "month",
+    "importance": 0.0004188230941150804
+  },
+  {
+    "feature": "durak_id_num",
+    "importance": 0.00041668277920363643
+  },
+  {
+    "feature": "windSpeed",
+    "importance": 0.0003234961079291278
+  },
+  {
+    "feature": "is_university_exam_week",
+    "importance": 0.00031725316063825707
+  },
+  {
+    "feature": "university_load_score",
+    "importance": 0.0002481958999838797
+  },
+  {
+    "feature": "hour_avg",
+    "importance": 0.00019338308001639725
+  },
+  {
+    "feature": "station_type_encoded",
+    "importance": 0.0001911182249258827
+  },
+  {
+    "feature": "is_morning_peak",
+    "importance": 0.00017612525566722221
+  },
+  {
+    "feature": "season",
+    "importance": 8.641434977703609e-05
+  },
+  {
+    "feature": "is_holiday_eve",
+    "importance": 7.057208503050542e-05
+  },
+  {
+    "feature": "is_national_holiday",
+    "importance": 6.569917318551242e-05
   },
   {
     "feature": "is_university_break",
-    "importance": 13.0
+    "importance": 5.202846595222221e-05
   },
   {
-    "feature": "event_type_encoded",
-    "importance": 6.0
+    "feature": "rain",
+    "importance": 4.0104742987382347e-05
+  },
+  {
+    "feature": "is_transfer_station",
+    "importance": 3.7629380037911224e-05
+  },
+  {
+    "feature": "university_activity_score",
+    "importance": 3.648861728941217e-05
+  },
+  {
+    "feature": "is_university_term",
+    "importance": 2.4163376888317703e-05
+  },
+  {
+    "feature": "is_evening_peak",
+    "importance": 2.1910566403816436e-05
+  },
+  {
+    "feature": "is_peak_hour",
+    "importance": 2.0825364568058005e-05
+  },
+  {
+    "feature": "event_window_score",
+    "importance": 1.7013461950321343e-05
+  },
+  {
+    "feature": "is_midterm_break",
+    "importance": 1.2993284620417255e-05
+  },
+  {
+    "feature": "station_event_proximity_score",
+    "importance": 1.1026607051873758e-05
+  },
+  {
+    "feature": "is_university_registration",
+    "importance": 7.936688136629769e-06
+  },
+  {
+    "feature": "weighted_event_score",
+    "importance": 7.844144904056173e-06
   },
   {
     "feature": "weather_impact_score",
-    "importance": 4.0
+    "importance": 3.525562037498595e-06
+  },
+  {
+    "feature": "is_event_window",
+    "importance": 2.5530272196547574e-06
+  },
+  {
+    "feature": "event_type_encoded",
+    "importance": 4.151536334231637e-07
+  },
+  {
+    "feature": "event_impact_score",
+    "importance": 3.6944694542307114e-07
+  },
+  {
+    "feature": "is_university_midterm",
+    "importance": 0.0
+  },
+  {
+    "feature": "is_university_finals",
+    "importance": 0.0
+  },
+  {
+    "feature": "is_university_makeup",
+    "importance": 0.0
   },
   {
     "feature": "has_event",
@@ -169,10 +213,6 @@
   },
   {
     "feature": "is_match_day",
-    "importance": 0.0
-  },
-  {
-    "feature": "event_impact_score",
     "importance": 0.0
   }
 ]

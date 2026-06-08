@@ -78,6 +78,10 @@ export type TransitDirectionConfig = {
   directionB: StationDirection;
 };
 
+// TODO: Kayseri tramvay T1 hattının gerçek rota uçları netleştiğinde
+// DEFAULT_TRANSIT_DIRECTION_CONFIG değerlerini güncelleyin.
+// Beklenen değerler: directionA → 'Mimarsinan' (hat başı), directionB → 'Otogar' (hat ucu).
+// Bu değişiklik platformId formatını etkileyeceğinden tüm referanslarda kademeli geçiş gerekir.
 export const DEFAULT_TRANSIT_DIRECTION_CONFIG: TransitDirectionConfig = {
   directionA: 'directionA',
   directionB: 'directionB',

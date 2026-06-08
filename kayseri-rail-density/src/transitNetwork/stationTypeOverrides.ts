@@ -22,6 +22,11 @@ export const STATION_TYPE_OVERRIDES: readonly StationTypeOverride[] = [
     notes: 'Kayseri Üniversitesi Şehit İsmet Eraslan',
   },
   {
+    stationGroupId: '1006063',
+    stationTypes: [StationType.UNIVERSITY],
+    notes: 'Nuh Naci Yazgan Üniversitesi',
+  },
+  {
     stationGroupId: '1006049',
     stationTypes: [StationType.HOSPITAL, StationType.UNIVERSITY],
     notes: 'Erciyes Üniversitesi Hastaneleri',

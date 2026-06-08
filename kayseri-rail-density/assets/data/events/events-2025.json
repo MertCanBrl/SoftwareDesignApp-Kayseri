@@ -1,6 +1,33 @@
 {
   "year": 2025,
   "description": "2025 yılı Kayseri tramvay hat etkinlik ve maç takvimi",
+  "pendingDataSources": [
+    {
+      "source": "Bubilet / Kayserispor resmi sitesi",
+      "dataType": "MATCH",
+      "note": "2025-26 Süper Lig ev maçı takvimi — sezon takvimi açıklandığında ekle"
+    },
+    {
+      "source": "KayseriEtkinlik.net / Kayseri Büyükşehir Belediyesi",
+      "dataType": "CONCERT / FESTIVAL",
+      "note": "Şehir konser ve festival programı — yıllık etkinlik takviminden doğrula"
+    },
+    {
+      "source": "ÖSYM",
+      "dataType": "EXAM",
+      "note": "YKS, KPSS, DGS gibi ulusal sınav tarihleri — ÖSYM.gov.tr'den doğrula"
+    },
+    {
+      "source": "Erciyes Üniversitesi akademik takvimi",
+      "dataType": "GRADUATION / EXAM",
+      "note": "2025 mezuniyet töreni kesin tarihi — üniversite web sitesinden doğrula"
+    },
+    {
+      "source": "Nuh Naci Yazgan Üniversitesi akademik takvimi",
+      "dataType": "GRADUATION / EXAM",
+      "note": "NNY mezuniyet ve sınav etkinlikleri — üniversite web sitesinden doğrula"
+    }
+  ],
   "events": [
     {
       "id": "ev-2025-match-0315",
@@ -161,6 +188,132 @@
       "impactLevel": "MEDIUM",
       "affectedStationIds": ["1006019", "1006020", "1006021", "1006022"],
       "description": "Açık hava konser etkinliği — Şehir Merkezi"
+    },
+    {
+      "id": "event-sport-football-kayserispor-2025-08-24-home",
+      "eventType": "MATCH",
+      "sport": "FOOTBALL",
+      "eventName": "Kayserispor İç Saha Futbol Maçı",
+      "date": "2025-08-24",
+      "startHour": 21,
+      "startMinute": 30,
+      "endHour": 23,
+      "endMinute": 30,
+      "impactLevel": "HIGH",
+      "locationName": "RHG Enertürk Enerji Stadyumu",
+      "affectedStationIds": ["1006008", "1006009", "1006010"],
+      "expectedDirectionBias": "STADIUM_INBOUND_BEFORE_MATCH_OUTBOUND_AFTER_MATCH",
+      "description": "Kayserispor iç saha futbol maçı. Maç öncesi ve maç sonrası stadyum çevresindeki duraklarda yoğunluk artışı beklenir.",
+      "source": "Kullanıcı tarafından sağlanan Kayserispor iç saha maç listesi",
+      "verified": true
+    },
+    {
+      "id": "event-sport-football-kayserispor-2025-09-14-home",
+      "eventType": "MATCH",
+      "sport": "FOOTBALL",
+      "eventName": "Kayserispor İç Saha Futbol Maçı",
+      "date": "2025-09-14",
+      "startHour": 16,
+      "startMinute": 0,
+      "endHour": 18,
+      "endMinute": 0,
+      "impactLevel": "HIGH",
+      "locationName": "RHG Enertürk Enerji Stadyumu",
+      "affectedStationIds": ["1006008", "1006009", "1006010"],
+      "expectedDirectionBias": "STADIUM_INBOUND_BEFORE_MATCH_OUTBOUND_AFTER_MATCH",
+      "description": "Kayserispor iç saha futbol maçı. Maç öncesi ve maç sonrası stadyum çevresindeki duraklarda yoğunluk artışı beklenir.",
+      "source": "Kullanıcı tarafından sağlanan Kayserispor iç saha maç listesi",
+      "verified": true
+    },
+    {
+      "id": "event-sport-football-kayserispor-2025-09-28-home",
+      "eventType": "MATCH",
+      "sport": "FOOTBALL",
+      "eventName": "Kayserispor İç Saha Futbol Maçı",
+      "date": "2025-09-28",
+      "startHour": 19,
+      "startMinute": 0,
+      "endHour": 21,
+      "endMinute": 0,
+      "impactLevel": "HIGH",
+      "locationName": "RHG Enertürk Enerji Stadyumu",
+      "affectedStationIds": ["1006008", "1006009", "1006010"],
+      "expectedDirectionBias": "STADIUM_INBOUND_BEFORE_MATCH_OUTBOUND_AFTER_MATCH",
+      "description": "Kayserispor iç saha futbol maçı. Maç öncesi ve maç sonrası stadyum çevresindeki duraklarda yoğunluk artışı beklenir.",
+      "source": "Kullanıcı tarafından sağlanan Kayserispor iç saha maç listesi",
+      "verified": true
+    },
+    {
+      "id": "event-sport-football-kayserispor-2025-10-19-home",
+      "eventType": "MATCH",
+      "sport": "FOOTBALL",
+      "eventName": "Kayserispor İç Saha Futbol Maçı",
+      "date": "2025-10-19",
+      "startHour": 13,
+      "startMinute": 30,
+      "endHour": 15,
+      "endMinute": 30,
+      "impactLevel": "HIGH",
+      "locationName": "RHG Enertürk Enerji Stadyumu",
+      "affectedStationIds": ["1006008", "1006009", "1006010"],
+      "expectedDirectionBias": "STADIUM_INBOUND_BEFORE_MATCH_OUTBOUND_AFTER_MATCH",
+      "description": "Kayserispor iç saha futbol maçı. Maç öncesi ve maç sonrası stadyum çevresindeki duraklarda yoğunluk artışı beklenir.",
+      "source": "Kullanıcı tarafından sağlanan Kayserispor iç saha maç listesi",
+      "verified": true
+    },
+    {
+      "id": "event-sport-football-kayserispor-2025-11-02-home",
+      "eventType": "MATCH",
+      "sport": "FOOTBALL",
+      "eventName": "Kayserispor İç Saha Futbol Maçı",
+      "date": "2025-11-02",
+      "startHour": 15,
+      "startMinute": 0,
+      "endHour": 17,
+      "endMinute": 0,
+      "impactLevel": "HIGH",
+      "locationName": "RHG Enertürk Enerji Stadyumu",
+      "affectedStationIds": ["1006008", "1006009", "1006010"],
+      "expectedDirectionBias": "STADIUM_INBOUND_BEFORE_MATCH_OUTBOUND_AFTER_MATCH",
+      "description": "Kayserispor iç saha futbol maçı. Maç öncesi ve maç sonrası stadyum çevresindeki duraklarda yoğunluk artışı beklenir.",
+      "source": "Kullanıcı tarafından sağlanan Kayserispor iç saha maç listesi",
+      "verified": true
+    },
+    {
+      "id": "event-sport-football-kayserispor-2025-11-22-home",
+      "eventType": "MATCH",
+      "sport": "FOOTBALL",
+      "eventName": "Kayserispor İç Saha Futbol Maçı",
+      "date": "2025-11-22",
+      "startHour": 16,
+      "startMinute": 0,
+      "endHour": 18,
+      "endMinute": 0,
+      "impactLevel": "HIGH",
+      "locationName": "RHG Enertürk Enerji Stadyumu",
+      "affectedStationIds": ["1006008", "1006009", "1006010"],
+      "expectedDirectionBias": "STADIUM_INBOUND_BEFORE_MATCH_OUTBOUND_AFTER_MATCH",
+      "description": "Kayserispor iç saha futbol maçı. Maç öncesi ve maç sonrası stadyum çevresindeki duraklarda yoğunluk artışı beklenir.",
+      "source": "Kullanıcı tarafından sağlanan Kayserispor iç saha maç listesi",
+      "verified": true
+    },
+    {
+      "id": "event-sport-football-kayserispor-2025-12-13-home",
+      "eventType": "MATCH",
+      "sport": "FOOTBALL",
+      "eventName": "Kayserispor İç Saha Futbol Maçı",
+      "date": "2025-12-13",
+      "startHour": 16,
+      "startMinute": 0,
+      "endHour": 18,
+      "endMinute": 0,
+      "impactLevel": "HIGH",
+      "locationName": "RHG Enertürk Enerji Stadyumu",
+      "affectedStationIds": ["1006008", "1006009", "1006010"],
+      "expectedDirectionBias": "STADIUM_INBOUND_BEFORE_MATCH_OUTBOUND_AFTER_MATCH",
+      "description": "Kayserispor iç saha futbol maçı. Maç öncesi ve maç sonrası stadyum çevresindeki duraklarda yoğunluk artışı beklenir.",
+      "source": "Kullanıcı tarafından sağlanan Kayserispor iç saha maç listesi",
+      "verified": true
     }
   ]
 }
