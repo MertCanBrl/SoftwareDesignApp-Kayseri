@@ -1,0 +1,166 @@
+{
+  "year": 2025,
+  "description": "2025 yılı Kayseri tramvay hat etkinlik ve maç takvimi",
+  "events": [
+    {
+      "id": "ev-2025-match-0315",
+      "eventType": "MATCH",
+      "date": "2025-03-15",
+      "startHour": 18,
+      "endHour": 22,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006008", "1006009", "1006010", "1006019"],
+      "description": "Kayserispor ev maçı — Kadir Has Stadyumu"
+    },
+    {
+      "id": "ev-2025-match-0405",
+      "eventType": "MATCH",
+      "date": "2025-04-05",
+      "startHour": 19,
+      "endHour": 22,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006008", "1006009", "1006010", "1006019"],
+      "description": "Kayserispor ev maçı — Kadir Has Stadyumu"
+    },
+    {
+      "id": "ev-2025-match-0426",
+      "eventType": "MATCH",
+      "date": "2025-04-26",
+      "startHour": 20,
+      "endHour": 22,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006008", "1006009", "1006010", "1006019"],
+      "description": "Kayserispor ev maçı — Kadir Has Stadyumu"
+    },
+    {
+      "id": "ev-2025-match-0517",
+      "eventType": "MATCH",
+      "date": "2025-05-17",
+      "startHour": 19,
+      "endHour": 22,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006008", "1006009", "1006010", "1006019"],
+      "description": "Kayserispor ev maçı — Kadir Has Stadyumu"
+    },
+    {
+      "id": "ev-2025-match-0906",
+      "eventType": "MATCH",
+      "date": "2025-09-06",
+      "startHour": 19,
+      "endHour": 22,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006008", "1006009", "1006010", "1006019"],
+      "description": "Kayserispor ev maçı — Kadir Has Stadyumu"
+    },
+    {
+      "id": "ev-2025-match-0927",
+      "eventType": "MATCH",
+      "date": "2025-09-27",
+      "startHour": 20,
+      "endHour": 22,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006008", "1006009", "1006010", "1006019"],
+      "description": "Kayserispor ev maçı — Kadir Has Stadyumu"
+    },
+    {
+      "id": "ev-2025-match-1018",
+      "eventType": "MATCH",
+      "date": "2025-10-18",
+      "startHour": 19,
+      "endHour": 22,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006008", "1006009", "1006010", "1006019"],
+      "description": "Kayserispor ev maçı — Kadir Has Stadyumu"
+    },
+    {
+      "id": "ev-2025-match-1108",
+      "eventType": "MATCH",
+      "date": "2025-11-08",
+      "startHour": 20,
+      "endHour": 22,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006008", "1006009", "1006010", "1006019"],
+      "description": "Kayserispor ev maçı — Kadir Has Stadyumu"
+    },
+    {
+      "id": "ev-2025-match-1129",
+      "eventType": "MATCH",
+      "date": "2025-11-29",
+      "startHour": 19,
+      "endHour": 22,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006008", "1006009", "1006010", "1006019"],
+      "description": "Kayserispor ev maçı — Kadir Has Stadyumu"
+    },
+    {
+      "id": "ev-2025-match-1220",
+      "eventType": "MATCH",
+      "date": "2025-12-20",
+      "startHour": 20,
+      "endHour": 22,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006008", "1006009", "1006010", "1006019"],
+      "description": "Kayserispor ev maçı — Kadir Has Stadyumu"
+    },
+    {
+      "id": "ev-2025-meeting-0412",
+      "eventType": "MEETING",
+      "date": "2025-04-12",
+      "startHour": 14,
+      "endHour": 18,
+      "impactLevel": "MEDIUM",
+      "affectedStationIds": ["1006019", "1006020", "1006021"],
+      "description": "Büyükşehir belediyesi toplu etkinliği"
+    },
+    {
+      "id": "ev-2025-fair-0503",
+      "eventType": "FAIR",
+      "date": "2025-05-03",
+      "startHour": 11,
+      "endHour": 20,
+      "impactLevel": "LOW",
+      "affectedStationIds": ["1006039", "1006040", "1006041"],
+      "description": "Kayseri Fuarı — 1. gün"
+    },
+    {
+      "id": "ev-2025-fair-0504",
+      "eventType": "FAIR",
+      "date": "2025-05-04",
+      "startHour": 10,
+      "endHour": 20,
+      "impactLevel": "LOW",
+      "affectedStationIds": ["1006039", "1006040", "1006041"],
+      "description": "Kayseri Fuarı — 2. gün"
+    },
+    {
+      "id": "ev-2025-exam-0610",
+      "eventType": "EXAM",
+      "date": "2025-06-10",
+      "startHour": 8,
+      "endHour": 17,
+      "impactLevel": "MEDIUM",
+      "affectedStationIds": ["1006048", "1006049", "1006052", "1006047"],
+      "description": "Erciyes Üniversitesi bahar dönemi final sınavı"
+    },
+    {
+      "id": "ev-2025-graduation-0620",
+      "eventType": "GRADUATION",
+      "date": "2025-06-20",
+      "startHour": 10,
+      "endHour": 16,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006048", "1006049", "1006052"],
+      "description": "Erciyes Üniversitesi mezuniyet töreni"
+    },
+    {
+      "id": "ev-2025-concert-0802",
+      "eventType": "CONCERT",
+      "date": "2025-08-02",
+      "startHour": 19,
+      "endHour": 23,
+      "impactLevel": "MEDIUM",
+      "affectedStationIds": ["1006019", "1006020", "1006021", "1006022"],
+      "description": "Açık hava konser etkinliği — Şehir Merkezi"
+    }
+  ]
+}

@@ -28,11 +28,24 @@ from sklearn.model_selection import train_test_split
 from feature_engineering import (
     FEATURE_NAMES,
     LEGACY_FEATURE_NAMES,
+    EventLoader,
+    HolidayLoader,
     HistoricalFeatureStore,
+    WeatherLoader,
     build_durak_id_num,
     build_feature_array,
     compute_aggregates,
 )
+
+try:
+    import sys as _sys
+    import os as _os
+    _sys.path.insert(0, _os.path.dirname(__file__))
+    from fetch_weather_forecast import fetch_forecast as _fetch_forecast
+    _HAS_FORECAST_MODULE = True
+except ImportError:
+    _HAS_FORECAST_MODULE = False
+    print("Uyarı: fetch_weather_forecast.py bulunamadı — mevsimsel fallback kullanılacak.")
 
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets" / "data"
@@ -604,6 +617,13 @@ def main() -> None:
     if len(stations) != 75:
         print(f"Warning: expected 75 stations, got {len(stations)}. Proceeding with file list.")
 
+    # ── Open-Meteo forecast yükle (2026 tahminleri için) ─────────────────────
+    if _HAS_FORECAST_MODULE:
+        forecast_data = _fetch_forecast()
+        WeatherLoader.set_forecast(forecast_data)
+    else:
+        print("[forecast] Modül yok — mevsimsel ortalama kullanılacak.")
+
     today = datetime.today().date()
     prediction_start = today
     prediction_days = PREDICTION_DAYS
@@ -621,6 +641,58 @@ def main() -> None:
 
     by_day: dict[str, list[dict[str, Any]]] = {d.isoformat(): [] for d in pred_dates}
     h_range = list(range(5, 24))
+
+    # ── Tahmin zenginleştirme önbellekleri ────────────────────────────────────
+    _w_cache: dict[tuple[str, int], dict[str, float]] = {}
+    _h_cache: dict[str, dict[str, Any]] = {}
+
+    def _get_weather(ds: str, hr: int) -> dict[str, float]:
+        k = (ds, hr)
+        if k not in _w_cache:
+            _w_cache[k] = WeatherLoader.get_weather(ds, hr)
+        return _w_cache[k]
+
+    def _get_holiday(ds: str) -> dict[str, Any]:
+        if ds not in _h_cache:
+            _h_cache[ds] = HolidayLoader.get_holiday_info(ds)
+        return _h_cache[ds]
+
+    def _compute_main_factors(
+        hr: int,
+        is_wknd: int,
+        hol: dict[str, Any],
+        ev: dict[str, Any],
+        w: dict[str, float],
+    ) -> list[str]:
+        factors: list[str] = []
+        if 7 <= hr <= 9:
+            factors.append("Sabah yoğunluğu")
+        elif 17 <= hr <= 19:
+            factors.append("Mesai çıkışı")
+        if w.get("snowfall", 0.0) > 0.5:
+            factors.append("Kar yağışı")
+        elif w.get("precipitation", 0.0) > 2.0:
+            factors.append("Yağış")
+        elif w.get("windSpeed", 0.0) > 25.0:
+            factors.append("Güçlü rüzgar")
+        if hol.get("is_official_holiday"):
+            if hol.get("is_religious_holiday"):
+                factors.append("Dini bayram")
+            elif hol.get("is_national_holiday"):
+                factors.append("Millî tatil")
+            else:
+                factors.append("Resmî tatil")
+        elif hol.get("is_holiday_eve"):
+            factors.append("Bayram arifesi")
+        if ev.get("is_match_day"):
+            factors.append("Maç günü")
+        elif ev.get("is_exam_week"):
+            factors.append("Sınav haftası")
+        elif ev.get("is_event_day"):
+            factors.append("Etkinlik günü")
+        if is_wknd and not factors:
+            factors.append("Hafta sonu")
+        return factors[:3]
 
     build_rows: list[dict[str, Any]] = []
     for d in pred_dates:
@@ -651,6 +723,15 @@ def main() -> None:
         name = str(p_df["durakAd"].iloc[i])
         pr = y_hat[i]
         pc = int(max(0, round(float(pr))))
+
+        w = _get_weather(d_str, h)
+        w_score = WeatherLoader.compute_impact_score(w)
+        w_level = WeatherLoader.compute_impact_level(w_score)
+        hol = _get_holiday(d_str)
+        ev = EventLoader.get_event_features(did, d_str, h)
+        is_wknd = int(datetime.strptime(d_str, "%Y-%m-%d").weekday() >= 5)
+        factors = _compute_main_factors(h, is_wknd, hol, ev, w)
+
         by_day[d_str].append(
             {
                 "durakId": did,
@@ -658,6 +739,9 @@ def main() -> None:
                 "date": d_str,
                 "hour": h,
                 "predictedPassengerCount": pc,
+                "weatherImpactScore": round(w_score, 2),
+                "weatherImpactLevel": w_level,
+                "mainFactors": factors,
             }
         )
 

@@ -14,42 +14,14 @@ import { formatDisplayDate } from '../utils/date';
 
 LocaleConfig.locales.tr = {
   monthNames: [
-    'Ocak',
-    'Şubat',
-    'Mart',
-    'Nisan',
-    'Mayıs',
-    'Haziran',
-    'Temmuz',
-    'Ağustos',
-    'Eylül',
-    'Ekim',
-    'Kasım',
-    'Aralık',
+    'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+    'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık',
   ],
   monthNamesShort: [
-    'Oca',
-    'Şub',
-    'Mar',
-    'Nis',
-    'May',
-    'Haz',
-    'Tem',
-    'Ağu',
-    'Eyl',
-    'Eki',
-    'Kas',
-    'Ara',
+    'Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz',
+    'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara',
   ],
-  dayNames: [
-    'Pazar',
-    'Pazartesi',
-    'Salı',
-    'Çarşamba',
-    'Perşembe',
-    'Cuma',
-    'Cumartesi',
-  ],
+  dayNames: ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'],
   dayNamesShort: ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'],
   today: 'Bugün',
 };
@@ -61,8 +33,13 @@ type Props = {
   saat: number;
   onChangeDate: (d: string) => void;
   onChangeHour: (h: number) => void;
-  /** Sadece tahmin günleri (mavi nokta); geçmiş gün listesiyle kesişmemeli */
+  /** Sadece tahmin günleri (mavi nokta) */
   predictionOnlyDates?: readonly string[];
+  /**
+   * Seçilebilir minimum saat (dahil). Bu değerin altındaki saatler disabled görünür
+   * ve tıklanamaz. 0 (varsayılan) = kısıtlama yok.
+   */
+  minHour?: number;
 };
 
 function daysInMonth(year: number, month1to12: number): number {
@@ -88,24 +65,13 @@ function buildMarkedDates(
     const monthStr = month1to12 < 10 ? `0${month1to12}` : String(month1to12);
     const dateString = `${year}-${monthStr}-${dayStr}`;
     if (!available.has(dateString)) {
-      out[dateString] = {
-        disabled: true,
-        disableTouchEvent: true,
-        textColor: theme.textMuted,
-      };
+      out[dateString] = { disabled: true, disableTouchEvent: true, textColor: theme.textMuted };
     } else if (predictionOnly.has(dateString)) {
-      out[dateString] = {
-        marked: true,
-        dotColor: '#3b82f6',
-      };
+      out[dateString] = { marked: true, dotColor: '#3b82f6' };
     }
   }
   if (available.has(selected)) {
-    out[selected] = {
-      ...out[selected],
-      selected: true,
-      selectedColor: '#111827',
-    };
+    out[selected] = { ...out[selected], selected: true, selectedColor: '#111827' };
   }
   return out;
 }
@@ -117,15 +83,13 @@ export function DateTimeSelector({
   onChangeDate,
   onChangeHour,
   predictionOnlyDates = [],
+  minHour = 0,
 }: Props) {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [visibleMonth, setVisibleMonth] = useState(() => yearMonthFromDateString(tarih));
 
   const availableDatesSet = useMemo(() => new Set(sortedDates), [sortedDates]);
-  const predictionOnlySet = useMemo(
-    () => new Set([...predictionOnlyDates]),
-    [predictionOnlyDates]
-  );
+  const predictionOnlySet = useMemo(() => new Set([...predictionOnlyDates]), [predictionOnlyDates]);
   const minDate = sortedDates[0];
   const maxDate = sortedDates.length ? sortedDates[sortedDates.length - 1] : undefined;
 
@@ -142,8 +106,7 @@ export function DateTimeSelector({
   }, [calendarOpen, tarih]);
 
   const markedDates = useMemo(
-    () =>
-      buildMarkedDates(visibleMonth.year, visibleMonth.month, tarih, availableDatesSet, predictionOnlySet),
+    () => buildMarkedDates(visibleMonth.year, visibleMonth.month, tarih, availableDatesSet, predictionOnlySet),
     [visibleMonth, tarih, availableDatesSet, predictionOnlySet]
   );
 
@@ -160,7 +123,7 @@ export function DateTimeSelector({
       <View style={styles.row}>
         <Pressable
           accessibilityRole="button"
-          style={({ pressed }) => [styles.navBtn, pressed && styles.pressed, !prev && styles.disabled]}
+          style={({ pressed }) => [styles.navBtn, pressed && styles.pressed, !prev && styles.navDisabled]}
           onPress={() => prev && onChangeDate(prev)}
           disabled={!prev}
         >
@@ -169,10 +132,8 @@ export function DateTimeSelector({
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Takvimden tarih seç"
-          onPress={() => {
-            if (sortedDates.length) setCalendarOpen(true);
-          }}
-          style={({ pressed }) => [styles.dateBox, pressed && styles.pressed, !sortedDates.length && styles.disabled]}
+          onPress={() => { if (sortedDates.length) setCalendarOpen(true); }}
+          style={({ pressed }) => [styles.dateBox, pressed && styles.pressed, !sortedDates.length && styles.navDisabled]}
           disabled={!sortedDates.length}
         >
           <Text style={styles.dateLabel}>Tarih</Text>
@@ -180,29 +141,40 @@ export function DateTimeSelector({
         </Pressable>
         <Pressable
           accessibilityRole="button"
-          style={({ pressed }) => [styles.navBtn, pressed && styles.pressed, !next && styles.disabled]}
+          style={({ pressed }) => [styles.navBtn, pressed && styles.pressed, !next && styles.navDisabled]}
           onPress={() => next && onChangeDate(next)}
           disabled={!next}
         >
           <Text style={styles.navText}>▶</Text>
         </Pressable>
       </View>
+
       <Text style={styles.hourTitle}>Saat</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hourScroll}>
         {hours.map((h) => {
           const active = h === saat;
+          const disabled = h < minHour;
           return (
             <Pressable
               key={h}
               accessibilityRole="button"
-              onPress={() => onChangeHour(h)}
+              accessibilityState={{ disabled }}
+              onPress={() => { if (!disabled) onChangeHour(h); }}
+              disabled={disabled}
               style={({ pressed }) => [
                 styles.hourChip,
                 active && styles.hourChipActive,
-                pressed && styles.pressed,
+                disabled && styles.hourChipDisabled,
+                pressed && !disabled && styles.pressed,
               ]}
             >
-              <Text style={[styles.hourText, active && styles.hourTextActive]}>{String(h).padStart(2, '0')}:00</Text>
+              <Text style={[
+                styles.hourText,
+                active && styles.hourTextActive,
+                disabled && styles.hourTextDisabled,
+              ]}>
+                {String(h).padStart(2, '0')}:00
+              </Text>
             </Pressable>
           );
         })}
@@ -277,11 +249,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.border,
   },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
+  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   navBtn: {
     width: 44,
     height: 44,
@@ -293,7 +261,7 @@ const styles = StyleSheet.create({
     borderColor: theme.border,
   },
   navText: { color: theme.textPrimary, fontSize: 16 },
-  disabled: { opacity: 0.35 },
+  navDisabled: { opacity: 0.35 },
   pressed: { opacity: 0.85 },
   dateBox: { alignItems: 'center', flex: 1, paddingVertical: 4 },
   dateLabel: { color: theme.textMuted, fontSize: 11, marginBottom: 4 },
@@ -315,21 +283,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.border,
   },
-  hourChipActive: {
-    backgroundColor: theme.accentSoft,
-    borderColor: theme.accent,
-  },
+  hourChipActive: { backgroundColor: theme.accentSoft, borderColor: theme.accent },
+  hourChipDisabled: { opacity: 0.3 },
   hourText: { color: theme.textSecondary, fontSize: 13, fontWeight: '600' },
   hourTextActive: { color: theme.textPrimary },
-  modalRoot: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  modalBackdrop: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
+  hourTextDisabled: { color: theme.textMuted },
+  modalRoot: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
+  modalBackdrop: { backgroundColor: 'rgba(0,0,0,0.5)' },
   calendarCard: {
     width: '100%',
     maxWidth: 400,
@@ -350,23 +310,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.border,
   },
-  modalTitle: {
-    color: theme.textPrimary,
-    fontSize: 16,
-    fontWeight: '700',
-  },
+  modalTitle: { color: theme.textPrimary, fontSize: 16, fontWeight: '700' },
   closeBtn: {
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 10,
     backgroundColor: theme.surface,
   },
-  closeBtnText: {
-    color: theme.textSecondary,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  calendarInner: {
-    borderRadius: 0,
-  },
+  closeBtnText: { color: theme.textSecondary, fontSize: 14, fontWeight: '600' },
+  calendarInner: { borderRadius: 0 },
 });

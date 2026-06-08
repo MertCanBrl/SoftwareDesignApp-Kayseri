@@ -1,10 +1,14 @@
 """
-Gelişmiş feature engineering — context enrichment / transit network ile uyumlu.
-Eksik event/weather verisinde deterministik mock + global_mean fallback kullanır.
+Gelişmiş feature engineering — gerçek tatil (JSON), gerçek hava (Open-Meteo CSV)
+ve gerçek etkinlik/maç (JSON) verisi kullanır.
+2026 tahmini için Open-Meteo forecast öncelikli, yoksa mevsimsel ortalama fallback.
 """
 
 from __future__ import annotations
 
+import csv
+import json
+import os
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from typing import Any
@@ -12,7 +16,11 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-# --- Mevcut (legacy) özellikler — backward compatibility ---
+_ML_DIR = os.path.dirname(os.path.abspath(__file__))
+_ASSETS_DIR = os.path.join(_ML_DIR, "..", "assets", "data")
+
+# ── Özellik listeleri ─────────────────────────────────────────────────────────
+
 LEGACY_FEATURE_NAMES: list[str] = [
     "durak_id_num",
     "saat",
@@ -26,31 +34,46 @@ LEGACY_FEATURE_NAMES: list[str] = [
     "day_of_week_hour_avg",
 ]
 
-# --- Yeni özellikler ---
 ADVANCED_FEATURE_NAMES: list[str] = [
     "season",
     "is_peak_hour",
     "is_morning_peak",
     "is_evening_peak",
-    "is_official_holiday",
+    # Tatil — JSON tabanlı
+    "is_holiday",            # resmî tatil (is_official_holiday'in yeniden adlandırılmışı)
     "is_religious_holiday",
+    "is_national_holiday",
     "is_holiday_eve",
+    "holiday_impact_score",
+    # Okul / üniversite takvimi
     "is_school_term",
     "is_midterm_break",
     "is_university_term",
     "is_university_break",
+    "is_university_exam_week",
+    # İstasyon
     "is_transfer_station",
     "station_type_encoded",
+    # Lag / rolling
     "lag_1_day_same_hour",
     "lag_7_day_same_hour",
     "rolling_mean_7",
     "rolling_mean_30",
+    # Etkinlik — JSON tabanlı
     "has_event",
+    "is_event_day",
+    "is_match_day",
+    "is_exam_week",
     "event_type_encoded",
     "event_impact_score",
+    # Hava — gerçek Open-Meteo CSV + forecast
     "temperature",
+    "precipitation",
     "rain",
-    "snow",
+    "snowfall",
+    "windSpeed",
+    "windGusts",
+    "windDirection",
     "weather_impact_score",
 ]
 
@@ -59,57 +82,40 @@ FEATURE_NAMES: list[str] = LEGACY_FEATURE_NAMES + ADVANCED_FEATURE_NAMES
 MORNING_PEAK_HOURS = (7, 8, 9)
 EVENING_PEAK_HOURS = (17, 18, 19)
 
-# --- Takvim (calendarContextConfig.ts ile uyumlu) ---
-OFFICIAL_HOLIDAYS: frozenset[str] = frozenset(
-    {
-        "2025-01-01",
-        "2025-03-30",
-        "2025-03-31",
-        "2025-04-01",
-        "2025-04-23",
-        "2025-05-01",
-        "2025-05-19",
-        "2025-06-06",
-        "2025-06-07",
-        "2025-06-08",
-        "2025-06-09",
-        "2025-07-15",
-        "2025-08-30",
-        "2025-10-28",
-        "2025-10-29",
-    }
-)
-
-RELIGIOUS_HOLIDAYS: frozenset[str] = frozenset(
-    {
-        "2025-03-30",
-        "2025-03-31",
-        "2025-04-01",
-        "2025-06-06",
-        "2025-06-07",
-        "2025-06-08",
-        "2025-06-09",
-    }
-)
-
-HOLIDAY_EVES: frozenset[str] = frozenset({"2025-03-29", "2025-06-05", "2025-10-27"})
-
 DATE_RANGES: dict[str, list[tuple[str, str]]] = {
     "school_term": [
         ("2024-09-09", "2025-01-17"),
         ("2025-02-10", "2025-06-13"),
+        ("2025-09-08", "2026-01-16"),
+        ("2026-02-09", "2026-06-12"),
     ],
     "school_midterm": [
         ("2025-01-20", "2025-01-31"),
         ("2025-04-14", "2025-04-18"),
+        ("2026-01-19", "2026-01-30"),
+        ("2026-04-13", "2026-04-17"),
     ],
     "university_term": [
         ("2024-09-16", "2025-01-24"),
         ("2025-02-03", "2025-06-20"),
+        ("2025-09-15", "2026-01-23"),
+        ("2026-02-02", "2026-06-19"),
     ],
     "university_break": [
         ("2025-01-25", "2025-02-02"),
         ("2025-06-21", "2025-09-14"),
+        ("2026-01-24", "2026-02-01"),
+        ("2026-06-20", "2026-09-13"),
+    ],
+    # Final ve midterm sınav haftaları (universitede yoğunluk artar)
+    "university_exam_week": [
+        ("2025-01-06", "2025-01-17"),   # 2024-25 güz finali
+        ("2025-04-07", "2025-04-18"),   # 2024-25 bahar midtermi
+        ("2025-06-02", "2025-06-20"),   # 2024-25 bahar finali
+        ("2025-11-10", "2025-11-21"),   # 2025-26 güz midtermi
+        ("2026-01-05", "2026-01-16"),   # 2025-26 güz finali
+        ("2026-04-06", "2026-04-17"),   # 2025-26 bahar midtermi
+        ("2026-06-01", "2026-06-19"),   # 2025-26 bahar finali
     ],
 }
 
@@ -165,48 +171,261 @@ IMPACT_SCORE: dict[str, float] = {
     "CRITICAL": 1.0,
 }
 
-MOCK_EVENTS: list[dict[str, Any]] = [
-    {
-        "eventType": "MATCH",
-        "date": "2025-03-15",
-        "startHour": 18,
-        "endHour": 22,
-        "impactLevel": "HIGH",
-        "affectedStationGroupIds": ["1006008", "1006009", "1006010", "1006019"],
-    },
-    {
-        "eventType": "MEETING",
-        "date": "2025-04-12",
-        "startHour": 14,
-        "endHour": 18,
-        "impactLevel": "MEDIUM",
-        "affectedStationGroupIds": ["1006019", "1006020", "1006021"],
-    },
-    {
-        "eventType": "EXAM",
-        "date": "2025-06-10",
-        "startHour": 8,
-        "endHour": 17,
-        "impactLevel": "MEDIUM",
-        "affectedStationGroupIds": ["1006048", "1006049", "1006052", "1006047"],
-    },
-    {
-        "eventType": "GRADUATION",
-        "date": "2025-06-20",
-        "startHour": 10,
-        "endHour": 16,
-        "impactLevel": "HIGH",
-        "affectedStationGroupIds": ["1006048", "1006049", "1006052"],
-    },
-    {
-        "eventType": "FAIR",
-        "date": "2025-05-03",
-        "startHour": 11,
-        "endHour": 20,
-        "impactLevel": "LOW",
-        "affectedStationGroupIds": ["1006039", "1006040", "1006041"],
-    },
-]
+
+# ── HolidayLoader ─────────────────────────────────────────────────────────────
+
+
+class HolidayLoader:
+    """Reads turkey-official-holidays-{year}.json for holiday queries."""
+
+    _cache: dict[int, list[dict]] = {}
+
+    @classmethod
+    def _load_year(cls, year: int) -> list[dict]:
+        if year not in cls._cache:
+            path = os.path.join(
+                _ASSETS_DIR, "holidays", f"turkey-official-holidays-{year}.json"
+            )
+            if not os.path.exists(path):
+                cls._cache[year] = []
+            else:
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                cls._cache[year] = data.get("holidays", [])
+        return cls._cache[year]
+
+    @classmethod
+    def get_holiday_info(cls, date_str: str) -> dict[str, Any]:
+        year = int(date_str[:4])
+        holidays = cls._load_year(year)
+
+        is_official = False
+        is_religious = False
+        is_national = False
+        transit_impact: str | None = None
+
+        for h in holidays:
+            if h["startDate"] <= date_str <= h["endDate"]:
+                is_official = True
+                if transit_impact is None:
+                    transit_impact = h.get("expectedTransitImpact", "medium")
+                htype = h.get("type", "")
+                if htype == "religious_holiday":
+                    is_religious = True
+                elif htype == "national_holiday":
+                    is_national = True
+
+        next_day = (
+            datetime.strptime(date_str, "%Y-%m-%d") + timedelta(days=1)
+        ).strftime("%Y-%m-%d")
+        is_eve = any(h["startDate"] == next_day for h in holidays)
+
+        if is_official:
+            if transit_impact == "high":
+                impact_score = 0.75
+            elif transit_impact == "low":
+                impact_score = 0.25
+            else:
+                impact_score = 0.5
+        elif is_eve:
+            impact_score = 0.5
+        else:
+            impact_score = 0.0
+
+        return {
+            "is_official_holiday": int(is_official),
+            "is_religious_holiday": int(is_religious),
+            "is_national_holiday": int(is_national),
+            "is_holiday_eve": int(is_eve),
+            "holiday_impact_score": impact_score,
+        }
+
+
+# ── EventLoader ───────────────────────────────────────────────────────────────
+
+
+class EventLoader:
+    """
+    assets/data/events/events-{year}.json dosyasından etkinlik verisi yükler.
+    MOCK_EVENTS'in yerini alır; has_event, is_event_day, is_match_day,
+    is_exam_week, event_type_encoded, event_impact_score üretir.
+    """
+
+    _cache: dict[int, list[dict]] = {}
+
+    @classmethod
+    def _load_year(cls, year: int) -> list[dict]:
+        if year not in cls._cache:
+            path = os.path.join(_ASSETS_DIR, "events", f"events-{year}.json")
+            if not os.path.exists(path):
+                cls._cache[year] = []
+            else:
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                cls._cache[year] = data.get("events", [])
+        return cls._cache[year]
+
+    @classmethod
+    def get_event_features(cls, durak_id: str, date_str: str, hour: int) -> dict[str, Any]:
+        year = int(date_str[:4])
+        events = cls._load_year(year)
+
+        has_event = 0
+        is_event_day = 0
+        is_match_day = 0
+        is_exam_week = 0
+        best_score = 0.0
+        best_type = 0
+
+        for ev in events:
+            if ev.get("date") != date_str:
+                continue
+            affected = ev.get("affectedStationIds", [])
+            if durak_id not in affected:
+                continue
+            if hour < ev.get("startHour", 0) or hour > ev.get("endHour", 23):
+                continue
+
+            is_event_day = 1
+            ev_type = ev.get("eventType", "OTHER")
+            score = IMPACT_SCORE.get(ev.get("impactLevel", "NONE"), 0.0)
+
+            if ev_type == "MATCH":
+                is_match_day = 1
+            if ev_type in ("EXAM", "GRADUATION"):
+                is_exam_week = 1
+
+            if score >= best_score:
+                best_score = score
+                best_type = EVENT_TYPE_MAP.get(ev_type, 0)
+                has_event = 1
+
+        return {
+            "has_event": has_event,
+            "is_event_day": is_event_day,
+            "is_match_day": is_match_day,
+            "is_exam_week": is_exam_week,
+            "event_type_encoded": best_type,
+            "event_impact_score": best_score,
+        }
+
+
+# ── WeatherLoader ─────────────────────────────────────────────────────────────
+
+_WEATHER_COLS = (
+    "temperature",
+    "precipitation",
+    "rain",
+    "snowfall",
+    "windSpeed",
+    "windGusts",
+    "windDirection",
+)
+_DISTRICTS = ("melikgazi", "talas", "kocasinan")
+_ZERO_WEATHER: dict[str, float] = {c: 0.0 for c in _WEATHER_COLS}
+
+
+class WeatherLoader:
+    """
+    Gerçek Open-Meteo CSV verisi (2025) + forecast (2026+) + mevsimsel fallback.
+
+    Öncelik sırası:
+      1. Forecast (set_forecast ile yüklenen, genellikle gelecek 16 gün)
+      2. Gerçek 2025 CSV verisi
+      3. Mevsimsel ortalama (aynı ay/saat için 2025 ortalaması)
+    """
+
+    _exact: dict[tuple[str, int], dict[str, float]] | None = None
+    _seasonal: dict[tuple[int, int], dict[str, float]] | None = None
+    _forecast: dict[tuple[str, int], dict[str, float]] = {}
+
+    @classmethod
+    def set_forecast(cls, forecast: dict[tuple[str, int], dict[str, float]]) -> None:
+        """train_model.py tarafından çağrılır; 2026 tahminleri için forecast verisini yükler."""
+        cls._forecast = forecast
+        n = len(forecast)
+        print(f"[WeatherLoader] {n} saatlik forecast verisi yüklendi ({n // 24 if n else 0} gün).")
+
+    @classmethod
+    def _init(cls) -> None:
+        if cls._exact is not None:
+            return
+
+        raw: dict[tuple[str, int], list[dict[str, float]]] = {}
+
+        for district in _DISTRICTS:
+            path = os.path.join(
+                _ASSETS_DIR, "weather", "2025", f"{district}-hourly-weather-2025.csv"
+            )
+            if not os.path.exists(path):
+                continue
+            with open(path, "r", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    date_str = row["date"]
+                    hour = int(row["time"].split(":")[0])
+                    vals = {c: float(row[c]) for c in _WEATHER_COLS}
+                    raw.setdefault((date_str, hour), []).append(vals)
+
+        cls._exact = {}
+        for key, district_vals in raw.items():
+            n = len(district_vals)
+            cls._exact[key] = {
+                c: sum(v[c] for v in district_vals) / n for c in _WEATHER_COLS
+            }
+
+        # Mevsimsel ortalamalar: (ay, saat) → 2025 gerçek verisinden
+        seasonal_raw: dict[tuple[int, int], list[dict[str, float]]] = {}
+        for (date_str, hour), vals in cls._exact.items():
+            month = int(date_str[5:7])
+            seasonal_raw.setdefault((month, hour), []).append(vals)
+
+        cls._seasonal = {}
+        for skey, val_list in seasonal_raw.items():
+            n = len(val_list)
+            cls._seasonal[skey] = {
+                c: sum(v[c] for v in val_list) / n for c in _WEATHER_COLS
+            }
+
+    @classmethod
+    def get_weather(cls, date_str: str, hour: int) -> dict[str, float]:
+        cls._init()
+        # 1. Forecast önceliği (2026 ve yakın gelecek)
+        fw = cls._forecast.get((date_str, hour))
+        if fw is not None:
+            return fw
+        # 2. Gerçek 2025 CSV verisi
+        w = cls._exact.get((date_str, hour))  # type: ignore[union-attr]
+        if w is not None:
+            return w
+        # 3. Mevsimsel ortalama fallback
+        month = int(date_str[5:7])
+        return cls._seasonal.get((month, hour), _ZERO_WEATHER)  # type: ignore[union-attr]
+
+    @classmethod
+    def compute_impact_score(cls, w: dict[str, float]) -> float:
+        if w.get("snowfall", 0.0) > 0.5:
+            return IMPACT_SCORE["HIGH"]
+        if w.get("precipitation", 0.0) > 5.0 or w.get("windSpeed", 0.0) > 40.0:
+            return IMPACT_SCORE["HIGH"]
+        if w.get("precipitation", 0.0) > 2.0:
+            return IMPACT_SCORE["MEDIUM"]
+        if w.get("windSpeed", 0.0) > 25.0:
+            return IMPACT_SCORE["LOW"]
+        return IMPACT_SCORE["NONE"]
+
+    @classmethod
+    def compute_impact_level(cls, score: float) -> str:
+        if score >= 0.75:
+            return "HIGH"
+        if score >= 0.5:
+            return "MEDIUM"
+        if score >= 0.25:
+            return "LOW"
+        return "NONE"
+
+
+# ── Yardımcı fonksiyonlar ─────────────────────────────────────────────────────
 
 
 def _in_ranges(ymd: str, ranges: list[tuple[str, str]]) -> bool:
@@ -228,85 +447,12 @@ def resolve_station_type_encoded(durak_id: str) -> int:
     return STATION_TYPE_MAP.get(label, 0)
 
 
-def resolve_mock_weather(ymd: str, hour: int) -> dict[str, float | int]:
-    """weatherContextProvider.ts ile uyumlu deterministik mock."""
-    try:
-        parsed = datetime.strptime(ymd, "%Y-%m-%d")
-        month = parsed.month
-        day_of_month = parsed.day
-    except ValueError:
-        month, day_of_month = 3, 1
-
-    seed = sum(ord(c) for c in ymd) + hour + day_of_month
-
-    if ymd == "2025-03-15" and hour >= 17:
-        return {
-            "temperature": 8.0,
-            "rain": 1,
-            "snow": 0,
-            "weather_impact_score": IMPACT_SCORE["HIGH"],
-        }
-    if ymd == "2025-01-25":
-        return {
-            "temperature": -2.0,
-            "rain": 0,
-            "snow": 1,
-            "weather_impact_score": IMPACT_SCORE["MEDIUM"],
-        }
-    if month >= 6 and month <= 8 and seed % 5 == 0:
-        return {
-            "temperature": 32.0,
-            "rain": 0,
-            "snow": 0,
-            "weather_impact_score": IMPACT_SCORE["LOW"],
-        }
-    if seed % 7 == 0:
-        temp = 6.0 if month <= 3 or month >= 11 else 14.0
-        return {
-            "temperature": temp,
-            "rain": 1,
-            "snow": 0,
-            "weather_impact_score": IMPACT_SCORE["HIGH"],
-        }
-    if seed % 11 == 0:
-        return {
-            "temperature": 12.0,
-            "rain": 0,
-            "snow": 0,
-            "weather_impact_score": IMPACT_SCORE["LOW"],
-        }
-
-    temp = (5 + (hour % 6)) if month <= 3 or month >= 11 else (15 + (hour % 8))
-    return {
-        "temperature": float(temp),
-        "rain": 0,
-        "snow": 0,
-        "weather_impact_score": IMPACT_SCORE["NONE"],
-    }
-
-
-def resolve_event_features(durak_id: str, ymd: str, hour: int) -> tuple[int, int, float]:
-    best_score = 0.0
-    best_type = 0
-    has_event = 0
-    for ev in MOCK_EVENTS:
-        if ev["date"] != ymd:
-            continue
-        if durak_id not in ev["affectedStationGroupIds"]:
-            continue
-        if hour < ev["startHour"] or hour > ev["endHour"]:
-            continue
-        score = IMPACT_SCORE.get(ev["impactLevel"], 0.0)
-        if score >= best_score:
-            best_score = score
-            best_type = EVENT_TYPE_MAP.get(ev["eventType"], 0)
-            has_event = 1
-    return has_event, best_type, best_score
+# ── HistoricalFeatureStore ────────────────────────────────────────────────────
 
 
 @dataclass
 class HistoricalFeatureStore:
-    """(durakId, date, hour) -> yolcuSayisi; eksikte global_mean."""
+    """(durakId, date, hour) -> yolcuSayisi; eksikse global_mean."""
 
     global_mean: float
     _index: dict[tuple[str, date, int], float]
@@ -340,6 +486,9 @@ class HistoricalFeatureStore:
             if v is not None:
                 vals.append(v)
         return float(np.mean(vals)) if vals else self.global_mean
+
+
+# ── Takvim öznitelikleri ──────────────────────────────────────────────────────
 
 
 def add_calendar_features(t: pd.Series) -> pd.DataFrame:
@@ -405,6 +554,9 @@ def _row_date(d: Any) -> date:
     return pd.to_datetime(d).date()
 
 
+# ── Gelişmiş özellik matrisi ──────────────────────────────────────────────────
+
+
 def build_advanced_features(
     base: pd.DataFrame,
     historical: HistoricalFeatureStore,
@@ -426,28 +578,45 @@ def build_advanced_features(
         dates.append(d)
         ymd_list.append(d.isoformat())
 
-    adv["is_official_holiday"] = [int(y in OFFICIAL_HOLIDAYS) for y in ymd_list]
-    adv["is_religious_holiday"] = [int(y in RELIGIOUS_HOLIDAYS) for y in ymd_list]
-    adv["is_holiday_eve"] = [int(y in HOLIDAY_EVES) for y in ymd_list]
+    # ── Tatil özellikleri (JSON tabanlı) ─────────────────────────────────────
+    holiday_cache: dict[str, dict[str, Any]] = {}
+    is_holiday_arr = np.zeros(n, dtype=np.int32)
+    is_religious = np.zeros(n, dtype=np.int32)
+    is_national = np.zeros(n, dtype=np.int32)
+    is_eve = np.zeros(n, dtype=np.int32)
+    holiday_impact = np.zeros(n, dtype=np.float32)
+
+    for i, ymd in enumerate(ymd_list):
+        if ymd not in holiday_cache:
+            holiday_cache[ymd] = HolidayLoader.get_holiday_info(ymd)
+        info = holiday_cache[ymd]
+        is_holiday_arr[i] = info["is_official_holiday"]
+        is_religious[i] = info["is_religious_holiday"]
+        is_national[i] = info["is_national_holiday"]
+        is_eve[i] = info["is_holiday_eve"]
+        holiday_impact[i] = info["holiday_impact_score"]
+
+    adv["is_holiday"] = is_holiday_arr
+    adv["is_religious_holiday"] = is_religious
+    adv["is_national_holiday"] = is_national
+    adv["is_holiday_eve"] = is_eve
+    adv["holiday_impact_score"] = holiday_impact
+
+    # ── Okul / üniversite takvimi ─────────────────────────────────────────────
     adv["is_school_term"] = [int(_in_ranges(y, DATE_RANGES["school_term"])) for y in ymd_list]
-    adv["is_midterm_break"] = [
-        int(_in_ranges(y, DATE_RANGES["school_midterm"])) for y in ymd_list
-    ]
-    adv["is_university_term"] = [
-        int(_in_ranges(y, DATE_RANGES["university_term"])) for y in ymd_list
-    ]
-    adv["is_university_break"] = [
-        int(_in_ranges(y, DATE_RANGES["university_break"])) for y in ymd_list
+    adv["is_midterm_break"] = [int(_in_ranges(y, DATE_RANGES["school_midterm"])) for y in ymd_list]
+    adv["is_university_term"] = [int(_in_ranges(y, DATE_RANGES["university_term"])) for y in ymd_list]
+    adv["is_university_break"] = [int(_in_ranges(y, DATE_RANGES["university_break"])) for y in ymd_list]
+    adv["is_university_exam_week"] = [
+        int(_in_ranges(y, DATE_RANGES["university_exam_week"])) for y in ymd_list
     ]
 
+    # ── İstasyon özellikleri ──────────────────────────────────────────────────
     durak_ids = base["durakId"].astype(str).to_numpy()
-    adv["is_transfer_station"] = [
-        int(d in TRANSFER_STATION_IDS) for d in durak_ids
-    ]
-    adv["station_type_encoded"] = [
-        resolve_station_type_encoded(d) for d in durak_ids
-    ]
+    adv["is_transfer_station"] = [int(d in TRANSFER_STATION_IDS) for d in durak_ids]
+    adv["station_type_encoded"] = [resolve_station_type_encoded(d) for d in durak_ids]
 
+    # ── Lag / rolling özellikler ──────────────────────────────────────────────
     lag1 = np.zeros(n, dtype=np.float32)
     lag7 = np.zeros(n, dtype=np.float32)
     roll7 = np.zeros(n, dtype=np.float32)
@@ -465,34 +634,68 @@ def build_advanced_features(
     adv["rolling_mean_7"] = roll7
     adv["rolling_mean_30"] = roll30
 
+    # ── Etkinlik + hava özellikleri (tek döngü) ───────────────────────────────
     has_ev = np.zeros(n, dtype=np.int32)
-    ev_type = np.zeros(n, dtype=np.int32)
+    is_ev_day = np.zeros(n, dtype=np.int32)
+    is_match = np.zeros(n, dtype=np.int32)
+    is_exam = np.zeros(n, dtype=np.int32)
+    ev_type_arr = np.zeros(n, dtype=np.int32)
     ev_score = np.zeros(n, dtype=np.float32)
+
     temp = np.zeros(n, dtype=np.float32)
-    rain = np.zeros(n, dtype=np.int32)
-    snow = np.zeros(n, dtype=np.int32)
+    precip = np.zeros(n, dtype=np.float32)
+    rain = np.zeros(n, dtype=np.float32)
+    snowfall = np.zeros(n, dtype=np.float32)
+    wind_speed = np.zeros(n, dtype=np.float32)
+    wind_gusts = np.zeros(n, dtype=np.float32)
+    wind_dir = np.zeros(n, dtype=np.float32)
     w_score = np.zeros(n, dtype=np.float32)
+
+    weather_cache: dict[tuple[str, int], dict[str, float]] = {}
 
     for i in range(n):
         ymd = ymd_list[i]
         h = int(hours[i])
         d_id = str(durak_ids[i])
-        he, et, es = resolve_event_features(d_id, ymd, h)
-        has_ev[i] = he
-        ev_type[i] = et
-        ev_score[i] = es
-        w = resolve_mock_weather(ymd, h)
-        temp[i] = float(w["temperature"])
-        rain[i] = int(w["rain"])
-        snow[i] = int(w["snow"])
-        w_score[i] = float(w["weather_impact_score"])
+
+        # Etkinlik (EventLoader — JSON tabanlı)
+        ev = EventLoader.get_event_features(d_id, ymd, h)
+        has_ev[i] = ev["has_event"]
+        is_ev_day[i] = ev["is_event_day"]
+        is_match[i] = ev["is_match_day"]
+        # is_exam_week: etkinlik JSON'u VEYA takvim aralığı
+        exam_from_cal = int(_in_ranges(ymd, DATE_RANGES["university_exam_week"]))
+        is_exam[i] = max(ev["is_exam_week"], exam_from_cal)
+        ev_type_arr[i] = ev["event_type_encoded"]
+        ev_score[i] = ev["event_impact_score"]
+
+        # Hava (WeatherLoader — CSV + forecast + mevsimsel)
+        wkey = (ymd, h)
+        if wkey not in weather_cache:
+            weather_cache[wkey] = WeatherLoader.get_weather(ymd, h)
+        w = weather_cache[wkey]
+        temp[i] = w["temperature"]
+        precip[i] = w["precipitation"]
+        rain[i] = w["rain"]
+        snowfall[i] = w["snowfall"]
+        wind_speed[i] = w["windSpeed"]
+        wind_gusts[i] = w["windGusts"]
+        wind_dir[i] = w["windDirection"]
+        w_score[i] = WeatherLoader.compute_impact_score(w)
 
     adv["has_event"] = has_ev
-    adv["event_type_encoded"] = ev_type
+    adv["is_event_day"] = is_ev_day
+    adv["is_match_day"] = is_match
+    adv["is_exam_week"] = is_exam
+    adv["event_type_encoded"] = ev_type_arr
     adv["event_impact_score"] = ev_score
     adv["temperature"] = temp
+    adv["precipitation"] = precip
     adv["rain"] = rain
-    adv["snow"] = snow
+    adv["snowfall"] = snowfall
+    adv["windSpeed"] = wind_speed
+    adv["windGusts"] = wind_gusts
+    adv["windDirection"] = wind_dir
     adv["weather_impact_score"] = w_score
 
     return adv.astype(np.float32)
@@ -537,3 +740,66 @@ def build_durak_id_num(df: pd.DataFrame) -> dict[str, int]:
         key=lambda s: int(s) if s.isdigit() else 0,
     )
     return {sid: i for i, sid in enumerate(all_ids)}
+
+
+# ── Doğrulama ─────────────────────────────────────────────────────────────────
+
+
+def verify_implementation() -> None:
+    """Gerçek veri entegrasyonunu doğrular."""
+    errors: list[str] = []
+
+    def check(label: str, got: Any, expected: Any) -> None:
+        if got != expected:
+            errors.append(f"{label}: beklenen={expected}, alınan={got}")
+
+    # Tatil doğrulamaları
+    h = HolidayLoader.get_holiday_info("2026-03-20")
+    check("2026-03-20 is_official_holiday", h["is_official_holiday"], 1)
+    check("2026-03-20 is_religious_holiday", h["is_religious_holiday"], 1)
+
+    h = HolidayLoader.get_holiday_info("2026-05-27")
+    check("2026-05-27 is_official_holiday", h["is_official_holiday"], 1)
+
+    h = HolidayLoader.get_holiday_info("2026-10-29")
+    check("2026-10-29 is_official_holiday", h["is_official_holiday"], 1)
+    check("2026-10-29 is_national_holiday", h["is_national_holiday"], 1)
+
+    h = HolidayLoader.get_holiday_info("2025-01-15")
+    check("2025-01-15 is_official_holiday", h["is_official_holiday"], 0)
+
+    # EventLoader doğrulaması
+    ev = EventLoader.get_event_features("1006009", "2025-03-15", 19)
+    check("2025-03-15 saat=19 durak=1006009 is_match_day", ev["is_match_day"], 1)
+    check("2025-03-15 saat=19 durak=1006009 has_event", ev["has_event"], 1)
+
+    ev2 = EventLoader.get_event_features("1006001", "2025-03-15", 19)
+    check("2025-03-15 saat=19 durak=1006001 is_match_day (etkilenmiyor)", ev2["is_match_day"], 0)
+
+    # is_university_exam_week doğrulaması (takvim)
+    check("2025-01-10 exam_week", int(_in_ranges("2025-01-10", DATE_RANGES["university_exam_week"])), 1)
+    check("2025-03-01 not exam_week", int(_in_ranges("2025-03-01", DATE_RANGES["university_exam_week"])), 0)
+
+    # WeatherLoader doğrulaması
+    WeatherLoader._init()
+    if not WeatherLoader._exact:
+        errors.append("WeatherLoader: 2025 CSV dosyaları yüklenemedi")
+    else:
+        w = WeatherLoader.get_weather("2025-06-15", 14)
+        if w is _ZERO_WEATHER:
+            errors.append("WeatherLoader: 2025-06-15 14:00 için gerçek veri bulunamadı")
+
+        w2026 = WeatherLoader.get_weather("2026-06-15", 14)
+        if w2026 is _ZERO_WEATHER:
+            errors.append("WeatherLoader: 2026-06-15 14:00 mevsimsel ortalama hesaplanamadı")
+
+    if errors:
+        print("verify_implementation: HATALAR:")
+        for e in errors:
+            print(f"  ✗ {e}")
+    else:
+        print("verify_implementation: TÜM KONTROLLER BAŞARILI")
+
+
+if __name__ == "__main__":
+    verify_implementation()

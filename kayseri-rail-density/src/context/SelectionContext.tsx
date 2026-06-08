@@ -1,10 +1,19 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import passengerDatesJson from '../../assets/data/passengerDates.json';
 import predictionDatesJson from '../../assets/data/predictionDates.json';
 import type { DisplayPassengerRow, PassengerRow, PredictionFileRow, StationRecord } from '../types';
 import { buildMergedStations } from '../utils/stations';
 import { passengerDataLoaders } from '../generated/passengerDataIndex';
 import { predictionDataLoaders } from '../generated/predictionDataIndex';
+import { useAuth } from '../auth/AuthContext';
+import { GUEST_FUTURE_DAYS } from '../auth/accessControl';
 
 const passengerDateList: string[] = (passengerDatesJson as string[]).filter(
   (d): d is string => typeof d === 'string' && d.length > 0
@@ -21,45 +30,48 @@ function localTodayYmd(): string {
   return `${y}-${m}-${day}`;
 }
 
-function mergeUniqueSorted(dates: string[], more: string[]): string[] {
-  return [...new Set([...dates, ...more])].sort();
+function localCurrentHour(): number {
+  return new Date().getHours();
 }
+
+function addDaysToYmd(ymd: string, n: number): string {
+  const d = new Date(ymd + 'T00:00:00');
+  d.setDate(d.getDate() + n);
+  const y = d.getFullYear();
+  const mo = String(d.getMonth() + 1).padStart(2, '0');
+  const dy = String(d.getDate()).padStart(2, '0');
+  return `${y}-${mo}-${dy}`;
+}
+
+function mergeUniqueSorted(a: string[], b: string[]): string[] {
+  return [...new Set([...a, ...b])].sort();
+}
+
+// Tüm mevcut tarihler (ham, filtresiz) — modül seviyesinde sabit
+const _allMergedSorted: string[] = mergeUniqueSorted(passengerDateList, predictionDateList);
 
 type DateDataKind = 'actual' | 'prediction' | 'none';
 
 type SelectionContextValue = {
-  /** Seçili günün satırları (gerçek veya tahmin, dataType ile ayrılmış) */
+  /** Seçili günün satırları (gerçek veya tahmin) */
   passengerRows: DisplayPassengerRow[];
   stations: StationRecord[];
-  /** Takvim: geçmiş + tahmin, sıralı */
+  /** Role göre filtrelenmiş tarih listesi */
   sortedDates: string[];
   tarih: string;
   saat: number;
+  /** Geçersiz tarih/saat değerlerini reddeden korumalı setter */
   setTarih: (d: string) => void;
+  /** Geçersiz saat değerini reddeden korumalı setter */
   setSaat: (h: number) => void;
   dateDataKind: DateDataKind;
-  /** Sadece tahmin; takvimde mavi nokta için (gerçek günler hariç) */
+  /** Sadece tahmin günleri (takvimde mavi nokta için) */
   markPredictionOnlyDates: string[];
+  /** Seçili günde izin verilen en erken saat; admin için 0, misafir için geçerli günün saati */
+  minAllowedSaat: number;
 };
 
 const SelectionContext = createContext<SelectionContextValue | null>(null);
-
-function initialTarih(merged: string[], actualLast: string[], pred: string[]): string {
-  const todayStr = localTodayYmd();
-  if (pred.includes(todayStr)) {
-    return todayStr;
-  }
-  if (actualLast.length) {
-    return actualLast[actualLast.length - 1]!;
-  }
-  if (pred.length) {
-    return pred[0]!;
-  }
-  if (merged.length) {
-    return merged[merged.length - 1]!;
-  }
-  return '2025-01-01';
-}
 
 function loadRowsForTarih(t: string): DisplayPassengerRow[] {
   const pLoad = (passengerDataLoaders as Record<string, (() => PassengerRow[]) | undefined>)[t];
@@ -91,33 +103,99 @@ function dateDataKindForRows(rows: DisplayPassengerRow[]): DateDataKind {
 }
 
 export function SelectionProvider({ children }: { children: React.ReactNode }) {
-  const mergedSorted = useMemo(
-    () => mergeUniqueSorted(passengerDateList, predictionDateList),
-    []
-  );
-  const markPredictionOnly = useMemo(() => {
+  const { isAdmin } = useAuth();
+  const isGuest = !isAdmin;
+
+  // ── Tarih listesi: misafir için kısıtlı pencere ───────────────────────────
+  const sortedDates = useMemo<string[]>(() => {
+    if (!isGuest) return _allMergedSorted;
+    const today = localTodayYmd();
+    const maxDay = addDaysToYmd(today, GUEST_FUTURE_DAYS);
+    return _allMergedSorted.filter((d) => d >= today && d <= maxDay);
+  }, [isGuest]);
+
+  const markPredictionOnly = useMemo<string[]>(() => {
     const actual = new Set(passengerDateList);
-    return predictionDateList.filter((d) => !actual.has(d));
-  }, []);
+    const raw = predictionDateList.filter((d) => !actual.has(d));
+    if (!isGuest) return raw;
+    const today = localTodayYmd();
+    const maxDay = addDaysToYmd(today, GUEST_FUTURE_DAYS);
+    return raw.filter((d) => d >= today && d <= maxDay);
+  }, [isGuest]);
 
   const stations = useMemo(() => buildMergedStations([]), []);
-  const sortedDates = useMemo(() => [...mergedSorted], [mergedSorted]);
-  const startT = initialTarih(mergedSorted, passengerDateList, predictionDateList);
-  const [tarih, setTarih] = useState<string>(startT);
+
+  // ── Başlangıç tarihi ──────────────────────────────────────────────────────
+  const [tarih, internalSetTarih] = useState<string>(() => {
+    if (isGuest) {
+      const today = localTodayYmd();
+      const maxDay = addDaysToYmd(today, GUEST_FUTURE_DAYS);
+      const window = _allMergedSorted.filter((d) => d >= today && d <= maxDay);
+      return window.includes(today) ? today : (window[0] ?? today);
+    }
+    const todayStr = localTodayYmd();
+    if (predictionDateList.includes(todayStr)) return todayStr;
+    if (passengerDateList.length) return passengerDateList[passengerDateList.length - 1]!;
+    if (predictionDateList.length) return predictionDateList[0]!;
+    return _allMergedSorted[_allMergedSorted.length - 1] ?? '2025-01-01';
+  });
+
   const [passengerRows, setPassengerRows] = useState<DisplayPassengerRow[]>(() =>
-    loadRowsForTarih(startT)
+    loadRowsForTarih(tarih)
   );
-  const [saat, setSaat] = useState(() => saatForRows(loadRowsForTarih(startT)));
+
+  // ── Başlangıç saati: misafir bugün için şu anki saati kullan ─────────────
+  const [saat, internalSetSaat] = useState<number>(() => {
+    const rows = loadRowsForTarih(tarih);
+    const rowMin = saatForRows(rows);
+    if (isGuest) {
+      const today = localTodayYmd();
+      if (tarih === today) return Math.max(rowMin, localCurrentHour());
+    }
+    return rowMin;
+  });
 
   const dateDataKind = useMemo(() => dateDataKindForRows(passengerRows), [passengerRows]);
 
+  // ── Seçili günde izin verilen minimum saat ────────────────────────────────
+  const minAllowedSaat = useMemo<number>(() => {
+    if (!isGuest) return 0;
+    const today = localTodayYmd();
+    return tarih === today ? localCurrentHour() : 0;
+  }, [isGuest, tarih]);
+
+  // ── Korumalı setTarih: misafir için izin verilmeyen tarihleri reddeder ────
+  const setTarih = useCallback(
+    (d: string) => {
+      if (isGuest && !sortedDates.includes(d)) return;
+      internalSetTarih(d);
+    },
+    [isGuest, sortedDates]
+  );
+
+  // ── Korumalı setSaat: misafir bugün için geçmiş saatleri reddeder ─────────
+  const setSaat = useCallback(
+    (h: number) => {
+      if (isGuest) {
+        const today = localTodayYmd();
+        if (tarih === today && h < localCurrentHour()) return;
+      }
+      internalSetSaat(h);
+    },
+    [isGuest, tarih]
+  );
+
+  // ── Tarih değiştiğinde veriyi yükle ve saati sıfırla ──────────────────────
   useEffect(() => {
     const rows = loadRowsForTarih(tarih);
     setPassengerRows(rows);
-    setSaat(saatForRows(rows));
-  }, [tarih]);
+    const rowMin = saatForRows(rows);
+    const today = localTodayYmd();
+    const minHour = isGuest && tarih === today ? localCurrentHour() : 0;
+    internalSetSaat(Math.max(rowMin, minHour));
+  }, [tarih, isGuest]);
 
-  const value = useMemo(
+  const value = useMemo<SelectionContextValue>(
     () => ({
       passengerRows,
       stations,
@@ -128,8 +206,20 @@ export function SelectionProvider({ children }: { children: React.ReactNode }) {
       setSaat,
       dateDataKind,
       markPredictionOnlyDates: markPredictionOnly,
+      minAllowedSaat,
     }),
-    [passengerRows, stations, sortedDates, tarih, saat, dateDataKind, markPredictionOnly]
+    [
+      passengerRows,
+      stations,
+      sortedDates,
+      tarih,
+      saat,
+      setTarih,
+      setSaat,
+      dateDataKind,
+      markPredictionOnly,
+      minAllowedSaat,
+    ]
   );
 
   return <SelectionContext.Provider value={value}>{children}</SelectionContext.Provider>;
