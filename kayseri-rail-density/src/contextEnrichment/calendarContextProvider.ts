@@ -3,7 +3,9 @@ import {
   SCHOOL_TERM_RANGES,
   UNIVERSITY_BREAK_RANGES,
   UNIVERSITY_TERM_RANGES,
+  UNIVERSITY_CALENDARS,
 } from './calendarContextConfig';
+import type { UniversityEventType, UniversityId } from './calendarContextConfig';
 import type { AcademicPeriod, CalendarContext } from './contextTypes';
 import {
   isDateInAnyRange,
@@ -21,6 +23,31 @@ const WEEKDAY_NAMES = [
   'Cuma',
   'Cumartesi',
 ];
+
+export type ActiveUniversityEvent = {
+  university: UniversityId;
+  type: UniversityEventType;
+  label?: string;
+};
+
+/** Verilen tarihte aktif olan üniversite takvim olaylarını döner. */
+export function getActiveUniversityEvents(date: string): {
+  activeUniversityEvents: ActiveUniversityEvent[];
+} {
+  const activeUniversityEvents: ActiveUniversityEvent[] = [];
+  for (const calendar of UNIVERSITY_CALENDARS) {
+    for (const entry of calendar.entries) {
+      if (entry.start <= date && date <= entry.end) {
+        activeUniversityEvents.push({
+          university: calendar.universityId,
+          type: entry.type,
+          label: entry.label,
+        });
+      }
+    }
+  }
+  return { activeUniversityEvents };
+}
 
 /**
  * Tarihten takvim bağlamı üretir.

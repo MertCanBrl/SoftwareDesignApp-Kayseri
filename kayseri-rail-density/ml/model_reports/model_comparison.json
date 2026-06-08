@@ -24,30 +24,30 @@
       "test_rows": 100798,
       "test_date_min": "2025-10-20",
       "test_date_max": "2025-12-31",
-      "mae": 45.77357212234482,
-      "rmse": 97.83209931720549,
-      "mape": 171.4457852633351,
-      "r2": 0.6961759557425187,
+      "mae": 45.22782563245338,
+      "rmse": 98.71206101905557,
+      "mape": 158.9490273506353,
+      "r2": 0.6906858171187713,
       "feature_importance_top5": [
         {
-          "feature": "rolling_mean_30",
-          "importance": 0.1811376140158242
+          "feature": "lag_7_day_same_hour",
+          "importance": 0.20309870880186912
         },
         {
-          "feature": "rolling_mean_7",
-          "importance": 0.17404049116724188
+          "feature": "rolling_mean_30",
+          "importance": 0.16575007989312948
         },
         {
           "feature": "lag_1_day_same_hour",
-          "importance": 0.15354212377385418
-        },
-        {
-          "feature": "lag_7_day_same_hour",
-          "importance": 0.13926223893337825
+          "importance": 0.1604467261739458
         },
         {
           "feature": "station_hour_avg",
-          "importance": 0.13912274689448487
+          "importance": 0.14195992896562618
+        },
+        {
+          "feature": "rolling_mean_7",
+          "importance": 0.13921751240328356
         }
       ]
     },
@@ -58,98 +58,30 @@
       "test_rows": 100798,
       "test_date_min": "2025-10-20",
       "test_date_max": "2025-12-31",
-      "mae": 40.03029947079888,
-      "rmse": 82.92568823832465,
-      "mape": 115.73396215337186,
-      "r2": 0.78170812868306,
+      "mae": 38.87533101196222,
+      "rmse": 78.78088366687473,
+      "mape": 113.85142149478054,
+      "r2": 0.8029841846140556,
       "feature_importance_top5": [
         {
           "feature": "lag_7_day_same_hour",
-          "importance": 0.5068989504715928
+          "importance": 0.5076654406876409
         },
         {
           "feature": "rolling_mean_7",
-          "importance": 0.3108563154961
+          "importance": 0.3096967491041305
         },
         {
           "feature": "station_hour_avg",
-          "importance": 0.07661269313842244
+          "importance": 0.07767021281973896
         },
         {
           "feature": "lag_1_day_same_hour",
-          "importance": 0.057258149725240744
-        },
-        {
-          "feature": "rolling_mean_30",
-          "importance": 0.009188589808560283
-        }
-      ]
-    },
-    {
-      "model": "XGBoost",
-      "split_mode": "time_based",
-      "evaluated_on": "time_based_test_set",
-      "test_rows": 100798,
-      "test_date_min": "2025-10-20",
-      "test_date_max": "2025-12-31",
-      "mae": 40.06106185913086,
-      "rmse": 81.60586431037754,
-      "mape": 113.90606987497227,
-      "r2": 0.7886013984680176,
-      "feature_importance_top5": [
-        {
-          "feature": "lag_7_day_same_hour",
-          "importance": 0.39327532052993774
-        },
-        {
-          "feature": "rolling_mean_7",
-          "importance": 0.24563783407211304
-        },
-        {
-          "feature": "station_hour_avg",
-          "importance": 0.10027054697275162
-        },
-        {
-          "feature": "rolling_mean_30",
-          "importance": 0.0483708493411541
+          "importance": 0.056939807041106745
         },
         {
           "feature": "is_holiday",
-          "importance": 0.035413701087236404
-        }
-      ]
-    },
-    {
-      "model": "LightGBM",
-      "split_mode": "time_based",
-      "evaluated_on": "time_based_test_set",
-      "test_rows": 100798,
-      "test_date_min": "2025-10-20",
-      "test_date_max": "2025-12-31",
-      "mae": 39.87400608940152,
-      "rmse": 84.17850689052058,
-      "mape": 141.2864514542417,
-      "r2": 0.7750625170418974,
-      "feature_importance_top5": [
-        {
-          "feature": "lag_1_day_same_hour",
-          "importance": 1192.0
-        },
-        {
-          "feature": "lag_7_day_same_hour",
-          "importance": 1190.0
-        },
-        {
-          "feature": "day",
-          "importance": 815.0
-        },
-        {
-          "feature": "station_hour_avg",
-          "importance": 814.0
-        },
-        {
-          "feature": "temperature",
-          "importance": 801.0
+          "importance": 0.009186948645770916
         }
       ]
     }

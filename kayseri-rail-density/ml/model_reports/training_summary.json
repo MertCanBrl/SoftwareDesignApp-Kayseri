@@ -1,5 +1,5 @@
 {
-  "best_model": "LightGBM",
+  "best_model": "GradientBoosting",
   "total_rows": 508715,
   "split_mode": "time_based",
   "train_rows": 407917,
@@ -12,16 +12,16 @@
   "unique_test_dates": 73,
   "overlap_date_count": 0,
   "no_date_leakage": true,
-  "feature_count": 44,
+  "feature_count": 54,
   "legacy_feature_count": 10,
   "debug_sample_size": null,
   "x_train_shape": [
     407917,
-    44
+    54
   ],
   "x_test_shape": [
     100798,
-    44
+    54
   ],
   "evaluation_split": {
     "split_mode": "time_based",
@@ -40,10 +40,10 @@
     "method": "chronological_unique_date_split"
   },
   "metrics": {
-    "mae": 39.87400608940152,
-    "rmse": 84.17850689052058,
-    "mape": 141.2864514542417,
-    "r2": 0.7750625170418974
+    "mae": 38.87533101196222,
+    "rmse": 78.78088366687473,
+    "mape": 113.85142149478054,
+    "r2": 0.8029841846140556
   },
   "metrics_evaluated_on": "time_based_test_set",
   "baseline_reference": {
