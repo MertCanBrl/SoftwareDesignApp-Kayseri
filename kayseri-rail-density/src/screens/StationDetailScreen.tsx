@@ -30,21 +30,36 @@ export function StationDetailScreen() {
   const {
     passengerRows,
     stations,
+    sortedDates,
     tarih: ctxTarih,
     saat: ctxSaat,
     setTarih,
     dateDataKind,
+    minAllowedSaat,
   } = useSelection();
 
   const durakId = String(params.durakId ?? '');
-  const tarih = typeof params.tarih === 'string' && params.tarih ? params.tarih : ctxTarih;
-  const saat = params.saat != null ? Number(params.saat) : ctxSaat;
 
+  // URL'den gelen tarih; sortedDates'e dahil değilse (misafir kısıtı) ctxTarih'e düşer
+  const tarih = useMemo(() => {
+    const paramDate = typeof params.tarih === 'string' && params.tarih ? params.tarih : '';
+    if (!paramDate || !sortedDates.includes(paramDate)) return ctxTarih;
+    return paramDate;
+  }, [params.tarih, ctxTarih, sortedDates]);
+
+  // URL'den gelen saat; minAllowedSaat'in altındaysa en küçük izin verilen değere kısıtlanır
+  const saat = useMemo(() => {
+    const paramSaat = params.saat != null ? Number(params.saat) : ctxSaat;
+    return Math.max(paramSaat, minAllowedSaat);
+  }, [params.saat, ctxSaat, minAllowedSaat]);
+
+  // Geçerli bir tarih ise context'i güncelle (korumalı setTarih zaten geçersizi reddeder)
   useEffect(() => {
-    if (typeof params.tarih === 'string' && params.tarih && params.tarih !== ctxTarih) {
-      setTarih(params.tarih);
+    const paramDate = typeof params.tarih === 'string' ? params.tarih : '';
+    if (paramDate && paramDate !== ctxTarih && sortedDates.includes(paramDate)) {
+      setTarih(paramDate);
     }
-  }, [params.tarih, ctxTarih, setTarih]);
+  }, [params.tarih, ctxTarih, setTarih, sortedDates]);
 
   const station = useMemo(() => stations.find((s) => s.durakId === durakId), [stations, durakId]);
 

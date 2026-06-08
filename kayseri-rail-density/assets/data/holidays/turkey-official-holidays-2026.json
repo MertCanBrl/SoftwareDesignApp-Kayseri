@@ -1,0 +1,96 @@
+{
+  "year": 2026,
+  "country": "TR",
+  "holidays": [
+    {
+      "name": "Yılbaşı",
+      "startDate": "2026-01-01",
+      "endDate": "2026-01-01",
+      "durationDays": 1,
+      "dayRange": "Perşembe",
+      "type": "official_holiday",
+      "expectedTransitImpact": "medium",
+      "reason": "Yeni yıl tatili nedeniyle gece ve sabah saatlerinde şehir içi hareketlilik artabilir; işe/okula gidiş haftalık normale göre azalır."
+    },
+    {
+      "name": "Ramazan Bayramı",
+      "startDate": "2026-03-20",
+      "endDate": "2026-03-22",
+      "durationDays": 3.5,
+      "dayRange": "Perşembe(Arefe), Cuma, Cumartesi, Pazar",
+      "type": "religious_holiday",
+      "expectedTransitImpact": "high",
+      "reason": "Dini bayram süresince iş ve okullar tatil olur; şehirlerarası seyahat ve akraba ziyaretleri nedeniyle terminal ve ana hatlarda yoğunluk artabilir, kentsel talep düşer."
+    },
+    {
+      "name": "23 Nisan Ulusal Egemenlik ve Çocuk Bayramı",
+      "startDate": "2026-04-23",
+      "endDate": "2026-04-23",
+      "durationDays": 1,
+      "dayRange": "Perşembe",
+      "type": "national_holiday",
+      "expectedTransitImpact": "low",
+      "reason": "Millî bayram; okullar ve pek çok kurum tatil, resmi törenler nedeniyle merkez güzergâhlarda sınırlı etki beklenir."
+    },
+    {
+      "name": "1 Mayıs Emek ve Dayanışma Günü",
+      "startDate": "2026-05-01",
+      "endDate": "2026-05-01",
+      "durationDays": 1,
+      "dayRange": "Cuma",
+      "type": "national_holiday",
+      "expectedTransitImpact": "medium",
+      "reason": "Emek Bayramı; bazı güzergâhlarda yürüyüş veya etkinlik nedeniyle trafik düzenlemesi olabilir, kent merkezinde yoğunluk değişkenlik gösterebilir."
+    },
+    {
+      "name": "19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı",
+      "startDate": "2026-05-19",
+      "endDate": "2026-05-19",
+      "durationDays": 1,
+      "dayRange": "Salı",
+      "type": "national_holiday",
+      "expectedTransitImpact": "low",
+      "reason": "Millî bayram; sabah saatlerinde tören etkinlikleri nedeniyle merkez duraklarda kısa süreli artış görülebilir, genel günlük talep düşüktür."
+    },
+    {
+      "name": "Kurban Bayramı",
+      "startDate": "2026-05-27",
+      "endDate": "2026-05-30",
+      "durationDays": 4.5,
+      "dayRange": "Salı(Arefe), Çarşamba, Perşembe, Cuma, Cumartesi",
+      "type": "religious_holiday",
+      "expectedTransitImpact": "high",
+      "reason": "Dini bayram; şehirlerarası hareketlilik ve aile ziyaretleri nedeniyle terminal yoğunluğu artar, kentsel çarşı ve iş talebi belirgin şekilde düşer."
+    },
+    {
+      "name": "15 Temmuz Demokrasi ve Millî Birlik Günü",
+      "startDate": "2026-07-15",
+      "endDate": "2026-07-15",
+      "durationDays": 1,
+      "dayRange": "Çarşamba",
+      "type": "national_holiday",
+      "expectedTransitImpact": "medium",
+      "reason": "Demokrasi anma günü; akşam saatlerinde özel etkinlikler ve toplantılar nedeniyle merkez güzergâhlarda değişken talep beklenir."
+    },
+    {
+      "name": "30 Ağustos Zafer Bayramı",
+      "startDate": "2026-08-30",
+      "endDate": "2026-08-30",
+      "durationDays": 1,
+      "dayRange": "Pazar",
+      "type": "national_holiday",
+      "expectedTransitImpact": "low",
+      "reason": "Zafer Bayramı; sabah tören saatleri dışında tatil günü normalinde seyir sürer, hafta sonu etkisiyle genel talep düşüktür."
+    },
+    {
+      "name": "29 Ekim Cumhuriyet Bayramı",
+      "startDate": "2026-10-29",
+      "endDate": "2026-10-29",
+      "durationDays": 1,
+      "dayRange": "Perşembe",
+      "type": "national_holiday",
+      "expectedTransitImpact": "medium",
+      "reason": "Cumhuriyet Bayramı; tören, yürüyüş ve kutlamaları nedeniyle merkez duraklarda artış beklenir, akşam saatlerinde şehir içi hareketlilik yüksek olabilir."
+    }
+  ]
+}

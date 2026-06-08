@@ -1,0 +1,76 @@
+{
+  "year": 2026,
+  "description": "2026 yılı Kayseri tramvay hat etkinlik ve maç takvimi",
+  "events": [
+    {
+      "id": "ev-2026-match-0124",
+      "eventType": "MATCH",
+      "date": "2026-01-24",
+      "startHour": 19,
+      "endHour": 22,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006008", "1006009", "1006010", "1006019"],
+      "description": "Kayserispor ev maçı — Kadir Has Stadyumu"
+    },
+    {
+      "id": "ev-2026-match-0214",
+      "eventType": "MATCH",
+      "date": "2026-02-14",
+      "startHour": 20,
+      "endHour": 22,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006008", "1006009", "1006010", "1006019"],
+      "description": "Kayserispor ev maçı — Kadir Has Stadyumu"
+    },
+    {
+      "id": "ev-2026-match-0307",
+      "eventType": "MATCH",
+      "date": "2026-03-07",
+      "startHour": 19,
+      "endHour": 22,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006008", "1006009", "1006010", "1006019"],
+      "description": "Kayserispor ev maçı — Kadir Has Stadyumu"
+    },
+    {
+      "id": "ev-2026-match-0411",
+      "eventType": "MATCH",
+      "date": "2026-04-11",
+      "startHour": 20,
+      "endHour": 22,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006008", "1006009", "1006010", "1006019"],
+      "description": "Kayserispor ev maçı — Kadir Has Stadyumu"
+    },
+    {
+      "id": "ev-2026-match-0502",
+      "eventType": "MATCH",
+      "date": "2026-05-02",
+      "startHour": 19,
+      "endHour": 22,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006008", "1006009", "1006010", "1006019"],
+      "description": "Kayserispor ev maçı — Kadir Has Stadyumu"
+    },
+    {
+      "id": "ev-2026-graduation-0619",
+      "eventType": "GRADUATION",
+      "date": "2026-06-19",
+      "startHour": 10,
+      "endHour": 16,
+      "impactLevel": "HIGH",
+      "affectedStationIds": ["1006048", "1006049", "1006052"],
+      "description": "Erciyes Üniversitesi mezuniyet töreni"
+    },
+    {
+      "id": "ev-2026-fair-0509",
+      "eventType": "FAIR",
+      "date": "2026-05-09",
+      "startHour": 10,
+      "endHour": 20,
+      "impactLevel": "LOW",
+      "affectedStationIds": ["1006039", "1006040", "1006041"],
+      "description": "Kayseri Fuarı"
+    }
+  ]
+}

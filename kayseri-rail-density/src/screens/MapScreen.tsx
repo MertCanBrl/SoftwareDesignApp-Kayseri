@@ -23,6 +23,8 @@ import { DensityLegend } from '../components/DensityLegend';
 import { StationMarker } from '../components/StationMarker';
 import { KAYSERI_REGION, theme } from '../constants/theme';
 import { useSelection } from '../context/SelectionContext';
+import { useAuth } from '../auth/AuthContext';
+import { LoginModal } from '../auth/LoginModal';
 import { getDensityLevel } from '../constants/densityLevels';
 import { getPredictionConfidence } from '../utils/predictionConfidence';
 import { getMapCalloutShortRecommendation } from '../utils/recommendations';
@@ -73,6 +75,9 @@ function trIncludes(hay: string, needle: string): boolean {
 }
 
 export function MapScreen() {
+  const { isAdmin } = useAuth();
+  const [loginVisible, setLoginVisible] = useState(false);
+
   const insets = useSafeAreaInsets();
   const mapRef = useRef<MapView | null>(null);
   const markerRefs = useRef<Record<string, MapMarker | null>>({});
@@ -87,6 +92,7 @@ export function MapScreen() {
     setSaat,
     dateDataKind,
     markPredictionOnlyDates,
+    minAllowedSaat,
   } = useSelection();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -300,7 +306,20 @@ export function MapScreen() {
         keyboardVerticalOffset={insets.top + 56}
       >
         <View style={styles.top}>
-          <Text style={styles.screenTitle}>Harita</Text>
+          <View style={styles.titleRow}>
+            <Text style={styles.screenTitle}>Harita</Text>
+            <Pressable
+              onPress={() => setLoginVisible(true)}
+              style={styles.hiddenLoginBtn}
+              accessibilityLabel="Yönetici girişi"
+            >
+              <Ionicons
+                name={isAdmin ? 'shield-checkmark' : 'lock-closed'}
+                size={14}
+                color={isAdmin ? '#22c55e' : theme.textMuted}
+              />
+            </Pressable>
+          </View>
           <DateTimeSelector
             sortedDates={sortedDates}
             tarih={tarih}
@@ -308,6 +327,7 @@ export function MapScreen() {
             onChangeDate={setTarih}
             onChangeHour={setSaat}
             predictionOnlyDates={markPredictionOnlyDates}
+            minHour={minAllowedSaat}
           />
           <View style={styles.legendPad}>
             <DensityLegend />
@@ -491,6 +511,11 @@ export function MapScreen() {
           </Pressable>
         </View>
       </KeyboardAvoidingView>
+
+      <LoginModal
+        visible={loginVisible}
+        onClose={() => setLoginVisible(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -505,10 +530,19 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: theme.background,
   },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   screenTitle: {
     color: theme.textPrimary,
     fontSize: 20,
     fontWeight: '800',
+  },
+  hiddenLoginBtn: {
+    padding: 6,
+    opacity: 0.4,
   },
   legendPad: { marginTop: 4 },
   mapWrap: { flex: 1, position: 'relative' },

@@ -1,7 +1,4 @@
 import {
-  HOLIDAY_EVES_2025,
-  OFFICIAL_HOLIDAYS_2025,
-  RELIGIOUS_HOLIDAYS_2025,
   SCHOOL_MIDTERM_BREAK_RANGES,
   SCHOOL_TERM_RANGES,
   UNIVERSITY_BREAK_RANGES,
@@ -10,10 +7,10 @@ import {
 import type { AcademicPeriod, CalendarContext } from './contextTypes';
 import {
   isDateInAnyRange,
-  isDateInList,
   isWeekendDate,
   parseYmd,
 } from './contextEnrichmentUtils';
+import { getHolidayInfo, getHolidaysForYear } from '../holidays/holidayLoader';
 
 const WEEKDAY_NAMES = [
   'Pazar',
@@ -26,13 +23,18 @@ const WEEKDAY_NAMES = [
 ];
 
 /**
- * Tarihten takvim bağlamı üretir (heuristic / mock tatil listeleri).
+ * Tarihten takvim bağlamı üretir.
+ * Tatil verisi JSON dosyalarından (2025/2026) yüklenir; diğer yıllar için tatil olmayan davranış gösterir.
  */
 export function getCalendarContext(date: string): CalendarContext {
+  const year = parseInt(date.slice(0, 4), 10);
+  const holidays = getHolidaysForYear(year);
+  const info = getHolidayInfo(date, holidays);
+
   const isWeekend = isWeekendDate(date);
-  const isOfficialHoliday = isDateInList(date, OFFICIAL_HOLIDAYS_2025);
-  const isReligiousHoliday = isDateInList(date, RELIGIOUS_HOLIDAYS_2025);
-  const isHolidayEve = isDateInList(date, HOLIDAY_EVES_2025);
+  const isOfficialHoliday = info.isOfficialHoliday;
+  const isReligiousHoliday = info.isReligiousHoliday;
+  const isHolidayEve = info.isHolidayEve;
   const isMidtermBreak = isDateInAnyRange(date, SCHOOL_MIDTERM_BREAK_RANGES);
   const isSchoolTerm =
     isDateInAnyRange(date, SCHOOL_TERM_RANGES) && !isMidtermBreak;

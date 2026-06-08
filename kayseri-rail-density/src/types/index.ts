@@ -23,6 +23,12 @@ export type PredictionFileRow = {
   date: string;
   hour: number;
   predictedPassengerCount: number;
+  /** 0.0–1.0 arası hava etkisi skoru (model yeniden eğitildikten sonra dolu gelir) */
+  weatherImpactScore?: number;
+  /** "NONE" | "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" */
+  weatherImpactLevel?: string;
+  /** Ana etki faktörleri, örn. ["Yağış", "Mesai çıkışı"] */
+  mainFactors?: string[];
 };
 
 export type StationRecord = {
@@ -35,3 +41,34 @@ export type StationRecord = {
 };
 
 export type HourlyPoint = { saat: number; yolcuSayisi: number };
+
+/** Open-Meteo saatlik hava durumu satırı (fetchKayseriWeather2025 çıktısı). */
+export type WeatherRow = {
+  district: string;
+  date: string;
+  time: string;
+  datetime: string;
+  temperature: number;
+  precipitation: number;
+  rain: number;
+  snowfall: number;
+  windSpeed: number;
+  windGusts: number;
+  windDirection: number;
+};
+
+/** WeatherRow + tatil ve takvim feature'ları (buildWeatherHolidayDataset çıktısı). */
+export type WeatherHolidayRow = WeatherRow & {
+  isOfficialHoliday: boolean;
+  isReligiousHoliday: boolean;
+  isNationalHoliday: boolean;
+  isHolidayEve: boolean;
+  holidayName: string | null;
+  holidayType: string | null;
+  holidayDuration: number | null;
+  expectedTransitImpact: string | null;
+  dayOfWeek: number;
+  month: number;
+  season: 'spring' | 'summer' | 'autumn' | 'winter';
+  explanationText: string;
+};

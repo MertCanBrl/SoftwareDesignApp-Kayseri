@@ -12,6 +12,8 @@
     "train-ml": "python3 ml/train_model.py",
     "train-ml-advanced": "python3 ml/train_model.py",
     "fetch-stations": "node scripts/fetchStationCoordinates.js",
+    "fetch:weather": "tsx scripts/fetchKayseriWeather2025.ts",
+    "build:holiday-dataset": "tsx scripts/buildWeatherHolidayDataset.ts",
     "demo-transit-network": "tsx src/transitNetwork/demoTransitNetwork.ts",
     "demo-direction-split": "tsx src/directionSplit/demoDirectionSplit.ts",
     "demo-segment-occupancy": "tsx src/segmentOccupancy/demoSegmentOccupancy.ts",

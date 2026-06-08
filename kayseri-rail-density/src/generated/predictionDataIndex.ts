@@ -4,11 +4,6 @@ import type { PredictionFileRow } from '../types';
 type Loader = () => PredictionFileRow[];
 
 export const predictionDataLoaders: Record<string, Loader> = {
-  '2026-05-16': () => require('../../assets/data/predictions-by-date/2026-05-16.json') as PredictionFileRow[],
-  '2026-05-17': () => require('../../assets/data/predictions-by-date/2026-05-17.json') as PredictionFileRow[],
-  '2026-05-18': () => require('../../assets/data/predictions-by-date/2026-05-18.json') as PredictionFileRow[],
-  '2026-05-19': () => require('../../assets/data/predictions-by-date/2026-05-19.json') as PredictionFileRow[],
-  '2026-05-20': () => require('../../assets/data/predictions-by-date/2026-05-20.json') as PredictionFileRow[],
   '2026-05-21': () => require('../../assets/data/predictions-by-date/2026-05-21.json') as PredictionFileRow[],
   '2026-05-22': () => require('../../assets/data/predictions-by-date/2026-05-22.json') as PredictionFileRow[],
   '2026-05-23': () => require('../../assets/data/predictions-by-date/2026-05-23.json') as PredictionFileRow[],
@@ -369,5 +364,10 @@ export const predictionDataLoaders: Record<string, Loader> = {
   '2027-05-13': () => require('../../assets/data/predictions-by-date/2027-05-13.json') as PredictionFileRow[],
   '2027-05-14': () => require('../../assets/data/predictions-by-date/2027-05-14.json') as PredictionFileRow[],
   '2027-05-15': () => require('../../assets/data/predictions-by-date/2027-05-15.json') as PredictionFileRow[],
+  '2027-05-16': () => require('../../assets/data/predictions-by-date/2027-05-16.json') as PredictionFileRow[],
+  '2027-05-17': () => require('../../assets/data/predictions-by-date/2027-05-17.json') as PredictionFileRow[],
+  '2027-05-18': () => require('../../assets/data/predictions-by-date/2027-05-18.json') as PredictionFileRow[],
+  '2027-05-19': () => require('../../assets/data/predictions-by-date/2027-05-19.json') as PredictionFileRow[],
+  '2027-05-20': () => require('../../assets/data/predictions-by-date/2027-05-20.json') as PredictionFileRow[],
 };
 
