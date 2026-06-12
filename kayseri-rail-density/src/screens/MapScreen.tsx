@@ -13,6 +13,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import MapView, { Circle, type MapMarker } from 'react-native-maps';
@@ -81,6 +82,7 @@ export function MapScreen() {
   const insets = useSafeAreaInsets();
   const mapRef = useRef<MapView | null>(null);
   const markerRefs = useRef<Record<string, MapMarker | null>>({});
+  const lastMarkerPressMs = useRef<number>(0);
 
   const {
     passengerRows,
@@ -88,8 +90,10 @@ export function MapScreen() {
     sortedDates,
     tarih,
     saat,
+    minute,
     setTarih,
     setSaat,
+    setMinute,
     dateDataKind,
     markPredictionOnlyDates,
     minAllowedSaat,
@@ -109,6 +113,8 @@ export function MapScreen() {
 
   const [nearestStations, setNearestStations] = useState<NearestEntry[]>([]);
   const [focusedStationId, setFocusedStationId] = useState<string | null>(null);
+  const [selectedStationId, setSelectedStationId] = useState<string | null>(null);
+  const [selectedDir, setSelectedDir] = useState<'gidis' | 'donus'>('gidis');
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -148,6 +154,19 @@ export function MapScreen() {
     return m;
   }, [passengerRows, stations, saat]);
 
+  const selectedStation = selectedStationId
+    ? (stations.find((s) => s.durakId === selectedStationId) ?? null)
+    : null;
+  const selectedYolcu = selectedStation ? (countById.get(selectedStation.durakId) ?? 0) : 0;
+  const selectedDisplayCount =
+    selectedStation?.platformType === 'single_area'
+      ? Math.ceil(selectedYolcu / 2)
+      : selectedYolcu;
+  const selectedDensityLabel = selectedStation ? getDensityLevel(selectedYolcu).label : '';
+  const selectedRecLine = selectedStation
+    ? (calloutRecById.get(selectedStation.durakId) ?? null)
+    : null;
+
   const searchResults = useMemo(() => {
     const q = debouncedSearch.trim();
     if (!q) return [];
@@ -159,14 +178,20 @@ export function MapScreen() {
   const recomputeNearest = useCallback(
     (from: { latitude: number; longitude: number }) => {
       const withCoords = stations.filter(hasRealMapCoordinates);
-      const ranked = withCoords
-        .map((station) => ({
-          station,
-          distanceM: haversineDistanceMeters(
-            { latitude: from.latitude, longitude: from.longitude },
-            { latitude: station.latitude, longitude: station.longitude }
-          ),
-        }))
+      // Deduplicate by parentDurakId: keep only the closest platform per station
+      const closestByParent = new Map<string, NearestEntry>();
+      for (const station of withCoords) {
+        const distanceM = haversineDistanceMeters(
+          { latitude: from.latitude, longitude: from.longitude },
+          { latitude: station.latitude, longitude: station.longitude }
+        );
+        const key = station.parentDurakId;
+        const existing = closestByParent.get(key);
+        if (!existing || distanceM < existing.distanceM) {
+          closestByParent.set(key, { station, distanceM });
+        }
+      }
+      const ranked = [...closestByParent.values()]
         .sort((a, b) => a.distanceM - b.distanceM)
         .slice(0, 3);
       setNearestStations(ranked);
@@ -187,7 +212,10 @@ export function MapScreen() {
         Alert.alert('', 'Bu durak için koordinat bulunamadı');
         return;
       }
+      lastMarkerPressMs.current = Date.now();
       setFocusedStationId(station.durakId);
+      setSelectedStationId(station.durakId);
+      setSelectedDir('gidis');
       mapRef.current?.animateToRegion(
         {
           latitude: station.latitude,
@@ -196,18 +224,17 @@ export function MapScreen() {
         },
         450
       );
-      setTimeout(() => {
-        markerRefs.current[station.durakId]?.showCallout();
-      }, 520);
     },
     []
   );
 
   const onPressMap = useCallback(() => {
+    if (Date.now() - lastMarkerPressMs.current < 300) return;
     clearSearchBlurTimer();
     Keyboard.dismiss();
     setIsSearchFocused(false);
     setFocusedStationId(null);
+    setSelectedStationId(null);
   }, [clearSearchBlurTimer]);
 
   const onPressMyLocation = useCallback(async () => {
@@ -324,8 +351,9 @@ export function MapScreen() {
             sortedDates={sortedDates}
             tarih={tarih}
             saat={saat}
+            minute={minute}
             onChangeDate={setTarih}
-            onChangeHour={setSaat}
+            onChangeTime={(h, m) => { setSaat(h); setMinute(m); }}
             predictionOnlyDates={markPredictionOnlyDates}
             minHour={minAllowedSaat}
           />
@@ -355,32 +383,22 @@ export function MapScreen() {
             ) : null}
             {stations.map((station) => {
               const yolcu = countById.get(station.durakId) ?? 0;
-              const density = getDensityLevel(yolcu);
-              const color = density.color;
-              const densityLabel = density.label;
+              const color = getDensityLevel(yolcu).color;
               return (
                 <StationMarker
                   key={station.durakId}
                   station={station}
                   pinColor={color}
-                  yolcuSayisi={yolcu}
-                  densityLabel={densityLabel}
-                  saat={saat}
-                  yolcuTitle={yolcuCalloutTitle}
-                  densityTitle={densityCalloutTitle}
-                  confidenceLabel={mapConfidence}
-                  recommendationLine={calloutRecById.get(station.durakId) ?? null}
                   isMapFocused={focusedStationId === station.durakId}
                   onMarkerRef={(m) => {
                     markerRefs.current[station.durakId] = m;
                   }}
-                  onGoDetail={() =>
-                    router.push(
-                      `/station/${encodeURIComponent(station.durakId)}?tarih=${encodeURIComponent(
-                        tarih
-                      )}&saat=${encodeURIComponent(String(saat))}`
-                    )
-                  }
+                  onPress={() => {
+                    lastMarkerPressMs.current = Date.now();
+                    setFocusedStationId(station.durakId);
+                    setSelectedStationId(station.durakId);
+                    setSelectedDir('gidis');
+                  }}
                 />
               );
             })}
@@ -489,6 +507,108 @@ export function MapScreen() {
                   </Pressable>
                 );
               })}
+            </View>
+          ) : null}
+
+          {selectedStation ? (
+            <View
+              style={[
+                styles.stationPopup,
+                { bottom: cardBottom, left: searchSidePad, right: searchRightPad },
+              ]}
+            >
+              <Pressable
+                onPress={() => setSelectedStationId(null)}
+                style={styles.popupClose}
+                hitSlop={8}
+              >
+                <Ionicons name="close" size={18} color={theme.textMuted} />
+              </Pressable>
+
+              <Text style={styles.popupName}>{selectedStation.durakAd}</Text>
+
+              {selectedStation.platformType === 'single_area' ? (
+                <View style={styles.popupDirRow}>
+                  {(['gidis', 'donus'] as const).map((d) => (
+                    <TouchableOpacity
+                      key={d}
+                      onPress={() => setSelectedDir(d)}
+                      style={[styles.popupDirBtn, selectedDir === d && styles.popupDirBtnActive]}
+                      activeOpacity={0.75}
+                    >
+                      <Text
+                        style={[
+                          styles.popupDirText,
+                          selectedDir === d && styles.popupDirTextActive,
+                        ]}
+                      >
+                        {d === 'gidis' ? 'Gidiş' : 'Dönüş'}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              ) : (
+                <View style={styles.popupDirBadgeRow}>
+                  <View
+                    style={[
+                      styles.popupDirBadge,
+                      selectedStation.direction === 'gidis'
+                        ? styles.popupBadgeGidis
+                        : styles.popupBadgeDonus,
+                    ]}
+                  >
+                    <Text style={styles.popupDirBadgeText}>
+                      {selectedStation.direction === 'gidis'
+                        ? '↑ Gidiş Platformu'
+                        : '↓ Dönüş Platformu'}
+                    </Text>
+                  </View>
+                </View>
+              )}
+
+              {selectedStation.approximate ? (
+                <Text style={styles.popupWarn}>Yaklaşık konum</Text>
+              ) : null}
+
+              <Text style={styles.popupRow}>
+                <Text style={styles.popupMuted}>Saat: </Text>
+                <Text style={styles.popupVal}>{String(saat).padStart(2, '0')}:{String(minute).padStart(2, '0')}</Text>
+              </Text>
+              <Text style={styles.popupRow}>
+                <Text style={styles.popupMuted}>{yolcuCalloutTitle}: </Text>
+                <Text style={styles.popupVal}>
+                  {selectedDisplayCount.toLocaleString('tr-TR')} yolcu
+                </Text>
+              </Text>
+              <Text style={styles.popupRow}>
+                <Text style={styles.popupMuted}>{densityCalloutTitle}: </Text>
+                <Text style={styles.popupVal}>{selectedDensityLabel}</Text>
+              </Text>
+              {mapConfidence ? (
+                <Text style={styles.popupRow}>
+                  <Text style={styles.popupMuted}>Güven: </Text>
+                  <Text style={styles.popupVal}>{mapConfidence}</Text>
+                </Text>
+              ) : null}
+              {selectedRecLine ? (
+                <Text style={styles.popupRec} numberOfLines={2}>
+                  {selectedRecLine}
+                </Text>
+              ) : null}
+
+              <TouchableOpacity
+                onPress={() =>
+                  router.push(
+                    `/station/${encodeURIComponent(
+                      selectedStation.parentDurakId
+                    )}?tarih=${encodeURIComponent(tarih)}&saat=${encodeURIComponent(String(saat))}`
+                  )
+                }
+                style={styles.popupBtn}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.popupBtnText}>Detaya Git</Text>
+              </TouchableOpacity>
             </View>
           ) : null}
 
@@ -646,6 +766,72 @@ const styles = StyleSheet.create({
   nearestDist: { color: theme.accent, fontSize: 14, fontWeight: '700' },
   nearestTextHighlight: { color: theme.textPrimary },
   nearestDistHighlight: { color: '#93C5FD' },
+  stationPopup: {
+    position: 'absolute',
+    zIndex: 18,
+    backgroundColor: theme.surfaceElevated,
+    borderRadius: theme.cardRadius,
+    borderWidth: 1,
+    borderColor: theme.border,
+    padding: 14,
+    ...theme.shadow,
+  },
+  popupClose: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    padding: 4,
+    zIndex: 1,
+  },
+  popupName: {
+    color: theme.textPrimary,
+    fontSize: 15,
+    fontWeight: '700',
+    marginBottom: 8,
+    paddingRight: 28,
+  },
+  popupDirRow: { flexDirection: 'row', gap: 6, marginBottom: 10 },
+  popupDirBtn: {
+    flex: 1,
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: theme.border,
+    alignItems: 'center',
+  },
+  popupDirBtnActive: { backgroundColor: theme.accent, borderColor: theme.accent },
+  popupDirText: { color: theme.textMuted, fontSize: 12, fontWeight: '600' },
+  popupDirTextActive: { color: '#fff' },
+  popupDirBadgeRow: { marginBottom: 8 },
+  popupDirBadge: {
+    alignSelf: 'flex-start',
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+  },
+  popupBadgeGidis: { backgroundColor: 'rgba(34, 197, 94, 0.18)' },
+  popupBadgeDonus: { backgroundColor: 'rgba(251, 146, 60, 0.18)' },
+  popupDirBadgeText: { color: theme.textSecondary, fontSize: 11, fontWeight: '700' },
+  popupWarn: { color: theme.textMuted, fontSize: 11, marginBottom: 6 },
+  popupRow: { marginBottom: 4 },
+  popupMuted: { color: theme.textMuted, fontSize: 12 },
+  popupVal: { color: theme.textPrimary, fontSize: 12, fontWeight: '600' },
+  popupRec: {
+    color: theme.textSecondary,
+    fontSize: 11,
+    fontWeight: '600',
+    marginTop: 4,
+    marginBottom: 2,
+  },
+  popupBtn: {
+    marginTop: 10,
+    backgroundColor: theme.accent,
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  popupBtnText: { color: '#fff', fontWeight: '700', fontSize: 14 },
   fab: {
     position: 'absolute',
     zIndex: 12,
