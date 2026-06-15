@@ -2,6 +2,10 @@ import stationsJson from '../../assets/data/stations.json';
 import type { DisplayPassengerRow, PassengerRow, StationRecord } from '../types';
 import { DURAK_ID_CANONICAL_AD, getCanonicalDurakAd } from '../constants/durakCanonicalMap';
 import { KAYSERI_REGION } from '../constants/theme';
+import { getPlatformType } from './platformUtils';
+
+/** Perpendicular offset in degrees lat (~9 m) to separate opposing platforms. */
+const PLATFORM_LAT_OFFSET = 0.00008;
 
 const BASE_LAT = KAYSERI_REGION.latitude;
 const BASE_LON = KAYSERI_REGION.longitude;
@@ -99,15 +103,15 @@ export function buildMergedStations(
     const n = Number(idStr);
     const durakAd = DURAK_ID_CANONICAL_AD[n]!;
     const fromFile = stationMapById[idStr];
-    let latitude: number;
-    let longitude: number;
+    let baseLat: number;
+    let baseLng: number;
     let approximate: boolean;
 
     if (!fromFile) {
       const c = approximateCoord(idStr, approxIdx);
       approxIdx += 1;
-      latitude = c.latitude;
-      longitude = c.longitude;
+      baseLat = c.latitude;
+      baseLng = c.longitude;
       approximate = true;
     } else if (fromFile.lat == null || fromFile.lng == null) {
       console.warn(
@@ -115,15 +119,49 @@ export function buildMergedStations(
       );
       const c = approximateCoord(idStr, approxIdx);
       approxIdx += 1;
-      latitude = c.latitude;
-      longitude = c.longitude;
+      baseLat = c.latitude;
+      baseLng = c.longitude;
       approximate = true;
     } else {
-      latitude = fromFile.lat;
-      longitude = fromFile.lng;
+      baseLat = fromFile.lat;
+      baseLng = fromFile.lng;
       approximate = false;
     }
-    byId.set(idStr, { durakId: idStr, durakAd, latitude, longitude, approximate });
+
+    const platformType = getPlatformType(idStr);
+
+    if (platformType === 'two_separate_areas') {
+      byId.set(`${idStr}_G`, {
+        durakId: `${idStr}_G`,
+        parentDurakId: idStr,
+        durakAd: `${durakAd} (Gidiş)`,
+        latitude: baseLat + PLATFORM_LAT_OFFSET,
+        longitude: baseLng,
+        approximate,
+        platformType,
+        direction: 'gidis',
+      });
+      byId.set(`${idStr}_D`, {
+        durakId: `${idStr}_D`,
+        parentDurakId: idStr,
+        durakAd: `${durakAd} (Dönüş)`,
+        latitude: baseLat - PLATFORM_LAT_OFFSET,
+        longitude: baseLng,
+        approximate,
+        platformType,
+        direction: 'donus',
+      });
+    } else {
+      byId.set(idStr, {
+        durakId: idStr,
+        parentDurakId: idStr,
+        durakAd,
+        latitude: baseLat,
+        longitude: baseLng,
+        approximate,
+        platformType,
+      });
+    }
   }
 
   const seenPass = new Set<string>();
@@ -138,9 +176,11 @@ export function buildMergedStations(
     approxIdx += 1;
     byId.set(r.durakId, {
       durakId: r.durakId,
+      parentDurakId: r.durakId,
       durakAd: getCanonicalDurakAd(r.durakId, r.durakAd),
       ...c,
       approximate: true,
+      platformType: 'single_area',
     });
   }
 

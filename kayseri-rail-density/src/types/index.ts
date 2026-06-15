@@ -1,3 +1,5 @@
+export type PlatformType = 'single_area' | 'two_separate_areas';
+
 export type PassengerRow = {
   tarih: string;
   durakId: string;
@@ -32,12 +34,22 @@ export type PredictionFileRow = {
 };
 
 export type StationRecord = {
+  /**
+   * Unique ID for this display entry.
+   * single_area  → original durakId (e.g. "1006001")
+   * two_separate_areas → parentDurakId + suffix (e.g. "1006002_G" / "1006002_D")
+   */
   durakId: string;
+  /** Original station ID without _G/_D suffix. */
+  parentDurakId: string;
   durakAd: string;
   latitude: number;
   longitude: number;
   /** OSM bulunamadıysa yaklaşık konum */
   approximate?: boolean;
+  platformType: PlatformType;
+  /** Only set for two_separate_areas platforms. */
+  direction?: 'gidis' | 'donus';
 };
 
 export type HourlyPoint = { saat: number; yolcuSayisi: number };

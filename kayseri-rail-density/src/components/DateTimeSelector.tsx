@@ -31,8 +31,9 @@ type Props = {
   sortedDates: string[];
   tarih: string;
   saat: number;
+  minute: number;
   onChangeDate: (d: string) => void;
-  onChangeHour: (h: number) => void;
+  onChangeTime: (h: number, m: number) => void;
   /** Sadece tahmin günleri (mavi nokta) */
   predictionOnlyDates?: readonly string[];
   /**
@@ -41,6 +42,17 @@ type Props = {
    */
   minHour?: number;
 };
+
+const TIME_SLOTS: { h: number; m: number }[] = (() => {
+  const slots: { h: number; m: number }[] = [];
+  for (let h = 0; h <= 23; h++) {
+    if (h >= 1 && h <= 4) continue; // 01:00–04:50 arası tramvay yok
+    for (let m = 0; m < 60; m += 10) {
+      slots.push({ h, m });
+    }
+  }
+  return slots;
+})();
 
 function daysInMonth(year: number, month1to12: number): number {
   return new Date(year, month1to12, 0).getDate();
@@ -80,8 +92,9 @@ export function DateTimeSelector({
   sortedDates,
   tarih,
   saat,
+  minute,
   onChangeDate,
-  onChangeHour,
+  onChangeTime,
   predictionOnlyDates = [],
   minHour = 0,
 }: Props) {
@@ -116,8 +129,6 @@ export function DateTimeSelector({
     setCalendarOpen(false);
   };
 
-  const hours = Array.from({ length: 24 }, (_, h) => h);
-
   return (
     <View style={styles.wrap}>
       <View style={styles.row}>
@@ -151,15 +162,16 @@ export function DateTimeSelector({
 
       <Text style={styles.hourTitle}>Saat</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hourScroll}>
-        {hours.map((h) => {
-          const active = h === saat;
+        {TIME_SLOTS.map(({ h, m }) => {
+          const active = h === saat && m === minute;
           const disabled = h < minHour;
+          const label = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
           return (
             <Pressable
-              key={h}
+              key={label}
               accessibilityRole="button"
               accessibilityState={{ disabled }}
-              onPress={() => { if (!disabled) onChangeHour(h); }}
+              onPress={() => { if (!disabled) onChangeTime(h, m); }}
               disabled={disabled}
               style={({ pressed }) => [
                 styles.hourChip,
@@ -173,7 +185,7 @@ export function DateTimeSelector({
                 active && styles.hourTextActive,
                 disabled && styles.hourTextDisabled,
               ]}>
-                {String(h).padStart(2, '0')}:00
+                {label}
               </Text>
             </Pressable>
           );

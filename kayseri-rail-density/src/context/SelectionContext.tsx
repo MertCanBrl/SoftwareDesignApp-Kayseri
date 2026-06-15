@@ -14,6 +14,7 @@ import { passengerDataLoaders } from '../generated/passengerDataIndex';
 import { predictionDataLoaders } from '../generated/predictionDataIndex';
 import { useAuth } from '../auth/AuthContext';
 import { GUEST_FUTURE_DAYS } from '../auth/accessControl';
+import { getPlatformType } from '../utils/platformUtils';
 
 const passengerDateList: string[] = (passengerDatesJson as string[]).filter(
   (d): d is string => typeof d === 'string' && d.length > 0
@@ -60,10 +61,13 @@ type SelectionContextValue = {
   sortedDates: string[];
   tarih: string;
   saat: number;
+  /** Seçili saat içindeki dakika offseti: 0, 10, 20, 30, 40 veya 50 */
+  minute: number;
   /** Geçersiz tarih/saat değerlerini reddeden korumalı setter */
   setTarih: (d: string) => void;
   /** Geçersiz saat değerini reddeden korumalı setter */
   setSaat: (h: number) => void;
+  setMinute: (m: number) => void;
   dateDataKind: DateDataKind;
   /** Sadece tahmin günleri (takvimde mavi nokta için) */
   markPredictionOnlyDates: string[];
@@ -73,14 +77,30 @@ type SelectionContextValue = {
 
 const SelectionContext = createContext<SelectionContextValue | null>(null);
 
+function splitRowsForPlatforms(rows: DisplayPassengerRow[]): DisplayPassengerRow[] {
+  const result: DisplayPassengerRow[] = [];
+  for (const row of rows) {
+    if (getPlatformType(row.durakId) === 'two_separate_areas') {
+      const half1 = Math.ceil(row.yolcuSayisi / 2);
+      const half2 = Math.floor(row.yolcuSayisi / 2);
+      result.push({ ...row, durakId: `${row.durakId}_G`, yolcuSayisi: half1 });
+      result.push({ ...row, durakId: `${row.durakId}_D`, yolcuSayisi: half2 });
+    } else {
+      result.push(row);
+    }
+  }
+  return result;
+}
+
 function loadRowsForTarih(t: string): DisplayPassengerRow[] {
   const pLoad = (passengerDataLoaders as Record<string, (() => PassengerRow[]) | undefined>)[t];
   if (pLoad) {
-    return pLoad().map((r) => ({ ...r, dataType: 'actual' as const }));
+    const rows = pLoad().map((r) => ({ ...r, dataType: 'actual' as const }));
+    return splitRowsForPlatforms(rows);
   }
   const prLoad = (predictionDataLoaders as Record<string, (() => PredictionFileRow[]) | undefined>)[t];
   if (prLoad) {
-    return prLoad().map((r) => ({
+    const rows = prLoad().map((r) => ({
       tarih: r.date,
       durakId: r.durakId,
       durakAd: r.durakAd,
@@ -88,6 +108,7 @@ function loadRowsForTarih(t: string): DisplayPassengerRow[] {
       yolcuSayisi: r.predictedPassengerCount,
       dataType: 'prediction' as const,
     }));
+    return splitRowsForPlatforms(rows);
   }
   return [];
 }
@@ -155,6 +176,12 @@ export function SelectionProvider({ children }: { children: React.ReactNode }) {
     return rowMin;
   });
 
+  const [minute, internalSetMinute] = useState<number>(0);
+
+  const setMinute = useCallback((m: number) => {
+    internalSetMinute(m);
+  }, []);
+
   const dateDataKind = useMemo(() => dateDataKindForRows(passengerRows), [passengerRows]);
 
   // ── Seçili günde izin verilen minimum saat ────────────────────────────────
@@ -193,6 +220,7 @@ export function SelectionProvider({ children }: { children: React.ReactNode }) {
     const today = localTodayYmd();
     const minHour = isGuest && tarih === today ? localCurrentHour() : 0;
     internalSetSaat(Math.max(rowMin, minHour));
+    internalSetMinute(0);
   }, [tarih, isGuest]);
 
   const value = useMemo<SelectionContextValue>(
@@ -202,8 +230,10 @@ export function SelectionProvider({ children }: { children: React.ReactNode }) {
       sortedDates,
       tarih,
       saat,
+      minute,
       setTarih,
       setSaat,
+      setMinute,
       dateDataKind,
       markPredictionOnlyDates: markPredictionOnly,
       minAllowedSaat,
@@ -214,8 +244,10 @@ export function SelectionProvider({ children }: { children: React.ReactNode }) {
       sortedDates,
       tarih,
       saat,
+      minute,
       setTarih,
       setSaat,
+      setMinute,
       dateDataKind,
       markPredictionOnly,
       minAllowedSaat,
