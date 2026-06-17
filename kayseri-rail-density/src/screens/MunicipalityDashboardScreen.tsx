@@ -5,10 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { runTransitDecisionPipeline } from '../agents/transitDecisionPipeline';
 import type { AgentPipelineResult } from '../agents/agentTypes';
-import {
-  canAccessMunicipalityDashboard,
-  DEMO_ROLE,
-} from '../auth/accessControl';
+import { useAuth } from '../auth/AuthContext';
+import { canAccessMunicipalityDashboard } from '../auth/accessControl';
 import { StatCard } from '../components/StatCard';
 import { theme } from '../constants/theme';
 import { useSelection } from '../context/SelectionContext';
@@ -438,7 +436,7 @@ function MunicipalityDashboardContent({
 }
 
 export function MunicipalityDashboardScreen() {
-  const role = DEMO_ROLE;
+  const { role } = useAuth();
   const allowed = canAccessMunicipalityDashboard(role);
   const { tarih, saat, passengerRows } = useSelection();
 

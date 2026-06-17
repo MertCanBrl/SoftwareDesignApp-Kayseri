@@ -11,7 +11,7 @@ import { getPredictionConfidence } from '../utils/predictionConfidence';
 import { getDailySummary } from '../utils/statistics';
 
 export function StatisticsScreen() {
-  const { passengerRows, sortedDates, tarih, setTarih, saat, setSaat, dateDataKind, markPredictionOnlyDates, minAllowedSaat } =
+  const { passengerRows, sortedDates, tarih, setTarih, saat, setSaat, minute, setMinute, dateDataKind, markPredictionOnlyDates, minAllowedSaat } =
     useSelection();
 
   const summary = useMemo(() => getDailySummary(passengerRows, tarih), [passengerRows, tarih]);
@@ -36,8 +36,9 @@ export function StatisticsScreen() {
           sortedDates={sortedDates}
           tarih={tarih}
           saat={saat}
+          minute={minute}
           onChangeDate={setTarih}
-          onChangeHour={setSaat}
+          onChangeTime={(h, m) => { setSaat(h); setMinute(m); }}
           predictionOnlyDates={markPredictionOnlyDates}
           minHour={minAllowedSaat}
         />

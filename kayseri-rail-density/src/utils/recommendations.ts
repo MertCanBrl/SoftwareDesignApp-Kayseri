@@ -55,25 +55,54 @@ export function getStationHourlyRows(
     .sort((a, b) => a.saat - b.saat);
 }
 
+type BestHourResult = { hour: number; passengerCount: number; densityLabel: string };
+
+function bestInRange(
+  list: ReturnType<typeof getStationHourlyRows>,
+  min: number,
+  max: number
+): BestHourResult | null {
+  const candidates = list.filter((r) => r.saat >= min && r.saat <= max);
+  if (!candidates.length) return null;
+  let best = candidates[0]!;
+  for (const r of candidates) {
+    if (r.yolcuSayisi < best.yolcuSayisi) best = r;
+    else if (r.yolcuSayisi === best.yolcuSayisi && r.saat < best.saat) best = r;
+  }
+  return { hour: best.saat, passengerCount: best.yolcuSayisi, densityLabel: getDensityLevel(best.yolcuSayisi).label };
+}
+
 /**
  * En düşük yolcu sayısına sahip saat; yoksa null.
- * Eşitlikte en erken saat.
+ * Eşitlikte en erken saat. (getCurrentAndNextRecommendation tarafından kullanılır)
  */
 export function getBestHourForStation(
   rows: DisplayPassengerRow[],
   durakId: string
-): { hour: number; passengerCount: number; densityLabel: string } | null {
+): BestHourResult | null {
   const list = getStationHourlyRows(rows, durakId);
   if (!list.length) return null;
-  let best = list[0]!;
-  for (const r of list) {
-    if (r.yolcuSayisi < best.yolcuSayisi) best = r;
-    else if (r.yolcuSayisi === best.yolcuSayisi && r.saat < best.saat) best = r;
-  }
+  return bestInRange(list, 0, 23);
+}
+
+export type PeriodBestHours = {
+  sabah: BestHourResult | null;   // 06:00–11:00
+  oglen: BestHourResult | null;   // 12:00–16:00
+  aksam: BestHourResult | null;   // 17:00–22:00
+};
+
+/**
+ * Sabah (06-11), öğlen (12-16) ve akşam (17-22) dilimlerinde en sakin saati döner.
+ */
+export function getBestHoursByPeriod(
+  rows: DisplayPassengerRow[],
+  durakId: string
+): PeriodBestHours {
+  const list = getStationHourlyRows(rows, durakId);
   return {
-    hour: best.saat,
-    passengerCount: best.yolcuSayisi,
-    densityLabel: getDensityLevel(best.yolcuSayisi).label,
+    sabah: bestInRange(list, 6, 11),
+    oglen: bestInRange(list, 12, 16),
+    aksam: bestInRange(list, 17, 22),
   };
 }
 
