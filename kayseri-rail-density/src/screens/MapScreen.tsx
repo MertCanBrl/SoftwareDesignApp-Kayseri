@@ -158,11 +158,8 @@ export function MapScreen() {
     ? (stations.find((s) => s.durakId === selectedStationId) ?? null)
     : null;
   const selectedYolcu = selectedStation ? (countById.get(selectedStation.durakId) ?? 0) : 0;
-  const selectedDisplayCount =
-    selectedStation?.platformType === 'single_area'
-      ? Math.ceil(selectedYolcu / 2)
-      : selectedYolcu;
-  const selectedDensityLabel = selectedStation ? getDensityLevel(selectedYolcu).label : '';
+  const selectedDisplayCount = selectedYolcu;
+  const selectedDensityLabel = selectedStation ? getDensityLevel(selectedDisplayCount).label : '';
   const selectedRecLine = selectedStation
     ? (calloutRecById.get(selectedStation.durakId) ?? null)
     : null;
@@ -600,7 +597,7 @@ export function MapScreen() {
                 onPress={() =>
                   router.push(
                     `/station/${encodeURIComponent(
-                      selectedStation.parentDurakId
+                      selectedStation.durakId
                     )}?tarih=${encodeURIComponent(tarih)}&saat=${encodeURIComponent(String(saat))}`
                   )
                 }

@@ -42,8 +42,10 @@ export function MapScreen() {
     sortedDates,
     tarih,
     saat,
+    minute,
     setTarih,
     setSaat,
+    setMinute,
     dateDataKind,
     markPredictionOnlyDates,
     minAllowedSaat,
@@ -96,8 +98,9 @@ export function MapScreen() {
           sortedDates={sortedDates}
           tarih={tarih}
           saat={saat}
+          minute={minute}
           onChangeDate={setTarih}
-          onChangeHour={setSaat}
+          onChangeTime={(h, m) => { setSaat(h); setMinute(m); }}
           predictionOnlyDates={markPredictionOnlyDates}
           minHour={minAllowedSaat}
         />

@@ -107,6 +107,9 @@ function loadRowsForTarih(t: string): DisplayPassengerRow[] {
       saat: r.hour,
       yolcuSayisi: r.predictedPassengerCount,
       dataType: 'prediction' as const,
+      weatherImpactScore: r.weatherImpactScore,
+      weatherImpactLevel: r.weatherImpactLevel,
+      mainFactors: r.mainFactors,
     }));
     return splitRowsForPlatforms(rows);
   }

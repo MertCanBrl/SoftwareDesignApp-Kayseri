@@ -1,5 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useMemo } from 'react';
+import type { StationRecord } from '../types';
 import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,12 +8,12 @@ import { StatusBar } from 'expo-status-bar';
 import { PassengerChart } from '../components/PassengerChart';
 import { StatCard } from '../components/StatCard';
 import { theme } from '../constants/theme';
-import { getDensityLevel } from '../constants/densityLevels';
+import { getDensityLevel, TRAM_CAPACITY } from '../constants/densityLevels';
 import { useSelection } from '../context/SelectionContext';
 import { formatDisplayDate } from '../utils/date';
 import { getPredictionConfidence } from '../utils/predictionConfidence';
 import {
-  getBestHourForStation,
+  getBestHoursByPeriod,
   getCurrentAndNextRecommendation,
   getHourlyTrendData,
   getHourlyTrendDataChartSeries,
@@ -61,9 +62,51 @@ export function StationDetailScreen() {
     }
   }, [params.tarih, ctxTarih, setTarih, sortedDates]);
 
-  const station = useMemo(() => stations.find((s) => s.durakId === durakId), [stations, durakId]);
+  const stationDirect = useMemo(
+    () => stations.find((s) => s.durakId === durakId),
+    [stations, durakId]
+  );
 
-  const hourly = useMemo(() => getDailyStationData(passengerRows, durakId, tarih), [passengerRows, durakId, tarih]);
+  // parentDurakId ile gelindiğinde _G/_D child'larını bul
+  const childStations = useMemo<StationRecord[]>(() => {
+    if (stationDirect) return [];
+    const dirRank = (s: StationRecord): number => {
+      if (s.direction === 'gidis') return 0;
+      if (s.direction === 'donus') return 2;
+      if (s.durakId.endsWith('_G')) return 0;
+      if (s.durakId.endsWith('_D')) return 2;
+      return 1;
+    };
+    return stations
+      .filter((s) => s.parentDurakId === durakId && s.durakId !== durakId)
+      .sort((a, b) => dirRank(a) - dirRank(b));
+  }, [stations, durakId, stationDirect]);
+
+  const isParentView = !stationDirect && childStations.length > 0;
+
+  // Gösterilecek station kaydı: doğrudan, parent synthetic, veya undefined
+  const station = useMemo<StationRecord | undefined>(() => {
+    if (stationDirect) return stationDirect;
+    if (childStations.length === 0) return undefined;
+    const first = childStations[0]!;
+    const baseName = first.durakAd.replace(/ \((Gidiş|Dönüş)\)$/, '');
+    return { ...first, durakId, durakAd: baseName, parentDurakId: durakId };
+  }, [stationDirect, childStations, durakId]);
+
+  // Saatlik veri: parent görünümünde _G + _D toplamı
+  const hourly = useMemo(() => {
+    if (!isParentView) return getDailyStationData(passengerRows, durakId, tarih);
+    const hourMap = new Map<number, number>();
+    for (const child of childStations) {
+      for (const p of getDailyStationData(passengerRows, child.durakId, tarih)) {
+        hourMap.set(p.saat, (hourMap.get(p.saat) ?? 0) + p.yolcuSayisi);
+      }
+    }
+    return [...hourMap.entries()]
+      .map(([s, y]) => ({ saat: s, yolcuSayisi: y }))
+      .sort((a, b) => a.saat - b.saat);
+  }, [passengerRows, durakId, tarih, isParentView, childStations]);
+
   const busiestHour = useMemo(() => getBusiestHour(hourly), [hourly]);
 
   const dailyTotal = useMemo(() => hourly.reduce((s, p) => s + p.yolcuSayisi, 0), [hourly]);
@@ -72,26 +115,36 @@ export function StationDetailScreen() {
     [dailyTotal, hourly.length]
   );
 
-  const selectedCount = useMemo(
-    () => getPassengerCountByStationDateHour(passengerRows, durakId, tarih, saat),
-    [passengerRows, durakId, tarih, saat]
-  );
+  // Seçilen saatteki yolcu: parent görünümünde child toplamı
+  const selectedCount = useMemo(() => {
+    if (!isParentView) return getPassengerCountByStationDateHour(passengerRows, durakId, tarih, saat);
+    let total = 0;
+    let found = false;
+    for (const child of childStations) {
+      const c = getPassengerCountByStationDateHour(passengerRows, child.durakId, tarih, saat);
+      if (c != null) { total += c; found = true; }
+    }
+    return found ? total : null;
+  }, [passengerRows, durakId, tarih, saat, isParentView, childStations]);
+
+  // Öneri / trend için ilk child'ı (veya doğrudan durakId'yi) kullan
+  const effectiveDurakId = isParentView ? (childStations[0]?.durakId ?? durakId) : durakId;
 
   const stationHourlyRows = useMemo(
-    () => getStationHourlyRows(passengerRows, durakId),
-    [passengerRows, durakId]
+    () => getStationHourlyRows(passengerRows, effectiveDurakId),
+    [passengerRows, effectiveDurakId]
   );
-  const bestHour = useMemo(
-    () => getBestHourForStation(passengerRows, durakId),
-    [passengerRows, durakId]
+  const periodBestHours = useMemo(
+    () => getBestHoursByPeriod(passengerRows, effectiveDurakId),
+    [passengerRows, effectiveDurakId]
   );
   const goRec = useMemo(
-    () => getCurrentAndNextRecommendation(passengerRows, durakId, saat),
-    [passengerRows, durakId, saat]
+    () => getCurrentAndNextRecommendation(passengerRows, effectiveDurakId, saat),
+    [passengerRows, effectiveDurakId, saat]
   );
   const trendData = useMemo(
-    () => getHourlyTrendData(passengerRows, durakId),
-    [passengerRows, durakId]
+    () => getHourlyTrendData(passengerRows, effectiveDurakId),
+    [passengerRows, effectiveDurakId]
   );
   const trendChart = useMemo(() => getHourlyTrendDataChartSeries(trendData), [trendData]);
   const hasTrendGaps = useMemo(
@@ -122,6 +175,29 @@ export function StationDetailScreen() {
   const isPrediction = dateDataKind === 'prediction';
   const hasStationHourly = stationHourlyRows.length > 0;
 
+  // Kapasite uyarısı: 75% warn, 90% critical, 100%+ over
+  const capacityInfo = useMemo(() => {
+    if (selectedCount == null || selectedCount <= 0) return null;
+    const ratio = selectedCount / TRAM_CAPACITY;
+    if (ratio >= 1.0) return { ratio, level: 'over' as const, pct: Math.round(ratio * 100) };
+    if (ratio >= 0.9) return { ratio, level: 'critical' as const, pct: Math.round(ratio * 100) };
+    if (ratio >= 0.75) return { ratio, level: 'warn' as const, pct: Math.round(ratio * 100) };
+    return null;
+  }, [selectedCount]);
+
+  // Seçilen saatin bağlam faktörleri (yalnızca tahmin modunda)
+  const contextFactors = useMemo(() => {
+    if (!isPrediction) return null;
+    const row = passengerRows.find(
+      (r) => r.durakId === effectiveDurakId && r.saat === saat && r.dataType === 'prediction'
+    );
+    if (!row) return null;
+    const factors = row.mainFactors ?? [];
+    const weatherLevel = row.weatherImpactLevel ?? 'NONE';
+    if (factors.length === 0 && weatherLevel === 'NONE') return null;
+    return { factors, weatherLevel, weatherScore: row.weatherImpactScore ?? 0 };
+  }, [passengerRows, effectiveDurakId, saat, isPrediction]);
+
   if (!station) {
     return (
       <SafeAreaView style={styles.safe}>
@@ -138,12 +214,13 @@ export function StationDetailScreen() {
 
   const detailConfidence = dateDataKind === 'prediction' ? getPredictionConfidence(tarih) : null;
 
+  const platformNote = isParentView ? ' · Gidiş + Dönüş toplamı' : '';
   const yolcuLine =
     isPrediction
-      ? 'Tahmini yolcu (seçilen saat)'
+      ? `Tahmini yolcu (seçilen saat)${platformNote}`
       : dateDataKind === 'actual'
-        ? 'Gerçek yolcu (seçilen saat)'
-        : 'Yolcu (seçilen saat)';
+        ? `Gerçek yolcu (seçilen saat)${platformNote}`
+        : `Yolcu (seçilen saat)${platformNote}`;
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -165,11 +242,46 @@ export function StationDetailScreen() {
             <Text style={styles.heroYolcuVal}>{(selectedCount ?? 0).toLocaleString('tr-TR')}</Text>
             <Text style={styles.heroYolcuUnit}> yolcu</Text>
           </Text>
+          {isParentView && childStations.length > 0 ? (
+            <View style={styles.platformRow}>
+              {childStations.map((child) => {
+                const childCount = getPassengerCountByStationDateHour(passengerRows, child.durakId, tarih, saat);
+                return (
+                  <Text key={child.durakId} style={styles.platformItem}>
+                    {child.direction === 'gidis' ? '↑ Gidiş' : '↓ Dönüş'}: {(childCount ?? 0).toLocaleString('tr-TR')} yolcu
+                  </Text>
+                );
+              })}
+            </View>
+          ) : null}
           <View style={[styles.badge, { borderColor: color }]}>
             <View style={[styles.badgeDot, { backgroundColor: color }]} />
             <Text style={styles.badgeText}>{heroDensityLine}</Text>
           </View>
         </View>
+
+        {capacityInfo != null ? (
+          <View style={[
+            styles.capacityBanner,
+            { borderColor: capacityInfo.level === 'over' ? '#ef4444' : capacityInfo.level === 'critical' ? '#f97316' : '#eab308' },
+          ]}>
+            <Text style={styles.capacityTitle}>
+              {capacityInfo.level === 'over'
+                ? 'Kapasite aşıldı'
+                : capacityInfo.level === 'critical'
+                  ? 'Tramvay neredeyse dolu'
+                  : 'Yoğun doluluk'}
+              {' · '}%{capacityInfo.pct}
+            </Text>
+            <Text style={styles.capacityBody}>
+              {capacityInfo.level === 'over'
+                ? 'Bu saatte tramvay kapasitesinin üzerinde yolcu bekleniyor. Bir sonraki seferi değerlendirin.'
+                : capacityInfo.level === 'critical'
+                  ? 'Tramvay kapasitesine çok yakın. Bir sonraki tramvayı beklemeyi düşünebilirsiniz.'
+                  : 'Doluluk oranı yüksek. Mümkünse farklı bir saat tercih edin.'}
+            </Text>
+          </View>
+        ) : null}
 
         {!hasStationHourly ? (
           <>
@@ -188,18 +300,40 @@ export function StationDetailScreen() {
           </>
         ) : null}
 
-        {hasStationHourly && bestHour != null ? (
+        {hasStationHourly ? (
           <View style={styles.insightCard}>
-            <Text style={styles.cardTitle}>En uygun saat</Text>
-            <Text style={styles.cardEm}>
-              {isPrediction
-                ? `Tahmine göre en uygun saat: ${String(bestHour.hour).padStart(2, '0')}:00`
-                : `Seçili gün verisine göre en sakin saat: ${String(bestHour.hour).padStart(2, '0')}:00`}
+            <Text style={styles.cardTitle}>
+              {isPrediction ? 'Tahmine göre en sakin saatler' : 'En sakin saatler'}
             </Text>
-            <Text style={styles.cardP}>
-              {isPrediction ? 'Tahmin edilen yolcu' : 'Yolcu'}: {bestHour.passengerCount.toLocaleString('tr-TR')}
-            </Text>
-            <Text style={styles.cardP}>Yoğunluk: {bestHour.densityLabel}</Text>
+            <View style={styles.periodRow}>
+              {(
+                [
+                  { key: 'sabah', label: 'Sabah', sub: '06–11', data: periodBestHours.sabah },
+                  { key: 'oglen', label: 'Öğlen', sub: '12–16', data: periodBestHours.oglen },
+                  { key: 'aksam', label: 'Akşam', sub: '17–22', data: periodBestHours.aksam },
+                ] as const
+              ).map(({ key, label, sub, data }) => (
+                <View key={key} style={styles.periodCol}>
+                  <Text style={styles.periodLabel}>{label}</Text>
+                  <Text style={styles.periodSub}>{sub}</Text>
+                  {data != null ? (
+                    <>
+                      <Text style={styles.periodHour}>
+                        {String(data.hour).padStart(2, '0')}:00
+                      </Text>
+                      <Text style={styles.periodCount}>
+                        {data.passengerCount.toLocaleString('tr-TR')} yolcu
+                      </Text>
+                      <Text style={[styles.periodDensity, { color: getDensityLevel(data.passengerCount).color }]}>
+                        {data.densityLabel}
+                      </Text>
+                    </>
+                  ) : (
+                    <Text style={styles.periodNoData}>Veri yok</Text>
+                  )}
+                </View>
+              ))}
+            </View>
           </View>
         ) : null}
 
@@ -216,6 +350,31 @@ export function StationDetailScreen() {
               <Text style={styles.cardP}>
                 Sonraki saat: {goRec.next.passengerCount.toLocaleString('tr-TR')} yolcu · {goRec.next.densityLabel}
               </Text>
+            ) : null}
+          </View>
+        ) : null}
+
+        {contextFactors != null ? (
+          <View style={styles.insightCard}>
+            <Text style={styles.cardTitle}>Tahmin Faktörleri</Text>
+            {contextFactors.factors.length > 0 ? (
+              <View style={styles.factorRow}>
+                {contextFactors.factors.map((f) => (
+                  <View key={f} style={styles.factorTag}>
+                    <Text style={styles.factorTagText}>{f}</Text>
+                  </View>
+                ))}
+              </View>
+            ) : null}
+            {contextFactors.weatherLevel !== 'NONE' ? (
+              <View style={[
+                styles.weatherBadge,
+                { backgroundColor: contextFactors.weatherLevel === 'CRITICAL' || contextFactors.weatherLevel === 'HIGH' ? '#ef4444' : '#f97316' },
+              ]}>
+                <Text style={styles.weatherBadgeText}>
+                  Hava etkisi · {contextFactors.weatherLevel} · %{Math.round(contextFactors.weatherScore * 100)}
+                </Text>
+              </View>
             ) : null}
           </View>
         ) : null}
@@ -359,4 +518,54 @@ const styles = StyleSheet.create({
   trendScrollInner: { paddingVertical: 4, paddingRight: 8 },
   lineChart: { borderRadius: theme.cardRadius, marginVertical: 4 },
   grid: { gap: 12 },
+  platformRow: { marginTop: 6, gap: 2 },
+  platformItem: { color: theme.textSecondary, fontSize: 12, fontWeight: '600' },
+  capacityBanner: {
+    borderRadius: theme.cardRadius,
+    borderWidth: 1.5,
+    padding: 14,
+    gap: 6,
+    backgroundColor: theme.surface,
+  },
+  capacityTitle: { color: theme.textPrimary, fontSize: 15, fontWeight: '800' },
+  capacityBody: { color: theme.textSecondary, fontSize: 13, fontWeight: '500', lineHeight: 18 },
+  factorTag: {
+    alignSelf: 'flex-start',
+    backgroundColor: theme.surfaceElevated,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: theme.border,
+  },
+  factorTagText: { color: theme.textPrimary, fontSize: 12, fontWeight: '600' },
+  factorRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 },
+  weatherBadge: {
+    alignSelf: 'flex-start',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginTop: 4,
+  },
+  weatherBadgeText: { color: '#fff', fontSize: 12, fontWeight: '700' },
+  periodRow: {
+    flexDirection: 'row',
+    marginTop: 8,
+    gap: 4,
+  },
+  periodCol: {
+    flex: 1,
+    backgroundColor: theme.surfaceElevated,
+    borderRadius: 10,
+    padding: 10,
+    gap: 2,
+    borderWidth: 1,
+    borderColor: theme.border,
+  },
+  periodLabel: { color: theme.textSecondary, fontSize: 12, fontWeight: '700' },
+  periodSub: { color: theme.textMuted, fontSize: 10, fontWeight: '500', marginBottom: 4 },
+  periodHour: { color: theme.textPrimary, fontSize: 18, fontWeight: '800' },
+  periodCount: { color: theme.textSecondary, fontSize: 11, fontWeight: '500' },
+  periodDensity: { fontSize: 11, fontWeight: '700', marginTop: 2 },
+  periodNoData: { color: theme.textMuted, fontSize: 12, fontWeight: '500', marginTop: 4 },
 });

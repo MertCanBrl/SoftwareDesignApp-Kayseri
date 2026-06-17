@@ -16,6 +16,12 @@ export type DisplayPassengerRow = {
   saat: number;
   yolcuSayisi: number;
   dataType: 'actual' | 'prediction';
+  /** Yalnızca tahmin satırlarında dolu. Model retrain sonrası anlamlı hale gelir. */
+  weatherImpactScore?: number;
+  /** 'NONE' | 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' */
+  weatherImpactLevel?: string;
+  /** Yoğunluğu açıklayan bağlam faktörleri, örn. ["Sabah yoğunluğu", "Mesai çıkışı"] */
+  mainFactors?: string[];
 };
 
 /** ml/train_model.py çıktısı (gün JSON dosyaları) */
