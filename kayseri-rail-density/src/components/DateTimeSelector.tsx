@@ -41,6 +41,11 @@ type Props = {
    * ve tıklanamaz. 0 (varsayılan) = kısıtlama yok.
    */
   minHour?: number;
+  /**
+   * minHour saatinde izin verilen en erken dakika (0, 10, 20, 30, 40 veya 50).
+   * Yalnızca h === minHour olan slotlarda etkilidir. 0 (varsayılan) = kısıtlama yok.
+   */
+  minMinute?: number;
 };
 
 const TIME_SLOTS: { h: number; m: number }[] = (() => {
@@ -97,6 +102,7 @@ export function DateTimeSelector({
   onChangeTime,
   predictionOnlyDates = [],
   minHour = 0,
+  minMinute = 0,
 }: Props) {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [visibleMonth, setVisibleMonth] = useState(() => yearMonthFromDateString(tarih));
@@ -164,7 +170,7 @@ export function DateTimeSelector({
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hourScroll}>
         {TIME_SLOTS.map(({ h, m }) => {
           const active = h === saat && m === minute;
-          const disabled = h < minHour;
+          const disabled = h < minHour || (h === minHour && m < minMinute);
           const label = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
           return (
             <Pressable

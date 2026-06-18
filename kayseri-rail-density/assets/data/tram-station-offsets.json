@@ -479,6 +479,9 @@
         },
         "orderedStationIds": [
           "1006019",
+          "1006020",
+          "1006021",
+          "1006022",
           "1006044",
           "1006045",
           "1006046",
@@ -496,6 +499,18 @@
           "1006019": {
             "name": "Cumhuriyet Meydanı",
             "offsetMinutes": 0
+          },
+          "1006020": {
+            "name": "Hunat",
+            "offsetMinutes": 2
+          },
+          "1006021": {
+            "name": "Büyükşehir Belediyesi",
+            "offsetMinutes": 3
+          },
+          "1006022": {
+            "name": "Fuzuli",
+            "offsetMinutes": 6
           },
           "1006044": {
             "name": "Sema Yazar",
@@ -570,12 +585,27 @@
           "1006046",
           "1006045",
           "1006044",
+          "1006022",
+          "1006021",
+          "1006020",
           "1006019"
         ],
         "stations": {
           "1006019": {
             "name": "Cumhuriyet Meydanı",
             "offsetMinutes": 33
+          },
+          "1006020": {
+            "name": "Hunat",
+            "offsetMinutes": 31
+          },
+          "1006021": {
+            "name": "Büyükşehir Belediyesi",
+            "offsetMinutes": 30
+          },
+          "1006022": {
+            "name": "Fuzuli",
+            "offsetMinutes": 27
           },
           "1006044": {
             "name": "Sema Yazar",

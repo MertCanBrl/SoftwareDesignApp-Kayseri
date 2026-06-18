@@ -195,19 +195,20 @@ function addReduceFrequencyByDirection(
   drafts: RecommendationDraft[],
   seen: Set<string>
 ): void {
-  const byDirection = new Map<string, LowDemandIssue[]>();
+  // Hat + yön + saat bazında grupla — farklı hatları ayrı önerilere ayır
+  const byLineAndDirection = new Map<string, LowDemandIssue[]>();
 
   for (const issue of lowDemandIssues) {
     if (!issue.suggestReduceFrequency) continue;
-    const key = `${issue.date}|${issue.hour}|${issue.direction}`;
-    const list = byDirection.get(key) ?? [];
+    const key = `${issue.lineId}|${issue.date}|${issue.hour}|${issue.direction}`;
+    const list = byLineAndDirection.get(key) ?? [];
     list.push(issue);
-    byDirection.set(key, list);
+    byLineAndDirection.set(key, list);
   }
 
-  for (const [, issues] of byDirection) {
+  for (const [, issues] of byLineAndDirection) {
     const sample = issues[0]!;
-    const dedupeKey = `REDUCE_FREQUENCY:${sample.date}:${sample.hour}:${sample.direction}`;
+    const dedupeKey = `REDUCE_FREQUENCY:${sample.lineId}:${sample.date}:${sample.hour}:${sample.direction}`;
     if (seen.has(dedupeKey)) continue;
     seen.add(dedupeKey);
 
@@ -224,7 +225,7 @@ function addReduceFrequencyByDirection(
       lineId: sample.lineId,
       occupancyRate: minRate,
       riskLevel: 'LOW',
-      message: `${formatHourLabel(sample.hour)} saatinde ${issues.length} segmentte düşük talep (en düşük %${formatOccupancyPercent(minRate)}). Sefer sıklığının gözden geçirilmesi önerilir.`,
+      message: `${formatHourLabel(sample.hour)} saatinde ${sample.lineId} hattında ${issues.length} segmentte düşük talep (en düşük %${formatOccupancyPercent(minRate)}). Bu hattın sefer sıklığının gözden geçirilmesi önerilir.`,
       relatedStationNames: [...new Set(issues.flatMap((i) => [i.fromStationName, i.toStationName]))],
     });
   }

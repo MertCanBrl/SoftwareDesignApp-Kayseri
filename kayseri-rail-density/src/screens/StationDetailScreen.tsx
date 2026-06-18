@@ -25,6 +25,7 @@ import {
   getPassengerCountByStationDateHour,
 } from '../utils/statistics';
 import { getEstimatedStationPassages } from '../transitNetwork/stationPassageUtils';
+import { getParentId, isPlatformId } from '../utils/platformUtils';
 import { distributeHourlyPassengersToPassages } from '../transitNetwork/passengerDistributionUtils';
 import { runUserRecommendationPipeline } from '../userRecommendations/runUserRecommendationPipeline';
 
@@ -74,6 +75,7 @@ export function StationDetailScreen() {
     sortedDates,
     tarih: ctxTarih,
     saat: ctxSaat,
+    minute,
     setTarih,
     dateDataKind,
     minAllowedSaat,
@@ -243,10 +245,13 @@ export function StationDetailScreen() {
   const estimatedPassages = useMemo(() => {
     const [y, mo, d] = tarih.split('-').map(Number);
     const date = new Date(y, mo - 1, d);
-    return getEstimatedStationPassages({ stationId: durakId, date, hour: saat })
-      .filter((p) => p.confidence === 'high')
+    const platformDir = isPlatformId(durakId)
+      ? (durakId.endsWith('_G') ? 'gidis' : 'donus')
+      : null;
+    return getEstimatedStationPassages({ stationId: getParentId(durakId), date, hour: saat, minute })
+      .filter((p) => p.confidence === 'high' && (platformDir === null || p.direction === platformDir))
       .slice(0, 6);
-  }, [durakId, tarih, saat]);
+  }, [durakId, tarih, saat, minute]);
 
   // Saatlik yolcu toplamını tahmini geçişlere dağıt
   // selectedCount: hero'da gösterilen değer — parent görünümünde _G+_D toplamı, doğrudan durağa kendi sayısı
