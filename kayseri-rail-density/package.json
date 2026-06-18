@@ -20,6 +20,7 @@
     "demo-municipality-analysis": "tsx src/municipality/demoMunicipalityAnalysis.ts",
     "demo-context-enrichment": "tsx src/contextEnrichment/demoContextEnrichment.ts",
     "demo-agent-pipeline": "tsx src/agents/demoAgentPipeline.ts",
+    "demo-passenger-distribution": "tsx src/transitNetwork/demoPassengerDistribution.ts",
     "tsc": "tsc --noEmit",
     "typecheck": "tsc --noEmit"
   },

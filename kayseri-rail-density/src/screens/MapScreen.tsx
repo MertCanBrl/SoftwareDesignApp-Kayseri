@@ -31,6 +31,7 @@ import { getPredictionConfidence } from '../utils/predictionConfidence';
 import { getMapCalloutShortRecommendation } from '../utils/recommendations';
 import { getPassengerRowByStationDateHour } from '../utils/statistics';
 import { haversineDistanceMeters } from '../utils/haversine';
+import { getEstimatedStationPassages } from '../transitNetwork/stationPassageUtils';
 import type { StationRecord } from '../types';
 
 const STATION_ZOOM = { latitudeDelta: 0.012, longitudeDelta: 0.012 };
@@ -163,6 +164,20 @@ export function MapScreen() {
   const selectedRecLine = selectedStation
     ? (calloutRecById.get(selectedStation.durakId) ?? null)
     : null;
+
+  // Seçili durak için sefer çizelgesine göre tahmini geçişler.
+  // Yalnızca high confidence geçişler gösterilir.
+  // T1/T2/T3/T4 hatlarının tamamı high confidence olduğundan tüm kalibre edilmiş hatlar dahil edilir.
+  // _G/_D suffixli duraklarda parentDurakId kullanılır.
+  const estimatedPassages = useMemo(() => {
+    if (!selectedStation) return [];
+    const stationId = selectedStation.parentDurakId;
+    const [y, mo, d] = tarih.split('-').map(Number);
+    const date = new Date(y, mo - 1, d);
+    return getEstimatedStationPassages({ stationId, date, hour: saat })
+      .filter((p) => p.confidence === 'high')
+      .slice(0, 4);
+  }, [selectedStation, tarih, saat]);
 
   const searchResults = useMemo(() => {
     const q = debouncedSearch.trim();
@@ -593,6 +608,24 @@ export function MapScreen() {
                 </Text>
               ) : null}
 
+              {estimatedPassages.length > 0 ? (
+                <View style={styles.passageSection}>
+                  <Text style={styles.passageSectionTitle}>
+                    Sefer çizelgesine göre tahmini geçişler
+                  </Text>
+                  {estimatedPassages.map((p, i) => (
+                    <Text key={i} style={styles.passageRow}>
+                      {p.estimatedPassageTime}
+                      {'  ·  '}
+                      {p.lineId} {p.direction === 'gidis' ? 'Gidiş' : 'Dönüş'}
+                    </Text>
+                  ))}
+                  <Text style={styles.passageNote}>
+                    Yaklaşık geçiştir, gerçek zamanlı konum değildir.
+                  </Text>
+                </View>
+              ) : null}
+
               <TouchableOpacity
                 onPress={() =>
                   router.push(
@@ -820,6 +853,31 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 4,
     marginBottom: 2,
+  },
+  passageSection: {
+    marginTop: 8,
+    paddingTop: 8,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: theme.border,
+  },
+  passageSectionTitle: {
+    color: theme.textSecondary,
+    fontSize: 10,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 5,
+  },
+  passageRow: {
+    color: theme.textPrimary,
+    fontSize: 13,
+    fontWeight: '600',
+    marginBottom: 3,
+  },
+  passageNote: {
+    color: theme.textMuted,
+    fontSize: 10,
+    marginTop: 3,
   },
   popupBtn: {
     marginTop: 10,

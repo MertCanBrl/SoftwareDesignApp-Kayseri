@@ -1,0 +1,183 @@
+{
+  "_meta": {
+    "source": "Kayseri Tramvay Sistemi Yolcu Yoğunluğu, Seyahat Davranışı ve Gerçek Zamanlı Bilgilendirme Sistemi Analiz Raporu",
+    "dataCollectionMethod": "structured_survey",
+    "rawResponses": 407,
+    "validResponses": 406,
+    "representativenessWarning": "Örneklem temsili nüfus seçkisi değildir. Bulgular planlama kararı desteği amacıyla kullanılmalıdır. İstatistiksel genellenebilirlik iddiası taşımaz.",
+    "usageNote": "Bu veriler doğrudan kullanıcı tahmini veya tahmin modeli girdisi olarak kullanılmamalıdır. Yalnızca planlama ve bağlam desteği amaçlıdır.",
+    "createdAt": "2026-06-18"
+  },
+
+  "sample": {
+    "totalValid": 406,
+    "dailyUsers": { "n": 219, "pct": 53.9 },
+    "regularUsers": {
+      "n": 374,
+      "pct": 92.1,
+      "note": "Günlük + haftada birkaç kez kullananların toplamı"
+    },
+    "genderFemale": { "n": 214, "pct": 52.7 },
+    "occupationFullTime": { "n": 171, "pct": 42.1 },
+    "occupationStudent": { "n": 117, "pct": 28.8 },
+    "ageGroups": [
+      { "range": "18-24", "n": 120, "pct": 29.6 },
+      { "range": "25-34", "n": 65, "pct": 16.0 },
+      { "range": "35-44", "n": 78, "pct": 19.2 },
+      { "range": "45-54", "n": 63, "pct": 15.5 },
+      { "range": "55-64", "n": 40, "pct": 9.9 },
+      { "range": "65+", "n": 40, "pct": 9.9 }
+    ]
+  },
+
+  "crowding": {
+    "highCrowdingPerception": {
+      "pct": 87.5,
+      "respondents": 392,
+      "note": "Yalnızca yoğunluk sorusunu yanıtlayanlar üzerinden hesaplanmıştır.",
+      "breakdown": {
+        "alwaysCrowded": { "n": 84, "pct": 21.4 },
+        "usuallyCrowded": { "n": 259, "pct": 66.1 },
+        "sometimesCrowded": { "n": 43, "pct": 11.0 }
+      }
+    },
+    "crowdingImpacts": [
+      { "type": "standingDiscomfort", "label": "Ayakta yolculuk konforsuzluğu", "n": 173, "pct": 43.9 },
+      { "type": "mentalFatigue", "label": "Zihinsel yorgunluk", "n": 130, "pct": 33.0 },
+      { "type": "delayRisk", "label": "Geç kalma riski", "n": 83, "pct": 21.1 },
+      { "type": "safetyRisk", "label": "Güvenlik endişesi", "n": 8, "pct": 2.0 }
+    ]
+  },
+
+  "peakHours": {
+    "note": "Çoklu seçim sorusu. Yüzdeler toplanmaz; her bir dilim bağımsız yorumlanmalıdır.",
+    "morningPeak": {
+      "window": "08:00-10:00",
+      "selectionRate": { "n": 262, "pct": 64.5 },
+      "isPrimaryPeak": true
+    },
+    "earlyMorning": {
+      "window": "06:00-08:00",
+      "selectionRate": { "n": 167, "pct": 41.1 },
+      "isPrimaryPeak": false
+    },
+    "eveningPeak": {
+      "window": "18:00-20:00",
+      "selectionRate": { "n": 214, "pct": 52.7 },
+      "isPrimaryPeak": false
+    },
+    "dualPeakStructureConfirmed": true
+  },
+
+  "digitalAcceptance": {
+    "appUsageIntent": {
+      "positive": { "pct": 82.0, "note": "Kesinlikle evet + büyük ihtimalle evet toplamı" },
+      "neutral": { "pct": 13.3 },
+      "negative": { "pct": 2.5 }
+    },
+    "appUsageIntentByAge": [
+      { "range": "55-64", "pct": 90.0, "note": "En yüksek kabul grubu" },
+      { "range": "18-24", "pct": 84.2 },
+      { "range": "25-34", "pct": 81.5 },
+      { "range": "35-44", "pct": 80.8 },
+      { "range": "65+", "pct": 80.0 },
+      { "range": "45-54", "pct": 76.2 }
+    ],
+    "desiredFeatures": [
+      { "feature": "alternativeRouteRecommendation", "label": "Alternatif güzergah önerisi", "pct": 21.7 },
+      { "feature": "notificationSystem", "label": "Bildirim sistemi", "pct": 17.7 },
+      { "feature": "dailyWeeklyCrowdingForecast", "label": "Günlük/haftalık yoğunluk tahmini", "pct": 17.2 },
+      { "feature": "liveCrowdingMap", "label": "Canlı yoğunluk haritası", "pct": 15.0 }
+    ]
+  },
+
+  "behaviorChange": {
+    "wouldChangeBehaviorWithApp": { "pct": 86.0 },
+    "wouldChangeRoute": { "pct": 56.0 },
+    "wouldShiftToOffPeakHours": { "pct": 30.0 },
+    "wouldNotChange": { "pct": 8.1 },
+    "alternativeHourFlexibility": {
+      "yes": { "pct": 62.8 },
+      "uncertain": { "pct": 12.8 },
+      "potentialPool": {
+        "pct": 75.6,
+        "note": "Evet + kararsız toplamı. Talep kaydırma potansiyelini gösterir; bireysel kullanıcı için garanti değildir."
+      }
+    }
+  },
+
+  "userConcerns": [
+    { "concern": "dataAccuracyReliability", "label": "Veri doğruluğu ve güvenilirlik", "n": 152, "pct": 37.4, "priority": 1 },
+    { "concern": "usabilityTimeCost", "label": "Kullanım zorluğu / zaman maliyeti", "n": 105, "pct": 25.9, "priority": 2 },
+    { "concern": "compulsiveChecking", "label": "Zorunlu kontrol alışkanlığı riski", "n": 62, "pct": 15.3, "priority": 3 },
+    { "concern": "techAdaptationDifficulty", "label": "Teknoloji uyum güçlüğü", "n": 41, "pct": 10.1, "priority": 4 },
+    { "concern": "privacyConcern", "label": "Gizlilik endişesi", "n": 28, "pct": 6.9, "priority": 5 }
+  ],
+
+  "lineProfiles": {
+    "_sourceNote": "Rapor Tablo 2 — Kayseri Ulaşım A.Ş. (2024) referanslıdır. Bu değerler birincil resmi kaynak değil, rapor aracılığıyla alınmıştır.",
+    "_calibrationPolicy": "T3 için OFFICIAL_DURATIONS güncellemesi yapılmadan önce Kayseri Ulaşım sitesi doğrulanmalıdır. T4 için eksik ara duraklar tamamlanmadan hiçbir kalibrasyon yapılmayacaktır.",
+    "T1": {
+      "route": "Organize Sanayi – İldem 5",
+      "reportedDurationMin": 70,
+      "reportedDurationIsRange": false,
+      "surveySelections": 464,
+      "highCrowdingPct": 86.3,
+      "projectOfficialDurationMin": 70,
+      "projectScaleFactor": 0.9926,
+      "calibrationStatus": "high_confidence",
+      "calibrationNote": "Resmi kaynaklı, kalibre edilmiş. Değişiklik gerekmez."
+    },
+    "T2": {
+      "route": "Talas Cemil Baba – Cumhuriyet Meydanı",
+      "reportedDurationMin": null,
+      "reportedDurationRange": "35-40",
+      "reportedDurationIsRange": true,
+      "surveySelections": 439,
+      "highCrowdingPct": 86.2,
+      "projectOfficialDurationMin": 33,
+      "projectScaleFactor": 1.248,
+      "calibrationStatus": "high_confidence",
+      "calibrationNote": "Proje 33 dk ile kalibre edilmiştir. Rapordaki 35–40 dk yuvarlama veya farklı ölçüm noktası farkı olabilir. T2'ye dokunulmayacak."
+    },
+    "T3": {
+      "route": "İldem 5 – Kumsmall AVM (Şehir Hastanesi güzergâhı)",
+      "reportedDurationMin": 90,
+      "reportedDurationIsRange": false,
+      "surveySelections": 334,
+      "highCrowdingPct": 84.6,
+      "projectOfficialDurationMin": 78,
+      "projectScaleFactor": 0.9855,
+      "calibrationStatus": "high_confidence",
+      "calibrationNote": "Resmi süre doğrulandı: 78 dk (Kumsmall AVM → İldem 5). OFFICIAL_DURATIONS.T3 = 78 olarak kalibre edildi. scaleFactor = 78/79.1 ≈ 0.9855. confidence = 'high'. Rapordaki 90 dk ikincil kaynak olup proje için kullanılmadı.",
+      "haversineDurationMin": 79.1,
+      "action": "Tamamlandı — generateTramStationOffsets.ts güncellendi, tram-station-offsets.json yeniden üretildi."
+    },
+    "T4": {
+      "route": "Cumhuriyet Meydanı – İzzet Bayraktar Camii",
+      "reportedDurationMin": null,
+      "reportedDurationRange": "35-40",
+      "reportedDurationIsRange": true,
+      "surveySelections": 265,
+      "highCrowdingPct": 84.4,
+      "projectOfficialDurationMin": 38,
+      "projectScaleFactor": 1.4686,
+      "calibrationStatus": "high_confidence",
+      "terminalConfirmedByReport": "İzzet Bayraktar Camii (stationId: 1006075)",
+      "durationNote": "Rapor 35–40 dk aralığı vermektedir; uygulamada orta değer 38 dk kullanılmıştır. Net resmi süre bulunursa güncellenmeli.",
+      "routeStops": 16,
+      "haversineDurationMin": 25.9,
+      "action": "Tamamlandı — 16 durak, terminal 1006075, OFFICIAL_DURATIONS.T4 = 38, tram-station-offsets.json yeniden üretildi."
+    }
+  },
+
+  "planningImplications": {
+    "primaryPolicyMessage": "Yoğunluk sorunu tek müdahaleyle çözülmez; sefer planlaması, yönlendirme, gerçek zamanlı bilgi ve talep kaydırma birlikte çalışmalıdır.",
+    "crowdingIsChronicNotExceptional": true,
+    "userReadinessForDigitalSolution": "high",
+    "criticalSuccessFactor": "Veri doğruluğu ve güvenilirlik — kullanıcıların %37,4'ünün birinci çekincesi budur.",
+    "demandShiftFeasible": true,
+    "topUserPriorityWhenAskedAboutSolution": "Daha sık sefer (%59,9) — dijital çözümden önce arz artışı beklentisi.",
+    "designPrinciple": "Yüzdeler kullanıcıya doğrudan gösterilmemeli; yalnızca açıklayıcı metin olarak kullanılmalıdır."
+  }
+}

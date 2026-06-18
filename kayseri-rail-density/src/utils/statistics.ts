@@ -1,4 +1,5 @@
 import { getCanonicalDurakAd } from '../constants/durakCanonicalMap';
+import { getParentId } from './platformUtils';
 import type { DisplayPassengerRow, HourlyPoint } from '../types';
 
 /** Context’ten gelen satırlar (dataType + isteğe bağlı tahmin güveni) */
@@ -49,12 +50,12 @@ export function stationDailyTotals(rows: CountRow[], tarih: string): Map<string,
   const m = new Map<string, { durakAd: string; total: number }>();
   for (const r of rows) {
     if (r.tarih !== tarih) continue;
-    const ad = getCanonicalDurakAd(r.durakId, r.durakAd);
-    const cur = m.get(r.durakId);
+    const parentId = getParentId(r.durakId);
+    const ad = getCanonicalDurakAd(parentId, r.durakAd);
+    const cur = m.get(parentId);
     if (cur) {
       cur.total += r.yolcuSayisi;
-      cur.durakAd = ad;
-    } else m.set(r.durakId, { durakAd: ad, total: r.yolcuSayisi });
+    } else m.set(parentId, { durakAd: ad, total: r.yolcuSayisi });
   }
   return m;
 }

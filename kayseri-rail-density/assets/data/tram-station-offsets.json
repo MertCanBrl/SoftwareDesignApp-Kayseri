@@ -1,0 +1,1346 @@
+{
+  "version": "1.1",
+  "generatedAt": "2026-06-17",
+  "note": "TAHMİNİ offset değerleri — gerçek zamanlı GPS verisi değil. T1, T2 ve T3 resmi Kayseri Ulaşım sefer süreleriyle, T4 rapor kaynaklı orta değer (38 dk) ile kalibre edilmiştir. Gerçek geçiş saatleriyle ±2-5 dakika sapma olabilir.",
+  "averageSpeedKmh": 22,
+  "routes": {
+    "T1": {
+      "gidis": {
+        "terminalStationId": "1006001",
+        "terminalStationName": "Organize Sanayi",
+        "meta": {
+          "officialDurationMinutes": 70,
+          "generatedDurationBeforeScaling": 70.5,
+          "scaleFactor": 0.9926,
+          "confidence": "high",
+          "source": "haversine_distance_scaled_to_official_duration"
+        },
+        "orderedStationIds": [
+          "1006001",
+          "1006002",
+          "1006003",
+          "1006004",
+          "1006005",
+          "1006006",
+          "1006007",
+          "1006008",
+          "1006009",
+          "1006010",
+          "1006011",
+          "1006012",
+          "1006013",
+          "1006014",
+          "1006015",
+          "1006016",
+          "1006017",
+          "1006018",
+          "1006019",
+          "1006020",
+          "1006021",
+          "1006022",
+          "1006023",
+          "1006024",
+          "1006025",
+          "1006026",
+          "1006027",
+          "1006028",
+          "1006029",
+          "1006030",
+          "1006031",
+          "1006032",
+          "1006033",
+          "1006034",
+          "1006035",
+          "1006036",
+          "1006037",
+          "1006038",
+          "1006039",
+          "1006040",
+          "1006041",
+          "1006042",
+          "1006043"
+        ],
+        "stations": {
+          "1006001": {
+            "name": "Organize Sanayi",
+            "offsetMinutes": 0
+          },
+          "1006002": {
+            "name": "Tınaz Tepe",
+            "offsetMinutes": 3
+          },
+          "1006003": {
+            "name": "Ondokuz Mayıs",
+            "offsetMinutes": 5
+          },
+          "1006004": {
+            "name": "Belsin Kürsü",
+            "offsetMinutes": 7
+          },
+          "1006005": {
+            "name": "Selimiye",
+            "offsetMinutes": 8
+          },
+          "1006006": {
+            "name": "Anafartalar",
+            "offsetMinutes": 9
+          },
+          "1006007": {
+            "name": "Keykubat",
+            "offsetMinutes": 11
+          },
+          "1006008": {
+            "name": "Sakarya",
+            "offsetMinutes": 13
+          },
+          "1006009": {
+            "name": "Stadyum",
+            "offsetMinutes": 15
+          },
+          "1006010": {
+            "name": "Köprülü Kavşak",
+            "offsetMinutes": 16
+          },
+          "1006011": {
+            "name": "Yazı Bağları",
+            "offsetMinutes": 17
+          },
+          "1006012": {
+            "name": "Esentepe",
+            "offsetMinutes": 19
+          },
+          "1006013": {
+            "name": "DSI-Yeni Sanayi",
+            "offsetMinutes": 20
+          },
+          "1006014": {
+            "name": "Osman Kavuncu",
+            "offsetMinutes": 22
+          },
+          "1006015": {
+            "name": "Karayolları",
+            "offsetMinutes": 23
+          },
+          "1006016": {
+            "name": "Aydınlıkevler",
+            "offsetMinutes": 25
+          },
+          "1006017": {
+            "name": "Eski Sanayi",
+            "offsetMinutes": 26
+          },
+          "1006018": {
+            "name": "Düvenönü",
+            "offsetMinutes": 29
+          },
+          "1006019": {
+            "name": "Cumhuriyet Meydanı",
+            "offsetMinutes": 30
+          },
+          "1006020": {
+            "name": "Hunat",
+            "offsetMinutes": 31
+          },
+          "1006021": {
+            "name": "Büyükşehir Belediyesi",
+            "offsetMinutes": 33
+          },
+          "1006022": {
+            "name": "Fuzuli",
+            "offsetMinutes": 35
+          },
+          "1006023": {
+            "name": "Alpaslan",
+            "offsetMinutes": 36
+          },
+          "1006024": {
+            "name": "Tuna",
+            "offsetMinutes": 38
+          },
+          "1006025": {
+            "name": "Erciyes Evler",
+            "offsetMinutes": 40
+          },
+          "1006026": {
+            "name": "Çifte Kümbet",
+            "offsetMinutes": 41
+          },
+          "1006027": {
+            "name": "Yıldız Evler",
+            "offsetMinutes": 43
+          },
+          "1006028": {
+            "name": "Doğu Terminali",
+            "offsetMinutes": 45
+          },
+          "1006029": {
+            "name": "Mimarsinan Kavşağı",
+            "offsetMinutes": 47
+          },
+          "1006030": {
+            "name": "Gökkent",
+            "offsetMinutes": 49
+          },
+          "1006031": {
+            "name": "Kumarlı",
+            "offsetMinutes": 51
+          },
+          "1006032": {
+            "name": "Harikalar Diyarı",
+            "offsetMinutes": 54
+          },
+          "1006033": {
+            "name": "Cırgalan",
+            "offsetMinutes": 55
+          },
+          "1006034": {
+            "name": "Ahi Evran",
+            "offsetMinutes": 56
+          },
+          "1006035": {
+            "name": "Gesi Kavşağı",
+            "offsetMinutes": 58
+          },
+          "1006036": {
+            "name": "Beyazşehir",
+            "offsetMinutes": 59
+          },
+          "1006037": {
+            "name": "Toki Kavşağı",
+            "offsetMinutes": 61
+          },
+          "1006038": {
+            "name": "Millet",
+            "offsetMinutes": 63
+          },
+          "1006039": {
+            "name": "İldem1",
+            "offsetMinutes": 64
+          },
+          "1006040": {
+            "name": "İldem2",
+            "offsetMinutes": 65
+          },
+          "1006041": {
+            "name": "İldem3",
+            "offsetMinutes": 67
+          },
+          "1006042": {
+            "name": "İldem4",
+            "offsetMinutes": 68
+          },
+          "1006043": {
+            "name": "İldem5",
+            "offsetMinutes": 70
+          }
+        }
+      },
+      "donus": {
+        "terminalStationId": "1006043",
+        "terminalStationName": "İldem5",
+        "meta": {
+          "officialDurationMinutes": 70,
+          "generatedDurationBeforeScaling": 70.5,
+          "scaleFactor": 0.9926,
+          "confidence": "high",
+          "source": "haversine_distance_scaled_to_official_duration"
+        },
+        "orderedStationIds": [
+          "1006043",
+          "1006042",
+          "1006041",
+          "1006040",
+          "1006039",
+          "1006038",
+          "1006037",
+          "1006036",
+          "1006035",
+          "1006034",
+          "1006033",
+          "1006032",
+          "1006031",
+          "1006030",
+          "1006029",
+          "1006028",
+          "1006027",
+          "1006026",
+          "1006025",
+          "1006024",
+          "1006023",
+          "1006022",
+          "1006021",
+          "1006020",
+          "1006019",
+          "1006018",
+          "1006017",
+          "1006016",
+          "1006015",
+          "1006014",
+          "1006013",
+          "1006012",
+          "1006011",
+          "1006010",
+          "1006009",
+          "1006008",
+          "1006007",
+          "1006006",
+          "1006005",
+          "1006004",
+          "1006003",
+          "1006002",
+          "1006001"
+        ],
+        "stations": {
+          "1006001": {
+            "name": "Organize Sanayi",
+            "offsetMinutes": 70
+          },
+          "1006002": {
+            "name": "Tınaz Tepe",
+            "offsetMinutes": 67
+          },
+          "1006003": {
+            "name": "Ondokuz Mayıs",
+            "offsetMinutes": 65
+          },
+          "1006004": {
+            "name": "Belsin Kürsü",
+            "offsetMinutes": 63
+          },
+          "1006005": {
+            "name": "Selimiye",
+            "offsetMinutes": 62
+          },
+          "1006006": {
+            "name": "Anafartalar",
+            "offsetMinutes": 61
+          },
+          "1006007": {
+            "name": "Keykubat",
+            "offsetMinutes": 59
+          },
+          "1006008": {
+            "name": "Sakarya",
+            "offsetMinutes": 57
+          },
+          "1006009": {
+            "name": "Stadyum",
+            "offsetMinutes": 55
+          },
+          "1006010": {
+            "name": "Köprülü Kavşak",
+            "offsetMinutes": 54
+          },
+          "1006011": {
+            "name": "Yazı Bağları",
+            "offsetMinutes": 53
+          },
+          "1006012": {
+            "name": "Esentepe",
+            "offsetMinutes": 51
+          },
+          "1006013": {
+            "name": "DSI-Yeni Sanayi",
+            "offsetMinutes": 50
+          },
+          "1006014": {
+            "name": "Osman Kavuncu",
+            "offsetMinutes": 48
+          },
+          "1006015": {
+            "name": "Karayolları",
+            "offsetMinutes": 47
+          },
+          "1006016": {
+            "name": "Aydınlıkevler",
+            "offsetMinutes": 45
+          },
+          "1006017": {
+            "name": "Eski Sanayi",
+            "offsetMinutes": 44
+          },
+          "1006018": {
+            "name": "Düvenönü",
+            "offsetMinutes": 41
+          },
+          "1006019": {
+            "name": "Cumhuriyet Meydanı",
+            "offsetMinutes": 40
+          },
+          "1006020": {
+            "name": "Hunat",
+            "offsetMinutes": 39
+          },
+          "1006021": {
+            "name": "Büyükşehir Belediyesi",
+            "offsetMinutes": 37
+          },
+          "1006022": {
+            "name": "Fuzuli",
+            "offsetMinutes": 35
+          },
+          "1006023": {
+            "name": "Alpaslan",
+            "offsetMinutes": 34
+          },
+          "1006024": {
+            "name": "Tuna",
+            "offsetMinutes": 32
+          },
+          "1006025": {
+            "name": "Erciyes Evler",
+            "offsetMinutes": 30
+          },
+          "1006026": {
+            "name": "Çifte Kümbet",
+            "offsetMinutes": 29
+          },
+          "1006027": {
+            "name": "Yıldız Evler",
+            "offsetMinutes": 27
+          },
+          "1006028": {
+            "name": "Doğu Terminali",
+            "offsetMinutes": 25
+          },
+          "1006029": {
+            "name": "Mimarsinan Kavşağı",
+            "offsetMinutes": 23
+          },
+          "1006030": {
+            "name": "Gökkent",
+            "offsetMinutes": 21
+          },
+          "1006031": {
+            "name": "Kumarlı",
+            "offsetMinutes": 19
+          },
+          "1006032": {
+            "name": "Harikalar Diyarı",
+            "offsetMinutes": 16
+          },
+          "1006033": {
+            "name": "Cırgalan",
+            "offsetMinutes": 15
+          },
+          "1006034": {
+            "name": "Ahi Evran",
+            "offsetMinutes": 14
+          },
+          "1006035": {
+            "name": "Gesi Kavşağı",
+            "offsetMinutes": 12
+          },
+          "1006036": {
+            "name": "Beyazşehir",
+            "offsetMinutes": 11
+          },
+          "1006037": {
+            "name": "Toki Kavşağı",
+            "offsetMinutes": 9
+          },
+          "1006038": {
+            "name": "Millet",
+            "offsetMinutes": 7
+          },
+          "1006039": {
+            "name": "İldem1",
+            "offsetMinutes": 6
+          },
+          "1006040": {
+            "name": "İldem2",
+            "offsetMinutes": 5
+          },
+          "1006041": {
+            "name": "İldem3",
+            "offsetMinutes": 3
+          },
+          "1006042": {
+            "name": "İldem4",
+            "offsetMinutes": 2
+          },
+          "1006043": {
+            "name": "İldem5",
+            "offsetMinutes": 0
+          }
+        }
+      }
+    },
+    "T2": {
+      "gidis": {
+        "terminalStationId": "1006019",
+        "terminalStationName": "Cumhuriyet Meydanı",
+        "meta": {
+          "officialDurationMinutes": 33,
+          "generatedDurationBeforeScaling": 26.4,
+          "scaleFactor": 1.248,
+          "confidence": "high",
+          "source": "haversine_distance_scaled_to_official_duration"
+        },
+        "orderedStationIds": [
+          "1006019",
+          "1006044",
+          "1006045",
+          "1006046",
+          "1006047",
+          "1006048",
+          "1006049",
+          "1006050",
+          "1006051",
+          "1006052",
+          "1006053",
+          "1006054",
+          "1006055"
+        ],
+        "stations": {
+          "1006019": {
+            "name": "Cumhuriyet Meydanı",
+            "offsetMinutes": 0
+          },
+          "1006044": {
+            "name": "Sema Yazar",
+            "offsetMinutes": 12
+          },
+          "1006045": {
+            "name": "Şehit Mustafa Şimşek",
+            "offsetMinutes": 13
+          },
+          "1006046": {
+            "name": "Şehit Furkan Doğan",
+            "offsetMinutes": 16
+          },
+          "1006047": {
+            "name": "Teknopark",
+            "offsetMinutes": 18
+          },
+          "1006048": {
+            "name": "Erciyes Üniversitesi",
+            "offsetMinutes": 21
+          },
+          "1006049": {
+            "name": "Erciyes Üniversitesi Hastaneleri",
+            "offsetMinutes": 22
+          },
+          "1006050": {
+            "name": "Lojmanlar",
+            "offsetMinutes": 24
+          },
+          "1006051": {
+            "name": "Kızılay Kan Merkezi",
+            "offsetMinutes": 26
+          },
+          "1006052": {
+            "name": "Yurtlar Bölgesi",
+            "offsetMinutes": 28
+          },
+          "1006053": {
+            "name": "Bahçelievler",
+            "offsetMinutes": 29
+          },
+          "1006054": {
+            "name": "Talas Belediyesi",
+            "offsetMinutes": 31
+          },
+          "1006055": {
+            "name": "Talas Cemil Baba",
+            "offsetMinutes": 33
+          }
+        }
+      },
+      "donus": {
+        "terminalStationId": "1006055",
+        "terminalStationName": "Talas Cemil Baba",
+        "meta": {
+          "officialDurationMinutes": 33,
+          "generatedDurationBeforeScaling": 26.4,
+          "scaleFactor": 1.248,
+          "confidence": "high",
+          "source": "haversine_distance_scaled_to_official_duration"
+        },
+        "orderedStationIds": [
+          "1006055",
+          "1006054",
+          "1006053",
+          "1006052",
+          "1006051",
+          "1006050",
+          "1006049",
+          "1006048",
+          "1006047",
+          "1006046",
+          "1006045",
+          "1006044",
+          "1006019"
+        ],
+        "stations": {
+          "1006019": {
+            "name": "Cumhuriyet Meydanı",
+            "offsetMinutes": 33
+          },
+          "1006044": {
+            "name": "Sema Yazar",
+            "offsetMinutes": 21
+          },
+          "1006045": {
+            "name": "Şehit Mustafa Şimşek",
+            "offsetMinutes": 20
+          },
+          "1006046": {
+            "name": "Şehit Furkan Doğan",
+            "offsetMinutes": 17
+          },
+          "1006047": {
+            "name": "Teknopark",
+            "offsetMinutes": 15
+          },
+          "1006048": {
+            "name": "Erciyes Üniversitesi",
+            "offsetMinutes": 12
+          },
+          "1006049": {
+            "name": "Erciyes Üniversitesi Hastaneleri",
+            "offsetMinutes": 11
+          },
+          "1006050": {
+            "name": "Lojmanlar",
+            "offsetMinutes": 9
+          },
+          "1006051": {
+            "name": "Kızılay Kan Merkezi",
+            "offsetMinutes": 7
+          },
+          "1006052": {
+            "name": "Yurtlar Bölgesi",
+            "offsetMinutes": 5
+          },
+          "1006053": {
+            "name": "Bahçelievler",
+            "offsetMinutes": 4
+          },
+          "1006054": {
+            "name": "Talas Belediyesi",
+            "offsetMinutes": 2
+          },
+          "1006055": {
+            "name": "Talas Cemil Baba",
+            "offsetMinutes": 0
+          }
+        }
+      }
+    },
+    "T3": {
+      "gidis": {
+        "terminalStationId": "1006066",
+        "terminalStationName": "Kumsmall AVM",
+        "meta": {
+          "officialDurationMinutes": 78,
+          "generatedDurationBeforeScaling": 79.1,
+          "scaleFactor": 0.9855,
+          "confidence": "high",
+          "source": "haversine_distance_scaled_to_official_duration"
+        },
+        "orderedStationIds": [
+          "1006066",
+          "1006065",
+          "1006064",
+          "1006063",
+          "1006062",
+          "1006061",
+          "1006060",
+          "1006059",
+          "1006058",
+          "1006057",
+          "1006056",
+          "1006006",
+          "1006007",
+          "1006008",
+          "1006009",
+          "1006010",
+          "1006011",
+          "1006012",
+          "1006013",
+          "1006014",
+          "1006015",
+          "1006016",
+          "1006017",
+          "1006018",
+          "1006019",
+          "1006020",
+          "1006021",
+          "1006022",
+          "1006023",
+          "1006024",
+          "1006025",
+          "1006026",
+          "1006027",
+          "1006028",
+          "1006029",
+          "1006030",
+          "1006031",
+          "1006032",
+          "1006033",
+          "1006034",
+          "1006035",
+          "1006036",
+          "1006037",
+          "1006038",
+          "1006039",
+          "1006040",
+          "1006041",
+          "1006042",
+          "1006043"
+        ],
+        "stations": {
+          "1006006": {
+            "name": "Anafartalar",
+            "offsetMinutes": 18
+          },
+          "1006007": {
+            "name": "Keykubat",
+            "offsetMinutes": 19
+          },
+          "1006008": {
+            "name": "Sakarya",
+            "offsetMinutes": 21
+          },
+          "1006009": {
+            "name": "Stadyum",
+            "offsetMinutes": 23
+          },
+          "1006010": {
+            "name": "Köprülü Kavşak",
+            "offsetMinutes": 24
+          },
+          "1006011": {
+            "name": "Yazı Bağları",
+            "offsetMinutes": 26
+          },
+          "1006012": {
+            "name": "Esentepe",
+            "offsetMinutes": 27
+          },
+          "1006013": {
+            "name": "DSI-Yeni Sanayi",
+            "offsetMinutes": 28
+          },
+          "1006014": {
+            "name": "Osman Kavuncu",
+            "offsetMinutes": 30
+          },
+          "1006015": {
+            "name": "Karayolları",
+            "offsetMinutes": 32
+          },
+          "1006016": {
+            "name": "Aydınlıkevler",
+            "offsetMinutes": 33
+          },
+          "1006017": {
+            "name": "Eski Sanayi",
+            "offsetMinutes": 34
+          },
+          "1006018": {
+            "name": "Düvenönü",
+            "offsetMinutes": 37
+          },
+          "1006019": {
+            "name": "Cumhuriyet Meydanı",
+            "offsetMinutes": 38
+          },
+          "1006020": {
+            "name": "Hunat",
+            "offsetMinutes": 40
+          },
+          "1006021": {
+            "name": "Büyükşehir Belediyesi",
+            "offsetMinutes": 41
+          },
+          "1006022": {
+            "name": "Fuzuli",
+            "offsetMinutes": 43
+          },
+          "1006023": {
+            "name": "Alpaslan",
+            "offsetMinutes": 45
+          },
+          "1006024": {
+            "name": "Tuna",
+            "offsetMinutes": 46
+          },
+          "1006025": {
+            "name": "Erciyes Evler",
+            "offsetMinutes": 48
+          },
+          "1006026": {
+            "name": "Çifte Kümbet",
+            "offsetMinutes": 49
+          },
+          "1006027": {
+            "name": "Yıldız Evler",
+            "offsetMinutes": 51
+          },
+          "1006028": {
+            "name": "Doğu Terminali",
+            "offsetMinutes": 53
+          },
+          "1006029": {
+            "name": "Mimarsinan Kavşağı",
+            "offsetMinutes": 55
+          },
+          "1006030": {
+            "name": "Gökkent",
+            "offsetMinutes": 57
+          },
+          "1006031": {
+            "name": "Kumarlı",
+            "offsetMinutes": 59
+          },
+          "1006032": {
+            "name": "Harikalar Diyarı",
+            "offsetMinutes": 62
+          },
+          "1006033": {
+            "name": "Cırgalan",
+            "offsetMinutes": 63
+          },
+          "1006034": {
+            "name": "Ahi Evran",
+            "offsetMinutes": 64
+          },
+          "1006035": {
+            "name": "Gesi Kavşağı",
+            "offsetMinutes": 66
+          },
+          "1006036": {
+            "name": "Beyazşehir",
+            "offsetMinutes": 67
+          },
+          "1006037": {
+            "name": "Toki Kavşağı",
+            "offsetMinutes": 69
+          },
+          "1006038": {
+            "name": "Millet",
+            "offsetMinutes": 71
+          },
+          "1006039": {
+            "name": "İldem1",
+            "offsetMinutes": 72
+          },
+          "1006040": {
+            "name": "İldem2",
+            "offsetMinutes": 73
+          },
+          "1006041": {
+            "name": "İldem3",
+            "offsetMinutes": 75
+          },
+          "1006042": {
+            "name": "İldem4",
+            "offsetMinutes": 76
+          },
+          "1006043": {
+            "name": "İldem5",
+            "offsetMinutes": 78
+          },
+          "1006056": {
+            "name": "Anafartalar 2",
+            "offsetMinutes": 17
+          },
+          "1006057": {
+            "name": "Otogar",
+            "offsetMinutes": 15
+          },
+          "1006058": {
+            "name": "Fen Lisesi",
+            "offsetMinutes": 13
+          },
+          "1006059": {
+            "name": "Hurdacılar",
+            "offsetMinutes": 11
+          },
+          "1006060": {
+            "name": "Psikiyatri Hastanesi",
+            "offsetMinutes": 10
+          },
+          "1006061": {
+            "name": "Şehir Hastanesi",
+            "offsetMinutes": 8
+          },
+          "1006062": {
+            "name": "Hastane Konutları",
+            "offsetMinutes": 7
+          },
+          "1006063": {
+            "name": "Nuh Naci Yazgan",
+            "offsetMinutes": 5
+          },
+          "1006064": {
+            "name": "Mobilya Kent 1",
+            "offsetMinutes": 4
+          },
+          "1006065": {
+            "name": "Mobilya Kent 2",
+            "offsetMinutes": 2
+          },
+          "1006066": {
+            "name": "Kumsmall AVM",
+            "offsetMinutes": 0
+          }
+        }
+      },
+      "donus": {
+        "terminalStationId": "1006043",
+        "terminalStationName": "İldem5",
+        "meta": {
+          "officialDurationMinutes": 78,
+          "generatedDurationBeforeScaling": 79.1,
+          "scaleFactor": 0.9855,
+          "confidence": "high",
+          "source": "haversine_distance_scaled_to_official_duration"
+        },
+        "orderedStationIds": [
+          "1006043",
+          "1006042",
+          "1006041",
+          "1006040",
+          "1006039",
+          "1006038",
+          "1006037",
+          "1006036",
+          "1006035",
+          "1006034",
+          "1006033",
+          "1006032",
+          "1006031",
+          "1006030",
+          "1006029",
+          "1006028",
+          "1006027",
+          "1006026",
+          "1006025",
+          "1006024",
+          "1006023",
+          "1006022",
+          "1006021",
+          "1006020",
+          "1006019",
+          "1006018",
+          "1006017",
+          "1006016",
+          "1006015",
+          "1006014",
+          "1006013",
+          "1006012",
+          "1006011",
+          "1006010",
+          "1006009",
+          "1006008",
+          "1006007",
+          "1006006",
+          "1006056",
+          "1006057",
+          "1006058",
+          "1006059",
+          "1006060",
+          "1006061",
+          "1006062",
+          "1006063",
+          "1006064",
+          "1006065",
+          "1006066"
+        ],
+        "stations": {
+          "1006006": {
+            "name": "Anafartalar",
+            "offsetMinutes": 60
+          },
+          "1006007": {
+            "name": "Keykubat",
+            "offsetMinutes": 59
+          },
+          "1006008": {
+            "name": "Sakarya",
+            "offsetMinutes": 57
+          },
+          "1006009": {
+            "name": "Stadyum",
+            "offsetMinutes": 55
+          },
+          "1006010": {
+            "name": "Köprülü Kavşak",
+            "offsetMinutes": 54
+          },
+          "1006011": {
+            "name": "Yazı Bağları",
+            "offsetMinutes": 52
+          },
+          "1006012": {
+            "name": "Esentepe",
+            "offsetMinutes": 51
+          },
+          "1006013": {
+            "name": "DSI-Yeni Sanayi",
+            "offsetMinutes": 50
+          },
+          "1006014": {
+            "name": "Osman Kavuncu",
+            "offsetMinutes": 48
+          },
+          "1006015": {
+            "name": "Karayolları",
+            "offsetMinutes": 46
+          },
+          "1006016": {
+            "name": "Aydınlıkevler",
+            "offsetMinutes": 45
+          },
+          "1006017": {
+            "name": "Eski Sanayi",
+            "offsetMinutes": 44
+          },
+          "1006018": {
+            "name": "Düvenönü",
+            "offsetMinutes": 41
+          },
+          "1006019": {
+            "name": "Cumhuriyet Meydanı",
+            "offsetMinutes": 40
+          },
+          "1006020": {
+            "name": "Hunat",
+            "offsetMinutes": 38
+          },
+          "1006021": {
+            "name": "Büyükşehir Belediyesi",
+            "offsetMinutes": 37
+          },
+          "1006022": {
+            "name": "Fuzuli",
+            "offsetMinutes": 35
+          },
+          "1006023": {
+            "name": "Alpaslan",
+            "offsetMinutes": 33
+          },
+          "1006024": {
+            "name": "Tuna",
+            "offsetMinutes": 32
+          },
+          "1006025": {
+            "name": "Erciyes Evler",
+            "offsetMinutes": 30
+          },
+          "1006026": {
+            "name": "Çifte Kümbet",
+            "offsetMinutes": 29
+          },
+          "1006027": {
+            "name": "Yıldız Evler",
+            "offsetMinutes": 27
+          },
+          "1006028": {
+            "name": "Doğu Terminali",
+            "offsetMinutes": 25
+          },
+          "1006029": {
+            "name": "Mimarsinan Kavşağı",
+            "offsetMinutes": 23
+          },
+          "1006030": {
+            "name": "Gökkent",
+            "offsetMinutes": 21
+          },
+          "1006031": {
+            "name": "Kumarlı",
+            "offsetMinutes": 19
+          },
+          "1006032": {
+            "name": "Harikalar Diyarı",
+            "offsetMinutes": 16
+          },
+          "1006033": {
+            "name": "Cırgalan",
+            "offsetMinutes": 15
+          },
+          "1006034": {
+            "name": "Ahi Evran",
+            "offsetMinutes": 14
+          },
+          "1006035": {
+            "name": "Gesi Kavşağı",
+            "offsetMinutes": 12
+          },
+          "1006036": {
+            "name": "Beyazşehir",
+            "offsetMinutes": 11
+          },
+          "1006037": {
+            "name": "Toki Kavşağı",
+            "offsetMinutes": 9
+          },
+          "1006038": {
+            "name": "Millet",
+            "offsetMinutes": 7
+          },
+          "1006039": {
+            "name": "İldem1",
+            "offsetMinutes": 6
+          },
+          "1006040": {
+            "name": "İldem2",
+            "offsetMinutes": 5
+          },
+          "1006041": {
+            "name": "İldem3",
+            "offsetMinutes": 3
+          },
+          "1006042": {
+            "name": "İldem4",
+            "offsetMinutes": 2
+          },
+          "1006043": {
+            "name": "İldem5",
+            "offsetMinutes": 0
+          },
+          "1006056": {
+            "name": "Anafartalar 2",
+            "offsetMinutes": 61
+          },
+          "1006057": {
+            "name": "Otogar",
+            "offsetMinutes": 63
+          },
+          "1006058": {
+            "name": "Fen Lisesi",
+            "offsetMinutes": 65
+          },
+          "1006059": {
+            "name": "Hurdacılar",
+            "offsetMinutes": 67
+          },
+          "1006060": {
+            "name": "Psikiyatri Hastanesi",
+            "offsetMinutes": 68
+          },
+          "1006061": {
+            "name": "Şehir Hastanesi",
+            "offsetMinutes": 70
+          },
+          "1006062": {
+            "name": "Hastane Konutları",
+            "offsetMinutes": 71
+          },
+          "1006063": {
+            "name": "Nuh Naci Yazgan",
+            "offsetMinutes": 73
+          },
+          "1006064": {
+            "name": "Mobilya Kent 1",
+            "offsetMinutes": 74
+          },
+          "1006065": {
+            "name": "Mobilya Kent 2",
+            "offsetMinutes": 76
+          },
+          "1006066": {
+            "name": "Kumsmall AVM",
+            "offsetMinutes": 78
+          }
+        }
+      }
+    },
+    "T4": {
+      "gidis": {
+        "terminalStationId": "1006019",
+        "terminalStationName": "Cumhuriyet Meydanı",
+        "meta": {
+          "officialDurationMinutes": 38,
+          "generatedDurationBeforeScaling": 25.9,
+          "scaleFactor": 1.4686,
+          "confidence": "high",
+          "source": "haversine_distance_scaled_to_official_duration"
+        },
+        "orderedStationIds": [
+          "1006019",
+          "1006020",
+          "1006021",
+          "1006022",
+          "1006044",
+          "1006045",
+          "1006046",
+          "1006067",
+          "1006068",
+          "1006069",
+          "1006070",
+          "1006071",
+          "1006072",
+          "1006073",
+          "1006074",
+          "1006075"
+        ],
+        "stations": {
+          "1006019": {
+            "name": "Cumhuriyet Meydanı",
+            "offsetMinutes": 0
+          },
+          "1006020": {
+            "name": "Hunat",
+            "offsetMinutes": 2
+          },
+          "1006021": {
+            "name": "Büyükşehir Belediyesi",
+            "offsetMinutes": 4
+          },
+          "1006022": {
+            "name": "Fuzuli",
+            "offsetMinutes": 7
+          },
+          "1006044": {
+            "name": "Sema Yazar",
+            "offsetMinutes": 14
+          },
+          "1006045": {
+            "name": "Şehit Mustafa Şimşek",
+            "offsetMinutes": 15
+          },
+          "1006046": {
+            "name": "Şehit Furkan Doğan",
+            "offsetMinutes": 19
+          },
+          "1006067": {
+            "name": "Yıldırım Beyazıt",
+            "offsetMinutes": 20
+          },
+          "1006068": {
+            "name": "Keçitepesi",
+            "offsetMinutes": 23
+          },
+          "1006069": {
+            "name": "Dedeman İmam Hatip Lisesi",
+            "offsetMinutes": 26
+          },
+          "1006070": {
+            "name": "Germiraltı",
+            "offsetMinutes": 29
+          },
+          "1006071": {
+            "name": "Kayseri Üniversitesi Şehit İsmet Eraslan",
+            "offsetMinutes": 31
+          },
+          "1006072": {
+            "name": "Halef Hoca",
+            "offsetMinutes": 33
+          },
+          "1006073": {
+            "name": "Anayurt Pazar Yeri",
+            "offsetMinutes": 35
+          },
+          "1006074": {
+            "name": "Turgut Özal",
+            "offsetMinutes": 36
+          },
+          "1006075": {
+            "name": "İzzet Bayraktar Camii",
+            "offsetMinutes": 38
+          }
+        }
+      },
+      "donus": {
+        "terminalStationId": "1006075",
+        "terminalStationName": "İzzet Bayraktar Camii",
+        "meta": {
+          "officialDurationMinutes": 38,
+          "generatedDurationBeforeScaling": 25.9,
+          "scaleFactor": 1.4686,
+          "confidence": "high",
+          "source": "haversine_distance_scaled_to_official_duration"
+        },
+        "orderedStationIds": [
+          "1006075",
+          "1006074",
+          "1006073",
+          "1006072",
+          "1006071",
+          "1006070",
+          "1006069",
+          "1006068",
+          "1006067",
+          "1006046",
+          "1006045",
+          "1006044",
+          "1006022",
+          "1006021",
+          "1006020",
+          "1006019"
+        ],
+        "stations": {
+          "1006019": {
+            "name": "Cumhuriyet Meydanı",
+            "offsetMinutes": 38
+          },
+          "1006020": {
+            "name": "Hunat",
+            "offsetMinutes": 36
+          },
+          "1006021": {
+            "name": "Büyükşehir Belediyesi",
+            "offsetMinutes": 34
+          },
+          "1006022": {
+            "name": "Fuzuli",
+            "offsetMinutes": 31
+          },
+          "1006044": {
+            "name": "Sema Yazar",
+            "offsetMinutes": 24
+          },
+          "1006045": {
+            "name": "Şehit Mustafa Şimşek",
+            "offsetMinutes": 23
+          },
+          "1006046": {
+            "name": "Şehit Furkan Doğan",
+            "offsetMinutes": 19
+          },
+          "1006067": {
+            "name": "Yıldırım Beyazıt",
+            "offsetMinutes": 18
+          },
+          "1006068": {
+            "name": "Keçitepesi",
+            "offsetMinutes": 15
+          },
+          "1006069": {
+            "name": "Dedeman İmam Hatip Lisesi",
+            "offsetMinutes": 12
+          },
+          "1006070": {
+            "name": "Germiraltı",
+            "offsetMinutes": 9
+          },
+          "1006071": {
+            "name": "Kayseri Üniversitesi Şehit İsmet Eraslan",
+            "offsetMinutes": 7
+          },
+          "1006072": {
+            "name": "Halef Hoca",
+            "offsetMinutes": 5
+          },
+          "1006073": {
+            "name": "Anayurt Pazar Yeri",
+            "offsetMinutes": 3
+          },
+          "1006074": {
+            "name": "Turgut Özal",
+            "offsetMinutes": 2
+          },
+          "1006075": {
+            "name": "İzzet Bayraktar Camii",
+            "offsetMinutes": 0
+          }
+        }
+      }
+    }
+  }
+}

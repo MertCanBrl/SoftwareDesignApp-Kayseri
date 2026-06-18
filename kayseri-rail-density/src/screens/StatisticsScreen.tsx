@@ -55,9 +55,9 @@ export function StatisticsScreen() {
             subtitle="Gün içinde en yüksek toplam yolcu olan saat"
           />
           <StatCard
-            title="Ortalama (kayıt başına)"
+            title="Ortalama (platform/saat kaydı başına)"
             value={Math.round(summary.averagePerRecord).toLocaleString('tr-TR')}
-            subtitle="Toplam yolcu / kayıt sayısı"
+            subtitle="Toplam yolcu / platform-saat kayıt sayısı"
           />
           <StatCard
             title="En yoğun durak"
