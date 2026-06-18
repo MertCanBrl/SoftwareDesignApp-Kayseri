@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import passengerDatesJson from '../../assets/data/passengerDates.json';
@@ -33,6 +34,10 @@ function localTodayYmd(): string {
 
 function localCurrentHour(): number {
   return new Date().getHours();
+}
+
+function localCurrentMinuteFloor10(): number {
+  return Math.floor(new Date().getMinutes() / 10) * 10;
 }
 
 function addDaysToYmd(ymd: string, n: number): string {
@@ -73,6 +78,8 @@ type SelectionContextValue = {
   markPredictionOnlyDates: string[];
   /** Seçili günde izin verilen en erken saat; admin için 0, misafir için geçerli günün saati */
   minAllowedSaat: number;
+  /** minAllowedSaat saatinde izin verilen en erken dakika (10'un katı); diğer saatlerde 0 */
+  minAllowedMinute: number;
 };
 
 const SelectionContext = createContext<SelectionContextValue | null>(null);
@@ -179,7 +186,10 @@ export function SelectionProvider({ children }: { children: React.ReactNode }) {
     return rowMin;
   });
 
-  const [minute, internalSetMinute] = useState<number>(0);
+  const [minute, internalSetMinute] = useState<number>(() => {
+    const today = localTodayYmd();
+    return tarih === today ? localCurrentMinuteFloor10() : 0;
+  });
 
   const setMinute = useCallback((m: number) => {
     internalSetMinute(m);
@@ -187,11 +197,17 @@ export function SelectionProvider({ children }: { children: React.ReactNode }) {
 
   const dateDataKind = useMemo(() => dateDataKindForRows(passengerRows), [passengerRows]);
 
-  // ── Seçili günde izin verilen minimum saat ────────────────────────────────
+  // ── Seçili günde izin verilen minimum saat ve dakika ─────────────────────
   const minAllowedSaat = useMemo<number>(() => {
     if (!isGuest) return 0;
     const today = localTodayYmd();
     return tarih === today ? localCurrentHour() : 0;
+  }, [isGuest, tarih]);
+
+  const minAllowedMinute = useMemo<number>(() => {
+    if (!isGuest) return 0;
+    const today = localTodayYmd();
+    return tarih === today ? localCurrentMinuteFloor10() : 0;
   }, [isGuest, tarih]);
 
   // ── Korumalı setTarih: misafir için izin verilmeyen tarihleri reddeder ────
@@ -215,15 +231,27 @@ export function SelectionProvider({ children }: { children: React.ReactNode }) {
     [isGuest, tarih]
   );
 
+  const prevIsGuestRef = useRef(isGuest);
+
   // ── Tarih değiştiğinde veriyi yükle ve saati sıfırla ──────────────────────
   useEffect(() => {
     const rows = loadRowsForTarih(tarih);
     setPassengerRows(rows);
     const rowMin = saatForRows(rows);
     const today = localTodayYmd();
+
+    const wasGuest = prevIsGuestRef.current;
+    prevIsGuestRef.current = isGuest;
+
+    // Admin girişinde (misafir → yetkili) saati sıfırlama; sadece rowMin altındaysa düzelt
+    if (wasGuest && !isGuest) {
+      internalSetSaat((prev) => Math.max(prev, rowMin));
+      return;
+    }
+
     const minHour = isGuest && tarih === today ? localCurrentHour() : 0;
     internalSetSaat(Math.max(rowMin, minHour));
-    internalSetMinute(0);
+    internalSetMinute(tarih === today ? localCurrentMinuteFloor10() : 0);
   }, [tarih, isGuest]);
 
   const value = useMemo<SelectionContextValue>(
@@ -240,6 +268,7 @@ export function SelectionProvider({ children }: { children: React.ReactNode }) {
       dateDataKind,
       markPredictionOnlyDates: markPredictionOnly,
       minAllowedSaat,
+      minAllowedMinute,
     }),
     [
       passengerRows,
@@ -254,6 +283,7 @@ export function SelectionProvider({ children }: { children: React.ReactNode }) {
       dateDataKind,
       markPredictionOnly,
       minAllowedSaat,
+      minAllowedMinute,
     ]
   );
 

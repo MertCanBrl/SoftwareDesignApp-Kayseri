@@ -96,8 +96,9 @@ function computePassagesForLineDirection(params: {
   stationId: string;
   dayType: TramDayType;
   hour: number;
+  minute: number;
 }): EstimatedStationPassage[] {
-  const { lineId, direction, stationId, dayType, hour } = params;
+  const { lineId, direction, stationId, dayType, hour, minute } = params;
 
   const routeData = offsets[lineId]?.[direction];
   if (!routeData) return [];
@@ -117,11 +118,14 @@ function computePassagesForLineDirection(params: {
 
   const passages: EstimatedStationPassage[] = [];
 
+  const windowStart = hour * 60 + minute;
+  const windowEnd = windowStart + 10;
+
   for (const terminalTime of terminalTimes) {
     const estimatedPassageTime = addMinutes(terminalTime, stationOffset.offsetMinutes);
-    const passageHour = Math.floor(toTotalMinutes(estimatedPassageTime) / 60) % 24;
+    const passageMinutes = toTotalMinutes(estimatedPassageTime);
 
-    if (passageHour !== hour) continue;
+    if (passageMinutes < windowStart || passageMinutes >= windowEnd) continue;
 
     passages.push({
       stationId,
@@ -149,6 +153,8 @@ export type GetEstimatedStationPassagesParams = {
   date: Date;
   /** Sonuçların filtreleneceği saat (0-23). */
   hour: number;
+  /** Seçilen dakika offseti (0, 10, 20, 30, 40 veya 50); 10 dakikalık pencereyi belirler. */
+  minute: number;
 };
 
 /**
@@ -164,7 +170,7 @@ export type GetEstimatedStationPassagesParams = {
 export function getEstimatedStationPassages(
   params: GetEstimatedStationPassagesParams,
 ): EstimatedStationPassage[] {
-  const { stationId, date, hour } = params;
+  const { stationId, date, hour, minute } = params;
   const dayType = getDayType(date);
   const lineIds = Object.keys(scheduleLines) as string[];
   const directions: TramDirection[] = ['gidis', 'donus'];
@@ -174,7 +180,7 @@ export function getEstimatedStationPassages(
   for (const lineId of lineIds) {
     for (const direction of directions) {
       all.push(
-        ...computePassagesForLineDirection({ lineId, direction, stationId, dayType, hour }),
+        ...computePassagesForLineDirection({ lineId, direction, stationId, dayType, hour, minute }),
       );
     }
   }

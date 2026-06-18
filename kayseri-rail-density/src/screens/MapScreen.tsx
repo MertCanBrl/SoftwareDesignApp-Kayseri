@@ -98,6 +98,7 @@ export function MapScreen() {
     dateDataKind,
     markPredictionOnlyDates,
     minAllowedSaat,
+    minAllowedMinute,
   } = useSelection();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -174,10 +175,10 @@ export function MapScreen() {
     const stationId = selectedStation.parentDurakId;
     const [y, mo, d] = tarih.split('-').map(Number);
     const date = new Date(y, mo - 1, d);
-    return getEstimatedStationPassages({ stationId, date, hour: saat })
-      .filter((p) => p.confidence === 'high')
+    return getEstimatedStationPassages({ stationId, date, hour: saat, minute })
+      .filter((p) => p.confidence === 'high' && p.direction === selectedDir)
       .slice(0, 4);
-  }, [selectedStation, tarih, saat]);
+  }, [selectedStation, tarih, saat, minute, selectedDir]);
 
   const searchResults = useMemo(() => {
     const q = debouncedSearch.trim();
@@ -348,15 +349,16 @@ export function MapScreen() {
           <View style={styles.titleRow}>
             <Text style={styles.screenTitle}>Harita</Text>
             <Pressable
-              onPress={() => setLoginVisible(true)}
-              style={styles.hiddenLoginBtn}
-              accessibilityLabel="Yönetici girişi"
+              onPress={() => isAdmin ? router.push('/municipality-dashboard') : setLoginVisible(true)}
+              style={[styles.hiddenLoginBtn, isAdmin && styles.adminBtn]}
+              accessibilityLabel={isAdmin ? 'Yönetici paneli' : 'Yönetici girişi'}
             >
               <Ionicons
                 name={isAdmin ? 'shield-checkmark' : 'lock-closed'}
-                size={14}
+                size={isAdmin ? 18 : 14}
                 color={isAdmin ? '#22c55e' : theme.textMuted}
               />
+              {isAdmin ? <Text style={styles.adminBtnLabel}>Panel</Text> : null}
             </Pressable>
           </View>
           <DateTimeSelector
@@ -368,6 +370,7 @@ export function MapScreen() {
             onChangeTime={(h, m) => { setSaat(h); setMinute(m); }}
             predictionOnlyDates={markPredictionOnlyDates}
             minHour={minAllowedSaat}
+            minMinute={minAllowedMinute}
           />
           <View style={styles.legendPad}>
             <DensityLegend />
@@ -693,6 +696,21 @@ const styles = StyleSheet.create({
   hiddenLoginBtn: {
     padding: 6,
     opacity: 0.4,
+  },
+  adminBtn: {
+    opacity: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(34,197,94,0.12)',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  adminBtnLabel: {
+    color: '#22c55e',
+    fontSize: 13,
+    fontWeight: '700',
   },
   legendPad: { marginTop: 4 },
   mapWrap: { flex: 1, position: 'relative' },

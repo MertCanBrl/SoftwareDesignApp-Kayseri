@@ -49,6 +49,7 @@ export function MapScreen() {
     dateDataKind,
     markPredictionOnlyDates,
     minAllowedSaat,
+    minAllowedMinute,
   } = useSelection();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -77,15 +78,16 @@ export function MapScreen() {
         <View style={styles.titleRow}>
           <Text style={styles.screenTitle}>Harita</Text>
           <Pressable
-            onPress={() => setLoginVisible(true)}
-            style={styles.hiddenLoginBtn}
-            accessibilityLabel="Yönetici girişi"
+            onPress={() => isAdmin ? router.push('/municipality-dashboard') : setLoginVisible(true)}
+            style={[styles.hiddenLoginBtn, isAdmin && styles.adminBtn]}
+            accessibilityLabel={isAdmin ? 'Yönetici paneli' : 'Yönetici girişi'}
           >
             <Ionicons
               name={isAdmin ? 'shield-checkmark' : 'lock-closed'}
-              size={14}
+              size={isAdmin ? 18 : 14}
               color={isAdmin ? '#22c55e' : theme.textMuted}
             />
+            {isAdmin ? <Text style={styles.adminBtnLabel}>Panel</Text> : null}
           </Pressable>
         </View>
         <View style={styles.webNote}>
@@ -103,6 +105,7 @@ export function MapScreen() {
           onChangeTime={(h, m) => { setSaat(h); setMinute(m); }}
           predictionOnlyDates={markPredictionOnlyDates}
           minHour={minAllowedSaat}
+          minMinute={minAllowedMinute}
         />
         <View style={styles.legendPad}>
           <DensityLegend />
@@ -191,6 +194,21 @@ const styles = StyleSheet.create({
   hiddenLoginBtn: {
     padding: 6,
     opacity: 0.4,
+  },
+  adminBtn: {
+    opacity: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(34,197,94,0.12)',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  adminBtnLabel: {
+    color: '#22c55e',
+    fontSize: 13,
+    fontWeight: '700',
   },
   webNote: {
     flexDirection: 'row',

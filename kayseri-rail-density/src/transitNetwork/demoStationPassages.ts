@@ -76,6 +76,7 @@ console.log('  [TAHMİNİ — sefer çizelgesi + koordinat bazlı offset]\n');
     stationId: '1006019',
     date: DEMO_DATE,
     hour: DEMO_HOUR,
+    minute: 0,
   });
   if (passages.length === 0) {
     console.log('  Bu saat diliminde geçiş bulunamadı.');
@@ -95,6 +96,7 @@ console.log('  [TAHMİNİ — sefer çizelgesi + koordinat bazlı offset]\n');
     stationId: '1006023',
     date: DEMO_DATE,
     hour: DEMO_HOUR,
+    minute: 0,
   });
   if (passages.length === 0) {
     console.log('  Bu saat diliminde geçiş bulunamadı.');
@@ -114,6 +116,7 @@ console.log('  [TAHMİNİ — sefer çizelgesi + koordinat bazlı offset]\n');
     stationId: '1006043',
     date: DEMO_DATE,
     hour: DEMO_HOUR,
+    minute: 0,
   });
   if (passages.length === 0) {
     console.log('  Bu saat diliminde geçiş bulunamadı.');
@@ -145,6 +148,7 @@ console.log('  [TAHMİNİ — sunday tarifesi kullanılır]\n');
     stationId: '1006023',
     date: sundayDate,
     hour: 10,
+    minute: 0,
   });
   if (passages.length === 0) {
     console.log('  Bu saat diliminde geçiş bulunamadı.');
