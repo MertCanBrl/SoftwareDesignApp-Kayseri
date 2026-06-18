@@ -255,8 +255,8 @@
           "direction": "gidis",
           "fromStation": "Cumhuriyet Meydanı",
           "fromStationId": "1006019",
-          "toStation": "Anayurt",
-          "toStationId": "1006073",
+          "toStation": "İzzet Bayraktar Camii",
+          "toStationId": "1006075",
           "schedule": {
             "weekday": [
               "05:50","06:06","06:22","06:38","06:54","07:10","07:26","07:42","07:58",
@@ -289,8 +289,8 @@
         },
         {
           "direction": "donus",
-          "fromStation": "Anayurt",
-          "fromStationId": "1006073",
+          "fromStation": "İzzet Bayraktar Camii",
+          "fromStationId": "1006075",
           "toStation": "Cumhuriyet Meydanı",
           "toStationId": "1006019",
           "schedule": {

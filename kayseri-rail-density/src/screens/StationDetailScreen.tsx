@@ -24,6 +24,46 @@ import {
   getDailyStationData,
   getPassengerCountByStationDateHour,
 } from '../utils/statistics';
+import { getEstimatedStationPassages } from '../transitNetwork/stationPassageUtils';
+import { distributeHourlyPassengersToPassages } from '../transitNetwork/passengerDistributionUtils';
+import { runUserRecommendationPipeline } from '../userRecommendations/runUserRecommendationPipeline';
+
+// ---------------------------------------------------------------------------
+// Pipeline input helpers — yalnızca userRecommendationPipeline için kullanılır
+// ---------------------------------------------------------------------------
+
+const DENSITY_RANK_MAP: Record<string, number> = {
+  Seyrek: 1,
+  'Çok Düşük': 2,
+  Düşük: 3,
+  Orta: 4,
+  Yüksek: 5,
+  'Çok Yüksek': 6,
+  'Kapasite Aşımı': 7,
+};
+
+function getDensityRank(label: string): number {
+  return DENSITY_RANK_MAP[label] ?? 1;
+}
+
+function mapPredictionConfidence(
+  label: string | null,
+): 'high' | 'medium' | 'low' | null {
+  if (label === 'Yüksek') return 'high';
+  if (label === 'Orta') return 'medium';
+  if (label === 'Düşük') return 'low';
+  return null;
+}
+
+function getServiceDayType(
+  dateStr: string,
+): 'weekday' | 'saturday' | 'sunday' {
+  const parts = dateStr.split('-').map(Number);
+  const day = new Date(parts[0]!, parts[1]! - 1, parts[2]!).getDay();
+  if (day === 6) return 'saturday';
+  if (day === 0) return 'sunday';
+  return 'weekday';
+}
 
 export function StationDetailScreen() {
   const router = useRouter();
@@ -198,6 +238,62 @@ export function StationDetailScreen() {
     return { factors, weatherLevel, weatherScore: row.weatherImpactScore ?? 0 };
   }, [passengerRows, effectiveDurakId, saat, isPrediction]);
 
+  // Seçilen saat dilimindeki high confidence tahmini geçişler (max 6).
+  // T1/T2/T3/T4 hatlarının tamamı high confidence olduğundan tüm kalibre edilmiş hatlar dahil edilir.
+  const estimatedPassages = useMemo(() => {
+    const [y, mo, d] = tarih.split('-').map(Number);
+    const date = new Date(y, mo - 1, d);
+    return getEstimatedStationPassages({ stationId: durakId, date, hour: saat })
+      .filter((p) => p.confidence === 'high')
+      .slice(0, 6);
+  }, [durakId, tarih, saat]);
+
+  // Saatlik yolcu toplamını tahmini geçişlere dağıt
+  // selectedCount: hero'da gösterilen değer — parent görünümünde _G+_D toplamı, doğrudan durağa kendi sayısı
+  const distributedPassages = useMemo(
+    () =>
+      distributeHourlyPassengersToPassages({
+        hourlyPassengerCount: selectedCount ?? 0,
+        passages: estimatedPassages,
+      }),
+    [selectedCount, estimatedPassages],
+  );
+
+  // Akıllı seyahat önerisi — useMemo hook'u guard'dan önce çağrılmalı (Hook kuralı)
+  const travelRec = useMemo(() => {
+    // dateDataKind 'none' olabilir; pipeline 'actual' | 'prediction' bekliyor
+    const resolvedDataType =
+      dateDataKind === 'prediction' ? 'prediction' : 'actual' as const;
+    const predLabel = resolvedDataType === 'prediction' ? getPredictionConfidence(tarih) : null;
+    return runUserRecommendationPipeline({
+      stationId: durakId,
+      stationName: station?.durakAd ?? '',
+      selectedDate: tarih,
+      selectedHour: saat,
+      hourlyPassengerCount: selectedCount ?? 0,
+      densityLevel: levelLabel,
+      densityRank: getDensityRank(levelLabel),
+      estimatedPassages,
+      distributedPassages,
+      nearbyStationsDensity: [],
+      dataType: resolvedDataType,
+      predictionConfidence: mapPredictionConfidence(predLabel),
+      serviceDayType: getServiceDayType(tarih),
+      isParentView,
+    });
+  }, [
+    durakId,
+    station,
+    tarih,
+    saat,
+    selectedCount,
+    levelLabel,
+    estimatedPassages,
+    distributedPassages,
+    dateDataKind,
+    isParentView,
+  ]);
+
   if (!station) {
     return (
       <SafeAreaView style={styles.safe}>
@@ -351,6 +447,34 @@ export function StationDetailScreen() {
                 Sonraki saat: {goRec.next.passengerCount.toLocaleString('tr-TR')} yolcu · {goRec.next.densityLabel}
               </Text>
             ) : null}
+          </View>
+        ) : null}
+
+        {distributedPassages.length > 0 ? (
+          <View style={styles.insightCard}>
+            <Text style={styles.cardTitle}>Seçilen saat dilimindeki tahmini geçişler</Text>
+            {distributedPassages.map((p, i) => (
+              <Text key={i} style={styles.passageRow}>
+                {p.estimatedPassageTime}{'  ·  '}{p.lineId} {p.direction === 'gidis' ? 'Gidiş' : 'Dönüş'}{'  ·  '}~{p.estimatedPassengers.toLocaleString('tr-TR')} yolcu
+              </Text>
+            ))}
+            <Text style={styles.passageNote}>
+              Saatlik yoğunluk tahmini, sefer çizelgesine göre tahmini geçişlere dağıtılmıştır. Gerçek zamanlı konum değildir.
+            </Text>
+          </View>
+        ) : null}
+
+        {dateDataKind !== 'none' && travelRec.action !== 'no_data' ? (
+          <View style={styles.travelRecCard}>
+            <Text style={styles.cardTitle}>Akıllı seyahat önerisi</Text>
+            <Text style={styles.cardEm}>{travelRec.headline}</Text>
+            <Text style={styles.cardP}>{travelRec.detail}</Text>
+            {travelRec.recommendedPassageTime != null ? (
+              <Text style={styles.cardP}>
+                Önerilen geçiş: {travelRec.recommendedPassageTime} civarı
+              </Text>
+            ) : null}
+            <Text style={styles.passageNote}>{travelRec.explanation}</Text>
           </View>
         ) : null}
 
@@ -568,4 +692,15 @@ const styles = StyleSheet.create({
   periodCount: { color: theme.textSecondary, fontSize: 11, fontWeight: '500' },
   periodDensity: { fontSize: 11, fontWeight: '700', marginTop: 2 },
   periodNoData: { color: theme.textMuted, fontSize: 12, fontWeight: '500', marginTop: 4 },
+  passageRow: { color: theme.textPrimary, fontSize: 13, fontWeight: '700' },
+  passageNote: { color: theme.textMuted, fontSize: 11, lineHeight: 16, marginTop: 2 },
+  travelRecCard: {
+    backgroundColor: theme.surface,
+    borderRadius: theme.cardRadius,
+    padding: 16,
+    borderWidth: 1.5,
+    borderColor: theme.accent,
+    ...theme.shadow,
+    gap: 6,
+  },
 });
