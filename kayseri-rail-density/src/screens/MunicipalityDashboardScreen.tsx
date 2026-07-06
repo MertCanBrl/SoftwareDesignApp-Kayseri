@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
-import React, { useMemo } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { runTransitDecisionPipeline } from '../agents/transitDecisionPipeline';
@@ -10,6 +10,7 @@ import { canAccessMunicipalityDashboard } from '../auth/accessControl';
 import { StatCard } from '../components/StatCard';
 import { theme } from '../constants/theme';
 import { useSelection } from '../context/SelectionContext';
+import { useStationFaults } from '../context/StationFaultContext';
 import { getTopCapacityIssues } from '../municipality/capacityIssueDetector';
 import {
   formatHourLabel,
@@ -24,7 +25,7 @@ import type {
 } from '../municipality/municipalityTypes';
 import type { OccupancyRiskLevel } from '../segmentOccupancy/segmentOccupancyTypes';
 import { buildTransitNetwork } from '../transitNetwork/buildTransitNetwork';
-import type { PassengerRow } from '../types';
+import type { PassengerRow, StationRecord } from '../types';
 
 const DEMO_DATE = '2025-03-12';
 const DEMO_HOUR = 17;
@@ -168,6 +169,149 @@ function ListRow({ children }: { children: React.ReactNode }) {
   return <View style={styles.listRow}>{children}</View>;
 }
 
+function stripDirectionSuffix(name: string): string {
+  return name.replace(/ \((Gidiş|Dönüş)\)$/, '');
+}
+
+function buildUniqueStationOptions(
+  stations: StationRecord[]
+): { parentDurakId: string; durakAd: string }[] {
+  const map = new Map<string, string>();
+  for (const s of stations) {
+    if (!map.has(s.parentDurakId)) {
+      map.set(s.parentDurakId, stripDirectionSuffix(s.durakAd));
+    }
+  }
+  return [...map.entries()]
+    .map(([parentDurakId, durakAd]) => ({ parentDurakId, durakAd }))
+    .sort((a, b) => a.durakAd.localeCompare(b.durakAd, 'tr'));
+}
+
+function FaultManagementSection() {
+  const { stations } = useSelection();
+  const { faults, reportFault, clearFault } = useStationFaults();
+  const stationOptions = useMemo(() => buildUniqueStationOptions(stations), [stations]);
+
+  const [query, setQuery] = useState('');
+  const [selected, setSelected] = useState<{ parentDurakId: string; durakAd: string } | null>(null);
+  const [description, setDescription] = useState('');
+
+  const filteredOptions = useMemo(() => {
+    const q = query.trim().toLocaleLowerCase('tr');
+    if (!q) return [];
+    return stationOptions.filter((s) => s.durakAd.toLocaleLowerCase('tr').includes(q)).slice(0, 8);
+  }, [query, stationOptions]);
+
+  const canSubmit = selected != null && description.trim().length > 0;
+
+  const handleSubmit = useCallback(() => {
+    if (!selected || !description.trim()) return;
+    reportFault(selected.parentDurakId, selected.durakAd, description.trim());
+    setSelected(null);
+    setQuery('');
+    setDescription('');
+  }, [selected, description, reportFault]);
+
+  return (
+    <SectionCard title="Arıza Bildirimi Yönetimi">
+      <Text style={styles.faultHint}>
+        Arıza/aksaklık yaşanan durağı seçip açıklama girin. Kullanıcılar durağın detay
+        sayfasında bu uyarıyı görür. Arıza giderildiğinde aşağıdaki listeden manuel olarak
+        kaldırın.
+      </Text>
+
+      {selected ? (
+        <View style={styles.selectedStationRow}>
+          <Text style={styles.selectedStationText}>Seçili durak: {selected.durakAd}</Text>
+          <Pressable
+            onPress={() => {
+              setSelected(null);
+              setQuery('');
+            }}
+          >
+            <Text style={styles.changeStationText}>Değiştir</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <>
+          <TextInput
+            value={query}
+            onChangeText={setQuery}
+            placeholder="Durak ara..."
+            placeholderTextColor={theme.textMuted}
+            style={styles.faultInput}
+          />
+          {filteredOptions.length > 0 ? (
+            <View style={styles.stationOptionList}>
+              {filteredOptions.map((opt) => (
+                <Pressable
+                  key={opt.parentDurakId}
+                  onPress={() => {
+                    setSelected(opt);
+                    setQuery('');
+                  }}
+                  style={({ pressed }) => [styles.stationOptionRow, pressed && styles.pressed]}
+                >
+                  <Text style={styles.stationOptionText}>{opt.durakAd}</Text>
+                </Pressable>
+              ))}
+            </View>
+          ) : null}
+        </>
+      )}
+
+      <TextInput
+        value={description}
+        onChangeText={setDescription}
+        placeholder="Örn: Arıza oluştu, sürelerde değişiklik olabilir."
+        placeholderTextColor={theme.textMuted}
+        style={[styles.faultInput, styles.faultTextArea]}
+        multiline
+        numberOfLines={3}
+      />
+
+      <Pressable
+        accessibilityRole="button"
+        disabled={!canSubmit}
+        onPress={handleSubmit}
+        style={({ pressed }) => [
+          styles.primaryBtn,
+          styles.faultSubmitBtn,
+          !canSubmit && styles.primaryBtnDisabled,
+          pressed && canSubmit && styles.pressed,
+        ]}
+      >
+        <Text style={styles.primaryBtnText}>Arıza Bildir</Text>
+      </Pressable>
+
+      <View style={styles.activeFaultList}>
+        <Text style={styles.activeFaultListTitle}>
+          Aktif arızalar{faults.length ? ` (${faults.length})` : ''}
+        </Text>
+        {faults.length === 0 ? (
+          <Text style={styles.emptyHint}>Şu anda bildirilmiş aktif arıza yok.</Text>
+        ) : (
+          faults.map((fault) => (
+            <View key={fault.parentDurakId} style={styles.faultRow}>
+              <View style={styles.faultRowBody}>
+                <Text style={styles.faultRowTitle}>{fault.durakAd}</Text>
+                <Text style={styles.faultRowDesc}>{fault.description}</Text>
+              </View>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => clearFault(fault.parentDurakId)}
+                style={({ pressed }) => [styles.clearFaultBtn, pressed && styles.pressed]}
+              >
+                <Text style={styles.clearFaultBtnText}>Kaldır</Text>
+              </Pressable>
+            </View>
+          ))
+        )}
+      </View>
+    </SectionCard>
+  );
+}
+
 function PriorityBadge({ priority }: { priority: RecommendationPriority }) {
   const tone =
     priority === 'CRITICAL'
@@ -304,6 +448,8 @@ function MunicipalityDashboardContent({
             <Text style={styles.estimateTagText}>Tahmini analiz</Text>
           </View>
         </View>
+
+        <FaultManagementSection />
 
         {showPipelineError ? (
           <View style={styles.errorCard}>
@@ -641,4 +787,76 @@ const styles = StyleSheet.create({
   },
   ghostBtn: { paddingVertical: 12, alignItems: 'center' },
   ghostBtnText: { color: theme.textSecondary, fontSize: 14, fontWeight: '600' },
+  faultHint: {
+    color: theme.textSecondary,
+    fontSize: 13,
+    lineHeight: 19,
+    marginBottom: 4,
+  },
+  faultInput: {
+    backgroundColor: theme.surfaceElevated,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: theme.border,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    color: theme.textPrimary,
+    fontSize: 14,
+  },
+  faultTextArea: {
+    minHeight: 72,
+    textAlignVertical: 'top',
+    marginTop: 4,
+  },
+  selectedStationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: theme.surfaceElevated,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: theme.border,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  selectedStationText: { color: theme.textPrimary, fontSize: 14, fontWeight: '700', flex: 1 },
+  changeStationText: { color: theme.accent, fontSize: 13, fontWeight: '700' },
+  stationOptionList: {
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: theme.border,
+    overflow: 'hidden',
+  },
+  stationOptionRow: {
+    backgroundColor: theme.surfaceElevated,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.border,
+  },
+  stationOptionText: { color: theme.textPrimary, fontSize: 14, fontWeight: '600' },
+  faultSubmitBtn: { marginTop: 4 },
+  primaryBtnDisabled: { opacity: 0.4 },
+  activeFaultList: { marginTop: 6, gap: 8 },
+  activeFaultListTitle: { color: theme.textPrimary, fontSize: 14, fontWeight: '700' },
+  faultRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: theme.surfaceElevated,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#DC2626',
+    padding: 12,
+  },
+  faultRowBody: { flex: 1 },
+  faultRowTitle: { color: theme.textPrimary, fontSize: 14, fontWeight: '700' },
+  faultRowDesc: { color: theme.textSecondary, fontSize: 13, marginTop: 2, lineHeight: 18 },
+  clearFaultBtn: {
+    backgroundColor: '#DC2626',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  clearFaultBtnText: { color: '#fff', fontSize: 12, fontWeight: '700' },
 });
