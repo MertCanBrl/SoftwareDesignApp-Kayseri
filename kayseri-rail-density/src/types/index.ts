@@ -58,6 +58,16 @@ export type StationRecord = {
   direction?: 'gidis' | 'donus';
 };
 
+/** Bir durakta bildirilen aktif arıza (admin tarafından oluşturulur/kaldırılır). */
+export type StationFault = {
+  /** Platformdan bağımsız durak kimliği (parentDurakId) — _G/_D'nin ikisini de kapsar */
+  parentDurakId: string;
+  durakAd: string;
+  description: string;
+  /** ISO 8601 zaman damgası */
+  reportedAt: string;
+};
+
 export type HourlyPoint = { saat: number; yolcuSayisi: number };
 
 /** Open-Meteo saatlik hava durumu satırı (fetchKayseriWeather2025 çıktısı). */

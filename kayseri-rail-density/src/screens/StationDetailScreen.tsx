@@ -10,6 +10,7 @@ import { StatCard } from '../components/StatCard';
 import { theme } from '../constants/theme';
 import { getDensityLevel, TRAM_CAPACITY } from '../constants/densityLevels';
 import { useSelection } from '../context/SelectionContext';
+import { useStationFaults } from '../context/StationFaultContext';
 import { formatDisplayDate } from '../utils/date';
 import { getPredictionConfidence } from '../utils/predictionConfidence';
 import {
@@ -125,6 +126,12 @@ export function StationDetailScreen() {
   }, [stations, durakId, stationDirect]);
 
   const isParentView = !stationDirect && childStations.length > 0;
+
+  const { getFault } = useStationFaults();
+  const activeFault = useMemo(
+    () => getFault(stationDirect?.parentDurakId ?? durakId),
+    [getFault, stationDirect, durakId]
+  );
 
   // Gösterilecek station kaydı: doğrudan, parent synthetic, veya undefined
   const station = useMemo<StationRecord | undefined>(() => {
@@ -360,6 +367,13 @@ export function StationDetailScreen() {
             <Text style={styles.badgeText}>{heroDensityLine}</Text>
           </View>
         </View>
+
+        {activeFault != null ? (
+          <View style={styles.faultBanner}>
+            <Text style={styles.faultBannerTitle}>Arıza bildirildi</Text>
+            <Text style={styles.faultBannerBody}>{activeFault.description}</Text>
+          </View>
+        ) : null}
 
         {capacityInfo != null ? (
           <View style={[
@@ -649,6 +663,16 @@ const styles = StyleSheet.create({
   grid: { gap: 12 },
   platformRow: { marginTop: 6, gap: 2 },
   platformItem: { color: theme.textSecondary, fontSize: 12, fontWeight: '600' },
+  faultBanner: {
+    borderRadius: theme.cardRadius,
+    borderWidth: 1.5,
+    borderColor: '#DC2626',
+    padding: 14,
+    gap: 6,
+    backgroundColor: 'rgba(220, 38, 38, 0.12)',
+  },
+  faultBannerTitle: { color: '#FCA5A5', fontSize: 15, fontWeight: '800' },
+  faultBannerBody: { color: theme.textPrimary, fontSize: 13, fontWeight: '500', lineHeight: 18 },
   capacityBanner: {
     borderRadius: theme.cardRadius,
     borderWidth: 1.5,
